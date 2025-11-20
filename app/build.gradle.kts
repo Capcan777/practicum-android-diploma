@@ -45,7 +45,7 @@ dependencies {
     implementation(libs.androidX.core)
     implementation(libs.androidX.appCompat)
 
-    //Coroutines
+    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
     // UI layer libraries
@@ -61,11 +61,11 @@ dependencies {
     androidTestImplementation(libs.uiTests.espressoCore)
     // endregion
 
-    //Retrofit
+    // Retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit2.converter.gson)
 
-    //Koin (DI)
+    // Koin (DI)
     implementation(libs.koin.android)
 
     // Glide (Image Loading)
