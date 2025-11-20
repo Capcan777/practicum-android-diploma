@@ -55,4 +55,9 @@ dependencies {
     androidTestImplementation(libs.uiTests.junitExt)
     androidTestImplementation(libs.uiTests.espressoCore)
     // endregion
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit2.converter.gson)
+
 }

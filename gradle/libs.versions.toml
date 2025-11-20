@@ -1,10 +1,12 @@
 [versions]
 
+converterGson = "3.0.0"
 java = "VERSION_1_8"
 
 # Build constants
 minSdk = "26"
 compileSdk = "34"
+retrofit = "3.0.0"
 targetSdk = "33"
 
 # Detekt
@@ -14,6 +16,8 @@ detektTwitterComposeRules ="0.0.26"
 [libraries]
 
 # Detekt
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 staticAnalysis-detektPlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 staticAnalysis-detektCli = { module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt" }
 staticAnalysis-detektApi = { module = "io.gitlab.arturbosch.detekt:detekt-api", version.ref = "detekt" }
@@ -36,5 +40,6 @@ unitTests-junit = "junit:junit:4.13.2"
 # UI tests
 uiTests-junitExt = "androidx.test.ext:junit:1.1.5"
 uiTests-espressoCore = "androidx.test.espresso:espresso-core:3.5.1"
+
 
 [bundles]
