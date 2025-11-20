@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("ru.practicum.android.diploma.plugins.developproperties")
+    id("com.google.devtools.ksp") version "2.1.0-1.0.29" // Подключение ksp
+    id("androidx.navigation.safeargs.kotlin") // Safe Args
 }
 
 android {
@@ -43,6 +45,9 @@ dependencies {
     implementation(libs.androidX.core)
     implementation(libs.androidX.appCompat)
 
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+
     // UI layer libraries
     implementation(libs.ui.material)
     implementation(libs.ui.constraintLayout)
@@ -55,4 +60,28 @@ dependencies {
     androidTestImplementation(libs.uiTests.junitExt)
     androidTestImplementation(libs.uiTests.espressoCore)
     // endregion
+
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit2.converter.gson)
+
+    // Koin (DI)
+    implementation(libs.koin.android)
+
+    // Glide (Image Loading)
+    implementation(libs.glide)
+    ksp(libs.compiler) // KSP для Glide
+
+    // Room (Database)
+    ksp(libs.room.compiler.v261) // KSP для Room
+    implementation(libs.room.ktx) // Поддержка корутин
+    implementation(libs.room.runtime)
+
+    // Lifecycle
+    implementation(libs.lifecycle.livedata.ktx)
+
+    // Navigation
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+
 }
