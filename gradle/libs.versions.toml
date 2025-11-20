@@ -13,7 +13,7 @@ retrofit = "3.0.0"
 
 # Build constants
 minSdk = "26"
-compileSdk = "35"
+compileSdk = "36"
 targetSdk = "33"
 
 # Detekt
