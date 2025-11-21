@@ -85,11 +85,11 @@ dependencies {
     implementation(libs.navigation.ui.ktx)
 
     // Jetpack Compose
-    implementation("androidx.compose.ui:ui:1.9.4")
-    implementation("androidx.compose.material3:material3:1.4.0")
-    implementation("androidx.compose.material:material-icons-extended:1.4.0")
-    implementation("androidx.activity:activity-compose:1.11.0")
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.activity.compose)
     debugImplementation(libs.androidx.ui.tooling)
-    implementation("androidx.compose.runtime:runtime-livedata:1.9.4")
+    implementation(libs.androidx.runtime.livedata)
 
 }
