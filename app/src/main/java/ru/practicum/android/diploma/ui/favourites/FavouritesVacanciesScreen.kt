@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.ui.root
+package ru.practicum.android.diploma.ui.favourites
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -6,6 +6,6 @@ import androidx.compose.ui.res.stringResource
 import ru.practicum.android.diploma.R
 
 @Composable
-fun AboutTeamScreen() {
-    Text(text = stringResource(R.string.team))
+fun FavouritesVacanciesScreen() {
+    Text(text = stringResource(R.string.favourites))
 }
