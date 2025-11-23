@@ -3,8 +3,7 @@ package ru.practicum.android.diploma
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import ru.practicum.android.diploma.di.databaseModule
-import ru.practicum.android.diploma.di.networkModule
+import ru.practicum.android.diploma.di.dataModule
 import ru.practicum.android.diploma.di.repositoryModule
 import ru.practicum.android.diploma.di.viewModelModule
 
@@ -14,8 +13,7 @@ class App : Application() {
         startKoin {
             androidContext(this@App)
             modules(
-                databaseModule,
-                networkModule,
+                dataModule,
                 repositoryModule,
                 viewModelModule
             )
