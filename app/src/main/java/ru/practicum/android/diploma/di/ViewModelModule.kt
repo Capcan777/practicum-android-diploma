@@ -4,6 +4,6 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
 
-    // TODO: добавить инициализацию viewmodel'ов для каждого экрана
+    // добавить инициализацию viewmodel'ов для каждого экрана
 
 }

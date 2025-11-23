@@ -4,6 +4,6 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
 
-    // TODO: добавить инициализацию репозиториев
+    // добавить инициализацию репозиториев
 
 }
