@@ -91,5 +91,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.koin.androidx.compose)
 
 }
