@@ -15,7 +15,7 @@ roomKtx = "2.8.4"
 retrofit = "3.0.0"
 runtimeLivedata = "1.9.5"
 ui = "1.9.5"
-koinAndroid = "3.3.0"
+koinAndroid = "4.1.1"
 
 # Build constants
 minSdk = "26"
