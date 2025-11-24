@@ -17,17 +17,17 @@ fun NavGraph() {
         composable(Routes.Search.route) { SearchScreen() }
         composable(Routes.VacancyDetails.route) { backStackEntry ->
             val vacancyId = backStackEntry.arguments?.getString("vacancyId")
-            if (vacancyId == null) {
-                return@composable
+            if (vacancyId != null) {
+                VacancyDetailsScreen(vacancyId)
+            } else {
+                // Обработать ошибку
             }
-            VacancyDetailsScreen(vacancyId)
         }
         composable(Routes.Favourites.route) { FavouritesVacanciesScreen() }
         composable(Routes.SettingsFilter.route) { FilterSettingsScreen() }
         composable(Routes.About.route) { AboutTeamScreen() }
     }
 }
-
 
 sealed class Routes(val route: String) {
     object Search : Routes("search")
