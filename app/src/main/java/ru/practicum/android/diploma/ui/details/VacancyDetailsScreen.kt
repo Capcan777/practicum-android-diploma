@@ -6,6 +6,6 @@ import androidx.compose.ui.res.stringResource
 import ru.practicum.android.diploma.R
 
 @Composable
-fun VacancyDetailsScreen() {
+fun VacancyDetailsScreen(vacancyId: String) {
     Text(text = stringResource(R.string.vacancy))
 }
