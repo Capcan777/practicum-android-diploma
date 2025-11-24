@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.designSystem.uiKit
+package ru.practicum.android.diploma.designsystem.theme
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.TextStyle

@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.practicum.android.diploma.designSystem.uiKit.VacancyTheme
+import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.navigation.NavGraph
 
 class RootActivity : ComponentActivity() {

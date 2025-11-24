@@ -1,8 +1,10 @@
-package ru.practicum.android.diploma.designSystem.uiKit
+package ru.practicum.android.diploma.designsystem.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.ui.graphics.Color
+
+private const val ALPHA_08 = 0.08f
+private const val ALPHA_12 = 0.12f
 
 val lightColorScheme = lightColorScheme(
     primary = primaryLight,
@@ -37,18 +39,18 @@ val lightColorScheme = lightColorScheme(
     outline = outlineLight,
     outlineVariant = outlineVariantLight,
 
-    scrim = Color(0xFF000000),
+    scrim = pureBlack,
     inverseSurface = onBackgroundLight,
     inverseOnSurface = backgroundLight,
     inversePrimary = primaryContainerLight,
 
     surfaceDim = surfaceVariantLight,
     surfaceBright = surfaceLight,
-    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLowest = pureWhite,
     surfaceContainerLow = surfaceLight,
     surfaceContainer = surfaceVariantLight,
-    surfaceContainerHigh = onSurfaceVariantLight.copy(alpha = 0.08f),
-    surfaceContainerHighest = onSurfaceVariantLight.copy(alpha = 0.12f)
+    surfaceContainerHigh = onSurfaceVariantLight.copy(alpha = ALPHA_08),
+    surfaceContainerHighest = onSurfaceVariantLight.copy(alpha = ALPHA_12)
 )
 
 val darkColorScheme = darkColorScheme(
@@ -84,16 +86,16 @@ val darkColorScheme = darkColorScheme(
     outline = outlineDark,
     outlineVariant = outlineVariantDark,
 
-    scrim = Color(0xFF000000),
+    scrim = pureBlack,
     inverseSurface = onBackgroundDark,
     inverseOnSurface = backgroundDark,
     inversePrimary = primaryContainerDark,
 
     surfaceDim = surfaceVariantDark,
     surfaceBright = surfaceDark,
-    surfaceContainerLowest = Color(0xFF000000),
+    surfaceContainerLowest = pureBlack,
     surfaceContainerLow = surfaceDark,
     surfaceContainer = surfaceVariantDark,
-    surfaceContainerHigh = onSurfaceVariantDark.copy(alpha = 0.08f),
-    surfaceContainerHighest = onSurfaceVariantDark.copy(alpha = 0.12f)
+    surfaceContainerHigh = onSurfaceVariantDark.copy(alpha = ALPHA_08),
+    surfaceContainerHighest = onSurfaceVariantDark.copy(alpha = ALPHA_12)
 )

@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.designSystem.uiKit
+package ru.practicum.android.diploma.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -10,7 +10,6 @@ private const val GRAY_SECONDARY = 0xFFAEAFB4
 private const val RED_ERROR = 0xFFF56B6C
 private const val DARK_SURFACE_VARIANT = 0xFF45464F
 
-// Добавляем недостающие цвета
 private const val ERROR_CONTAINER_LIGHT = 0xFFFFDAD6
 private const val ON_ERROR_CONTAINER_LIGHT = 0xFF410002
 private const val ERROR_CONTAINER_DARK = 0xFF93000A
@@ -22,6 +21,9 @@ private const val OUTLINE_VARIANT_DARK = 0xFF41484D
 private const val SURFACE_VARIANT_LIGHT = 0xFFE6E8EB
 private const val ON_SURFACE_VARIANT_LIGHT = 0xFF45464F
 private const val ON_SURFACE_VARIANT_DARK = 0xFFC6C6D0
+
+private const val PURE_BLACK = 0xFF000000
+private const val PURE_WHITE = 0xFFFFFFFF
 
 // Light theme
 val primaryLight = Color(BLUE_PRIMARY) // Blue
@@ -78,3 +80,6 @@ val onSurfaceVariantDark = Color(ON_SURFACE_VARIANT_DARK)
 
 val outlineDark = Color(OUTLINE_DARK)
 val outlineVariantDark = Color(OUTLINE_VARIANT_DARK)
+
+val pureBlack = Color(PURE_BLACK)
+val pureWhite = Color(PURE_WHITE)
