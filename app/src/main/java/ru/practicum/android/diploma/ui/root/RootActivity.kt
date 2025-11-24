@@ -25,7 +25,6 @@ class RootActivity : ComponentActivity() {
     }
 
     private fun networkRequestExample(accessToken: String) {
-        // ...
     }
 
     @Composable
