@@ -1,9 +1,10 @@
 [versions]
 
 activityCompose = "1.11.0"
+kotlin = "2.1.20"
 java = "VERSION_1_8"
 compiler = "5.0.5"
-koin = "4.1.1"
+koin = "3.3.0"
 glide = "5.0.5"
 kotlinxCoroutinesAndroid = "1.10.2"
 lifecycleViewmodelKtx = "2.10.0"
@@ -15,7 +16,7 @@ roomKtx = "2.8.4"
 retrofit = "3.0.0"
 runtimeLivedata = "1.9.5"
 ui = "1.9.5"
-koinAndroid = "4.1.1"
+koinAndroid = "3.3.0"
 
 # Build constants
 minSdk = "26"
@@ -88,4 +89,6 @@ uiTests-espressoCore = "androidx.test.espresso:espresso-core:3.7.0"
 #Compose
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "ui" }
 
-[bundles]
+[plugins]
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

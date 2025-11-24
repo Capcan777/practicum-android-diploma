@@ -1,9 +1,10 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.jetbrains.kotlin.android)
     id("ru.practicum.android.diploma.plugins.developproperties")
-    id("com.google.devtools.ksp") version "2.1.0-1.0.29" // Подключение ksp
+    id("com.google.devtools.ksp") version "2.1.20-2.0.0" // Подключение ksp
     id("androidx.navigation.safeargs.kotlin") // Safe Args
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
