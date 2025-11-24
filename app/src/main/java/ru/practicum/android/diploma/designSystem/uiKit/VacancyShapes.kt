@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.designsystem.uiKit
+package ru.practicum.android.diploma.designSystem.uiKit
 
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape

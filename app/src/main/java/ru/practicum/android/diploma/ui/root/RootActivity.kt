@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.designsystem.uiKit.VacancyTheme
+import ru.practicum.android.diploma.designSystem.uiKit.VacancyTheme
 
 class RootActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +19,7 @@ class RootActivity : AppCompatActivity() {
         setContentView(R.layout.activity_root)
 
         // Пример использования access token для HeadHunter API
-        //networkRequestExample(accessToken = BuildConfig.API_ACCESS_TOKEN)
+        // networkRequestExample(accessToken = BuildConfig.API_ACCESS_TOKEN)
 
         setContent {
             VacancyTheme(isDarkTheme = false) {
@@ -36,8 +36,7 @@ class RootActivity : AppCompatActivity() {
     fun RootScreen() {
         Surface(
             color = VacancyTheme.colorScheme.background,
-            modifier =
-                Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             Text(
                 text = "Добро пожаловать в Diploma App!",

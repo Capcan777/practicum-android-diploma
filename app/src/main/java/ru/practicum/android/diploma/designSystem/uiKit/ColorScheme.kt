@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.designsystem.uiKit
+package ru.practicum.android.diploma.designSystem.uiKit
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme

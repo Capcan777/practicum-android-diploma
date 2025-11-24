@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.designsystem.uiKit
+package ru.practicum.android.diploma.designSystem.uiKit
 
 import android.app.Activity
 import android.os.Build
