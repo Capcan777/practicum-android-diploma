@@ -14,10 +14,12 @@ import ru.practicum.android.diploma.ui.search.SearchScreen
 fun NavGraph() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Routes.Search.route) {
-
         composable(Routes.Search.route) { SearchScreen() }
         composable(Routes.VacancyDetails.route) { backStackEntry ->
-            val vacancyId = backStackEntry.arguments?.getString("vacancyId") ?: return@composable
+            val vacancyId = backStackEntry.arguments?.getString("vacancyId")
+            if (vacancyId == null) {
+                return@composable
+            }
             VacancyDetailsScreen(vacancyId)
         }
         composable(Routes.Favourites.route) { FavouritesVacanciesScreen() }
