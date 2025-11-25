@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 
-class FavouritesVacanciesFragment: Fragment() {
+class FavouritesVacanciesFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,

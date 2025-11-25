@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 
-class VacancyDetailsFragment: Fragment() {
+class VacancyDetailsFragment : Fragment() {
     private var vacancyId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
