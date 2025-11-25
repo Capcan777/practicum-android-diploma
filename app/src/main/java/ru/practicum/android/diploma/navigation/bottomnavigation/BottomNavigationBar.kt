@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.navigation
+package ru.practicum.android.diploma.navigation.bottomnavigation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.HorizontalDivider

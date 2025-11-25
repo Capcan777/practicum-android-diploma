@@ -1,6 +1,7 @@
-package ru.practicum.android.diploma.navigation
+package ru.practicum.android.diploma.navigation.bottomnavigation
 
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.navigation.Routes
 
 sealed class BottomNavItem(
     val route: String,
