@@ -15,9 +15,7 @@ private const val ON_ERROR_CONTAINER_LIGHT = 0xFF410002
 private const val ERROR_CONTAINER_DARK = 0xFF93000A
 private const val ON_ERROR_CONTAINER_DARK = 0xFFFFDAD6
 private const val OUTLINE_LIGHT = 0xFF767680
-private const val OUTLINE_VARIANT_LIGHT = 0xFFC6C6D0
 private const val OUTLINE_DARK = 0xFF8A9297
-private const val OUTLINE_VARIANT_DARK = 0xFF41484D
 private const val SURFACE_VARIANT_LIGHT = 0xFFE6E8EB
 private const val ON_SURFACE_VARIANT_LIGHT = 0xFF45464F
 private const val ON_SURFACE_VARIANT_DARK = 0xFFC6C6D0
@@ -51,7 +49,7 @@ val surfaceVariantLight = Color(SURFACE_VARIANT_LIGHT) // Light Gray
 val onSurfaceVariantLight = Color(ON_SURFACE_VARIANT_LIGHT)
 
 val outlineLight = Color(OUTLINE_LIGHT)
-val outlineVariantLight = Color(OUTLINE_VARIANT_LIGHT)
+val outlineVariantLight = Color(LIGHT_GRAY)
 
 // Dark theme
 val primaryDark = Color(BLUE_PRIMARY) // Blue
@@ -79,7 +77,7 @@ val surfaceVariantDark = Color(DARK_SURFACE_VARIANT)
 val onSurfaceVariantDark = Color(ON_SURFACE_VARIANT_DARK)
 
 val outlineDark = Color(OUTLINE_DARK)
-val outlineVariantDark = Color(OUTLINE_VARIANT_DARK)
+val outlineVariantDark = Color(LIGHT_GRAY)
 
 val pureBlack = Color(PURE_BLACK)
 val pureWhite = Color(PURE_WHITE)
