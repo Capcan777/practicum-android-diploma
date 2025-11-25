@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
-import ru.practicum.android.diploma.navigation.bottomnavigation.BottomNavigationBar
 import ru.practicum.android.diploma.navigation.NavGraph
+import ru.practicum.android.diploma.navigation.bottomnavigation.BottomNavigationBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
