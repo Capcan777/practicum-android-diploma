@@ -50,7 +50,7 @@ object VacancyTheme {
 @Composable
 fun VacancyTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     shapes: VacancyShapes = VacancyTheme.shapes,
     typography: VacancyTypography = VacancyTheme.typography,
     content: @Composable () -> Unit
