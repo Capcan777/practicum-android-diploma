@@ -1,10 +1,13 @@
 package ru.practicum.android.diploma.data.network
 
 import android.content.Context
+import android.util.Log
+import retrofit2.HttpException
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.util.InternetConnectionStatus
+import java.io.IOException
 
 class RetrofitNetworkClient(
     private val api: VacancyApi,
@@ -30,12 +33,17 @@ class RetrofitNetworkClient(
                     searchResponse.apply {
                         result = SUCCESS
                     }
-                } catch (e: Exception) {
+                } catch (e: IOException) {
+                    Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
                     Response().apply {
-                        result = ERROR_SERVER // обработать ошибку
+                        result = ERROR_SERVER
+                    }
+                } catch (e: HttpException) {
+                    Log.e("RetrofitNetworkClient", "HTTP error: ${e.message}", e)
+                    Response().apply {
+                        result = ERROR_SERVER
                     }
                 }
-
             }
 
             else -> {
