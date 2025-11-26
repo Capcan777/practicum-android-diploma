@@ -7,6 +7,7 @@ import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.util.InternetConnectionStatus
+import ru.practicum.android.diploma.util.ResponseCodes
 import java.io.IOException
 
 class RetrofitNetworkClient(
@@ -31,24 +32,24 @@ class RetrofitNetworkClient(
 
                     val searchResponse = api.getVacancies(authorizationHeader, contentType, filters, dto.page)
                     searchResponse.apply {
-                        result = SUCCESS
+                        result = ResponseCodes.SUCCESS
                     }
                 } catch (e: IOException) {
                     Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
                     Response().apply {
-                        result = ERROR_SERVER
+                        result = ResponseCodes.ERROR_SERVER
                     }
                 } catch (e: HttpException) {
                     Log.e("RetrofitNetworkClient", "HTTP error: ${e.message}", e)
                     Response().apply {
-                        result = ERROR_SERVER
+                        result = ResponseCodes.ERROR_SERVER
                     }
                 }
             }
 
             else -> {
                 Response().apply {
-                    result = ERROR_CLIENT
+                    result = ResponseCodes.ERROR_CLIENT
                 }
             }
         }
@@ -66,11 +67,5 @@ class RetrofitNetworkClient(
             put("page", dto.page.toString())
             put("only_with_salary", dto.onlyWithSalary.toString())
         }
-    }
-
-    companion object ResponseCodes {
-        const val SUCCESS = 200
-        const val ERROR_CLIENT = 400
-        const val ERROR_SERVER = 500
     }
 }
