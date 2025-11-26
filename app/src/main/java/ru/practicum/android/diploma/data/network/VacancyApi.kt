@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.data.network
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.QueryMap
 import ru.practicum.android.diploma.data.dto.SearchResponse
 
@@ -11,7 +12,8 @@ interface VacancyApi {
     suspend fun getVacancies(
         @Header("Authorization") token: String,
         @Header("Content-Type") contentType: String,
-        @QueryMap(encoded = true) filters: Map<String, String>
+        @QueryMap(encoded = true) filters: Map<String, String>,
+        @Query("page") page: Int
     ): SearchResponse
 
     @GET("vacancies/{vacancyId}")
