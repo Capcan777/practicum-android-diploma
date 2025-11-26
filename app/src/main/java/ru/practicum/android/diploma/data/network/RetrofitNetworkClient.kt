@@ -29,7 +29,7 @@ class RetrofitNetworkClient(
 
                     val filters = createFilters(dto)
 
-                    val searchResponse = api.getVacancies(authorizationHeader, contentType, filters)
+                    val searchResponse = api.getVacancies(authorizationHeader, contentType, filters, dto.page)
                     searchResponse.apply {
                         result = SUCCESS
                     }
