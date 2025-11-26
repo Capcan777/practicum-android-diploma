@@ -14,7 +14,6 @@ class SearchFragment : Fragment() {
 
     private val viewModel by viewModel<SearchViewModel>()
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

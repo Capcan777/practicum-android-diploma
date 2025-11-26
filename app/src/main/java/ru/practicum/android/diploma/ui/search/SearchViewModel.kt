@@ -9,7 +9,6 @@ class SearchViewModel : ViewModel() {
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
 
-
     fun clearSearchText() {
         _searchText.value = ""
     }

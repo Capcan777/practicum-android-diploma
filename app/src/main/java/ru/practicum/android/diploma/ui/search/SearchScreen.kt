@@ -65,7 +65,7 @@ fun SearchScreen(
 
             IconButton(
                 onClick = {
-                    // TODO: переход к экрану фильтрации, когда появится навигация
+                    // переход к экрану фильтрации, когда появится навигация
                 }
             ) {
                 Icon(
@@ -113,7 +113,6 @@ fun SearchScreen(
             )
         )
 
-
         if (searchQuery.isEmpty()) SearchPlaceholder()
 
     }
@@ -137,7 +136,6 @@ fun SearchPlaceholder() {
         )
     }
 }
-
 
 @Preview(showSystemUi = true)
 @Composable

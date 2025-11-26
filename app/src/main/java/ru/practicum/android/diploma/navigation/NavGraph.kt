@@ -15,7 +15,9 @@ fun NavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.Search.route) {
         composable(Routes.Search.route) {
             SearchScreen(
-                navController, onClearSearchText = {}
+                navController, onClearSearchText = { // добавить функцию очистки поля поиска
+
+                }
             )
         }
         composable(Routes.VacancyDetails.route) { backStackEntry ->
