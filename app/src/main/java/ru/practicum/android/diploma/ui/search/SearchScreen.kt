@@ -61,7 +61,7 @@ fun SearchScreen(
             Text(
                 text = stringResource(R.string.vacancies_search),
                 style = VacancyTheme.typography.medium22,
-                color = VacancyTheme.colorScheme.onBackground
+                color = VacancyTheme.colorScheme.inverseSurface
             )
 
             IconButton(
@@ -72,7 +72,7 @@ fun SearchScreen(
                 Icon(
                     imageVector = Icons.Filled.FilterList,
                     contentDescription = null,
-                    tint = VacancyTheme.colorScheme.onBackground
+                    tint = VacancyTheme.colorScheme.inverseSurface
                 )
             }
         }
@@ -137,7 +137,7 @@ fun SearchPlaceholder() {
 @Preview(showSystemUi = true)
 @Composable
 fun SearchScreenPreview() {
-    VacancyTheme(isDarkTheme = false) {
+    VacancyTheme(isDarkTheme = true) {
         SearchScreen(navController = NavController(LocalContext.current), onClearSearchText = {})
     }
 }
