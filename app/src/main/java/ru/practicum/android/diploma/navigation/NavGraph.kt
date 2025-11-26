@@ -13,7 +13,11 @@ import ru.practicum.android.diploma.ui.search.SearchScreen
 @Composable
 fun NavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.Search.route) {
-        composable(Routes.Search.route) { SearchScreen(navController) }
+        composable(Routes.Search.route) {
+            SearchScreen(
+                navController, viewModel = Unit
+            )
+        }
         composable(Routes.VacancyDetails.route) { backStackEntry ->
             val vacancyId = backStackEntry.arguments?.getString("vacancyId")
             if (vacancyId != null) {

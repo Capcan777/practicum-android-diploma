@@ -6,4 +6,5 @@
     <string name="vacancy">Вакансия</string>
     <string name="favourites">Избранное</string>
     <string name="team">Команда</string>
+    <string name="enter_search_request">Введите запрос</string>
 </resources>

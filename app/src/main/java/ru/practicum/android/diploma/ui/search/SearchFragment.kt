@@ -8,8 +8,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
+
+    private val viewModel by viewModel<SearchViewModel>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,7 +24,7 @@ class SearchFragment : Fragment() {
             setContent {
                 VacancyTheme(isDarkTheme = false) {
                     val navController = findNavController()
-                    SearchScreen(navController)
+                    SearchScreen(navController, viewModel.clearSearchText())
                 }
             }
         }
