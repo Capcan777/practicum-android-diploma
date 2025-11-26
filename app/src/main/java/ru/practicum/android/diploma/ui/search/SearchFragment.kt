@@ -24,7 +24,7 @@ class SearchFragment : Fragment() {
             setContent {
                 VacancyTheme(isDarkTheme = false) {
                     val navController = findNavController()
-                    SearchScreen(navController, viewModel.clearSearchText())
+                    SearchScreen(navController, { viewModel.clearSearchText() })
                 }
             }
         }

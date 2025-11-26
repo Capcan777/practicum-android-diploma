@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.search
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
@@ -41,7 +43,7 @@ import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 @Composable
 fun SearchScreen(
     navController: NavController,
-    viewModel: Unit,
+    onClearSearchText: () -> Unit,
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
@@ -86,7 +88,7 @@ fun SearchScreen(
                 Text(
                     text = stringResource(R.string.enter_search_request),
                     style = VacancyTheme.typography.regular16,
-                    color = VacancyTheme.colorScheme.onSurfaceVariant
+                    color = VacancyTheme.colorScheme.onBackground
                 )
             },
             trailingIcon = {
@@ -96,17 +98,17 @@ fun SearchScreen(
                     tint = VacancyTheme.colorScheme.onPrimaryContainer,
                 )
             },
-            shape = VacancyTheme.shapes.shape16dp,
+            shape = VacancyTheme.shapes.shape10dp,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = VacancyTheme.colorScheme.outlineVariant,
-                unfocusedBorderColor = VacancyTheme.colorScheme.outlineVariant,
+                focusedBorderColor = VacancyTheme.colorScheme.secondaryContainer,
+                unfocusedBorderColor = VacancyTheme.colorScheme.secondaryContainer,
                 cursorColor = VacancyTheme.colorScheme.primary,
                 focusedContainerColor = VacancyTheme.colorScheme.secondaryContainer,
                 unfocusedContainerColor = VacancyTheme.colorScheme.secondaryContainer
             )
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+
         if (searchQuery.isEmpty()) SearchPlaceholder()
 
     }
@@ -120,9 +122,12 @@ fun SearchPlaceholder() {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            painter = painterResource(id = R.drawable.placeholder_search),
             contentDescription = null,
-            modifier = Modifier.fillMaxWidth(0.8f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .width(328.dp)
+                .height(223.dp),
             contentScale = ContentScale.Fit
         )
     }
@@ -132,5 +137,7 @@ fun SearchPlaceholder() {
 @Preview(showSystemUi = true)
 @Composable
 fun SearchScreenPreview() {
-    SearchScreen(rememberNavController(), viewModel = Unit)
+    VacancyTheme(isDarkTheme = false) {
+        SearchScreen(navController = NavController(LocalContext.current), onClearSearchText = {})
+    }
 }
