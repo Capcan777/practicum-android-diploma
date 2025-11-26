@@ -49,4 +49,3 @@ val vacancyTypography = VacancyTypography(
         lineHeight = 16.sp
     )
 )
-

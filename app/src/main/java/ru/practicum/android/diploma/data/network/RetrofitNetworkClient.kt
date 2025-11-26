@@ -25,4 +25,3 @@ class RetrofitNetworkClient(
         return InternetConnectionStatus.isInternetAvailable(context)
     }
 }
-
