@@ -18,31 +18,32 @@ class RetrofitNetworkClient(
         }
 
         return when (dto) {
-                is SearchRequest -> {
-                    try {
-                        val token = BuildConfig.API_ACCESS_TOKEN
-                        val authorizationHeader = "Bearer $token"
-                        val contentType = "application/json"
+            is SearchRequest -> {
+                try {
+                    val token = BuildConfig.API_ACCESS_TOKEN
+                    val authorizationHeader = "Bearer $token"
+                    val contentType = "application/json"
 
-                        val filters = createFilters(dto)
+                    val filters = createFilters(dto)
 
-                        val searchResponse = api.getVacancies(authorizationHeader, contentType, filters)
-                        searchResponse.apply {
-                            result = 200
-                        }
-                    } catch (e: Exception) {
-                        Response().apply {
-                            result = 500 // обработать ошибку
-                        }
+                    val searchResponse = api.getVacancies(authorizationHeader, contentType, filters)
+                    searchResponse.apply {
+                        result = SUCCESS
                     }
-
-                }
-                else -> {
+                } catch (e: Exception) {
                     Response().apply {
-                        result = 400
+                        result = ERROR_SERVER // обработать ошибку
                     }
+                }
+
+            }
+
+            else -> {
+                Response().apply {
+                    result = ERROR_CLIENT
                 }
             }
+        }
     }
 
     private fun isConnected(): Boolean {
@@ -57,5 +58,11 @@ class RetrofitNetworkClient(
             put("page", dto.page.toString())
             put("only_with_salary", dto.onlyWithSalary.toString())
         }
+    }
+
+    companion object ResponseCodes {
+        const val SUCCESS = 200
+        const val ERROR_CLIENT = 400
+        const val ERROR_SERVER = 500
     }
 }

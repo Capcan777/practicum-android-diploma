@@ -5,4 +5,4 @@ class SearchResponse(
     val pages: Int,
     val page: Int,
     val vacancies: List<VacancyItemDto>
-): Response()
+) : Response()
