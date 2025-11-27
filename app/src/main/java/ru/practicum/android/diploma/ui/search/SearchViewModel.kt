@@ -37,15 +37,15 @@ class SearchViewModel(
             }
         }
     }
-}
 
-private fun createSearchRequest(): SearchRequest {
-    // брать параметры из фильтрации
-    return SearchRequest(
-        industry = null,
-        text = _searchText.value.takeIf { it.isNotBlank() },
-        salary = null,
-        page = 1,
-        onlyWithSalary = false
-    )
+    private fun createSearchRequest(): SearchRequest {
+        // брать параметры из фильтрации
+        return SearchRequest(
+            industry = null,
+            text = _searchText.value.takeIf { it.isNotBlank() },
+            salary = null,
+            page = 1,
+            onlyWithSalary = false
+        )
+    }
 }

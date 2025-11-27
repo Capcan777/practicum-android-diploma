@@ -62,7 +62,7 @@ fun SearchScreen(
     onClearSearchText: () -> Unit,
     viewModel: SearchViewModel = koinViewModel()
 ) {
-    val screenState by viewModel.screenStateFlow.collectAsState(initial = SearchScreenState.Nothing)
+    val screenState by viewModel.screenState.collectAsState(initial = SearchScreenState.Nothing)
     // добавить список поиска вакансий
     var searchQuery by remember { mutableStateOf("") }
 
