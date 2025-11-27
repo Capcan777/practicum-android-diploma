@@ -137,10 +137,45 @@ fun SearchPlaceholder() {
     }
 }
 
+@Composable
+fun NoConnectionPlaceholder() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column() {
+            Image(
+                painter = painterResource(id = R.drawable.placeholder_no_connection),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .width(328.dp)
+                    .height(223.dp),
+                contentScale = ContentScale.Fit
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                style = VacancyTheme.typography.medium22,
+                text = stringResource(R.string.no_connection),
+            )
+        }
+    }
+}
+
 @Preview(showSystemUi = true)
 @Composable
 fun SearchScreenPreview() {
     VacancyTheme(isDarkTheme = true) {
         SearchScreen(navController = NavController(LocalContext.current), onClearSearchText = {})
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun NoConnectionPlaceholderPreview() {
+    VacancyTheme(isDarkTheme = true) {
+        NoConnectionPlaceholder()
     }
 }

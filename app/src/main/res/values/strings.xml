@@ -7,4 +7,6 @@
     <string name="favourites">Избранное</string>
     <string name="team">Команда</string>
     <string name="enter_search_request">Введите запрос</string>
+    <string name="no_connection">Нет интернета</string>
+
 </resources>
