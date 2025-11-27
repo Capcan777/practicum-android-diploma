@@ -28,7 +28,7 @@ val lightColorScheme = lightColorScheme(
     onErrorContainer = onErrorContainerLight,
 
     background = backgroundLight,
-    onBackground = onBackgroundLight,
+    onBackground = secondaryLight,
 
     surface = surfaceLight,
     onSurface = onSurfaceLight,
@@ -57,11 +57,11 @@ val darkColorScheme = darkColorScheme(
     primary = primaryDark,
     onPrimary = onPrimaryDark,
     primaryContainer = primaryContainerDark,
-    onPrimaryContainer = onPrimaryContainerDark,
+    onPrimaryContainer = onPrimaryDark,
 
     secondary = secondaryDark,
     onSecondary = onSecondaryDark,
-    secondaryContainer = secondaryContainerDark,
+    secondaryContainer = secondaryLight,
     onSecondaryContainer = onSecondaryContainerDark,
 
     tertiary = secondaryDark,
