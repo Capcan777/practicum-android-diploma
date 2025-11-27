@@ -33,13 +33,15 @@ fun NavGraph(navController: NavHostController) {
     }
 }
 
-sealed class Routes(val route: String) {
-    object Search : Routes("search")
-    object VacancyDetails : Routes("vacancy_details/{vacancyId}") {
-        fun createRoute(vacancyId: String) = "vacancy_details/$vacancyId"
-    }
+data class Routes(val route: String) {
+    companion object {
+        val Search = Routes("search")
+        val VacancyDetails = Routes("vacancy_details/{vacancyId}")
+        val Favourites = Routes("favourites")
+        val SettingsFilter = Routes("filter")
+        val About = Routes("about")
 
-    object Favourites : Routes("favourites")
-    object SettingsFilter : Routes("filter")
-    object About : Routes("about")
+        // Функция для создания route с параметрами
+        fun createVacancyDetailsRoute(vacancyId: String) = "vacancy_details/$vacancyId"
+    }
 }
