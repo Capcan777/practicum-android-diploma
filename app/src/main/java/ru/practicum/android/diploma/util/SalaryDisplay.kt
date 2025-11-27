@@ -7,6 +7,7 @@ import androidx.compose.ui.res.stringResource
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.domain.models.SalaryRange
+import java.util.Locale
 
 @Composable
 fun SalaryDisplay(salaryRange: SalaryRange?) {
@@ -58,10 +59,9 @@ fun formatCurrency(currency: String?): String {
     }
 }
 
-@SuppressLint("DefaultLocale")
 @Composable
 fun formatWithSpaces(value: Int?): String {
     return value?.let {
-        String.format("%,d", it).replace(",", " ")
+        String.format(Locale.forLanguageTag("ru-RU"), "%,d", it).replace(",", " ")
     } ?: ""
 }
