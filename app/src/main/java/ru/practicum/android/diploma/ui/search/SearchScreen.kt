@@ -6,44 +6,65 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
+import ru.practicum.android.diploma.domain.models.Employer
+import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.ui.common.Placeholder
+import ru.practicum.android.diploma.ui.search.state.SearchScreenState
+import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
 
 @Composable
 fun SearchScreen(
     navController: NavController,
     onClearSearchText: () -> Unit,
+    viewModel: SearchViewModel = koinViewModel()
 ) {
+    val screenState by viewModel.screenStateFlow.collectAsState(initial = SearchScreenState.Nothing)
+    // добавить список поиска вакансий
     var searchQuery by remember { mutableStateOf("") }
 
     Column(
@@ -115,6 +136,45 @@ fun SearchScreen(
 
         if (searchQuery.isEmpty()) SearchPlaceholder()
 
+        when (val state = screenState) {
+            is SearchScreenState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            is SearchScreenState.Content -> {
+                VacancyListItem(vacancies = state.vacancies, onItemClick = {
+                    navController.navigate("vacancyDetails")
+                })
+            }
+
+            is SearchScreenState.NoConnection -> {
+                Placeholder(
+                    imageResId = R.drawable.placeholder_no_connection,
+                    title = stringResource(R.string.no_connection)
+                )
+            }
+
+            is SearchScreenState.ServerError -> {
+
+            }
+
+            is SearchScreenState.NotFound -> {
+
+            }
+
+            is SearchScreenState.Error -> {
+
+            }
+
+            is SearchScreenState.Nothing -> {
+
+            }
+        }
     }
 }
 
@@ -138,44 +198,164 @@ fun SearchPlaceholder() {
 }
 
 @Composable
-fun NoConnectionPlaceholder() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+fun VacancyListItem(
+    vacancies: List<VacancyUiModel>,
+    onItemClick: (Vacancy) -> Unit
+) {
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        contentPadding = PaddingValues(bottom = 18.dp)
     ) {
-        Column() {
-            Image(
-                painter = painterResource(id = R.drawable.placeholder_no_connection),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .width(328.dp)
-                    .height(223.dp),
-                contentScale = ContentScale.Fit
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                style = VacancyTheme.typography.medium22,
-                text = stringResource(R.string.no_connection),
+        items(vacancies) { uiVacancy ->
+            VacancyRow(
+                vacancy = uiVacancy.vacancy,
+                onClick = { onItemClick(uiVacancy.vacancy) }
             )
         }
     }
 }
 
-@Preview(showSystemUi = true)
 @Composable
-fun SearchScreenPreview() {
-    VacancyTheme(isDarkTheme = true) {
-        SearchScreen(navController = NavController(LocalContext.current), onClearSearchText = {})
+fun VacancyRow(
+    vacancy: Vacancy,
+//    formattedSalary: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        verticalAlignment = Alignment.Top
+    ) {
+
+        AsyncImage(
+            model = vacancy.company.logoUrl,
+            contentDescription = null,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(12.dp)),
+            contentScale = ContentScale.Crop
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 12.dp)
+        ) {
+            Text(
+                text = "${vacancy.title}, ${vacancy.location}",
+                style = VacancyTheme.typography.medium22,
+                color = VacancyTheme.colorScheme.inverseSurface,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = vacancy.company.name,
+                style = VacancyTheme.typography.regular16,
+            )
+            Text(
+                text = "${vacancy.salary?.from}",
+                style = VacancyTheme.typography.regular16,
+            )
+        }
     }
 }
 
-@Preview(showSystemUi = true)
+
+//@Preview(showSystemUi = true)
+//@Composable
+//fun SearchScreenPreview() {
+//    val vacancies = Vacancy(
+//        id = "2222",
+//        title = "Engineer в Microsoft",
+//        description = "Здесь описание работы",
+//        salary = null,
+//        company = Employer(
+//            id = "2",
+//            name = "Microsoft",
+//            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png"
+//        ),
+//        location = "Москва",
+//        industry = Industry(
+//            id = 2,
+//            name = "Нефтянка"
+//        )
+//    )
+//    VacancyTheme(isDarkTheme = false) {
+//        SearchScreen(navController = NavController(LocalContext.current), onClearSearchText = {})
+//    }
+//}
+
+@Preview(showBackground = true)
 @Composable
-fun NoConnectionPlaceholderPreview() {
-    VacancyTheme(isDarkTheme = true) {
-        NoConnectionPlaceholder()
+fun VacancyRowPreview() {
+    val vacancies = Vacancy(
+        id = "2222",
+        title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
+        description = "Здесь описание работы",
+        salary = null,
+        company = Employer(
+            id = "2",
+            name = "Microsoft",
+            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png"
+        ),
+        location = "Москва",
+        industry = Industry(
+            id = 2,
+            name = "Нефтянка"
+        )
+    )
+
+    VacancyTheme(isDarkTheme = false) {
+        VacancyRow(vacancies, onClick = {}
+        )
     }
 }
+//@Preview(showSystemUi = true)
+//@Composable
+//fun VacancyListItemPreview() {
+//    VacancyListItem(
+//        vacancies = listOf(
+//            Vacancy(
+//            id = "2222",
+//            title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
+//            description = "Здесь описание работы",
+//            salary = SalaryRange(
+//                from = 1200,
+//                to = null,
+//                currency = "Руб."
+//            ),
+//            company = Employer(
+//                id = "2",
+//                name = "Microsoft",
+//                logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png"
+//            ),
+//            location = "Москва",
+//            industry = Industry(
+//                id = 2,
+//                name = "Нефтянка"
+//            )
+//            ), Vacancy(
+//                id = "2222",
+//                title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
+//                description = "Здесь описание работы",
+//                salary = SalaryRange(
+//                    from = 1200,
+//                    to = null,
+//                    currency = "Руб."
+//                ),
+//                company = Employer(
+//                    id = "2",
+//                    name = "Microsoft",
+//                    logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png"
+//                ),
+//                location = "Москва",
+//                industry = Industry(
+//                    id = 2,
+//                    name = "Нефтянка"
+//                )
+//            )
+//        ), onItemClick = {})
+//}
