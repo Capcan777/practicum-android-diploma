@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -51,12 +52,12 @@ fun BottomNavigationBar(
                     icon = {
                         Icon(
                             painter = painterResource(id = item.iconResId),
-                            contentDescription = item.title
+                            contentDescription = stringResource(id = item.title)
                         )
                     },
                     label = {
                         Text(
-                            text = item.title,
+                            text = stringResource(id = item.title),
                             style = VacancyTheme.typography.regular12
                         )
                     },

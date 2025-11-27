@@ -8,6 +8,10 @@
     <string name="team">Команда</string>
     <string name="enter_search_request">Введите запрос</string>
 
+    <string name="main_title">Главная</string>
+    <string name="favourites_title">Избранное</string>
+    <string name="team_title">Команда</string>
+
 
     <string name="currency_rub">RUB</string>
     <string name="currency_usd">USD</string>
