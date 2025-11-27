@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -160,19 +159,22 @@ fun SearchScreen(
             }
 
             is SearchScreenState.ServerError -> {
-
+                // показать экран ошибки сервера
             }
 
             is SearchScreenState.NotFound -> {
-
+                Placeholder(
+                    imageResId = R.drawable.placeholder_error_riecive,
+                    title = stringResource(R.string.not_found)
+                )
             }
 
             is SearchScreenState.Error -> {
-
+                // показать экран ошибки
             }
 
             is SearchScreenState.Nothing -> {
-
+                // ничего не делать
             }
         }
     }
@@ -202,7 +204,6 @@ fun VacancyListItem(
     vacancies: List<VacancyUiModel>,
     onItemClick: (Vacancy) -> Unit
 ) {
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -229,7 +230,6 @@ fun VacancyRow(
             .clickable { onClick() },
         verticalAlignment = Alignment.Top
     ) {
-
         AsyncImage(
             model = vacancy.company.logoUrl,
             contentDescription = null,
@@ -263,10 +263,9 @@ fun VacancyRow(
     }
 }
 
-
-//@Preview(showSystemUi = true)
-//@Composable
-//fun SearchScreenPreview() {
+// @Preview(showSystemUi = true)
+// @Composable
+// fun SearchScreenPreview() {
 //    val vacancies = Vacancy(
 //        id = "2222",
 //        title = "Engineer в Microsoft",
@@ -286,7 +285,7 @@ fun VacancyRow(
 //    VacancyTheme(isDarkTheme = false) {
 //        SearchScreen(navController = NavController(LocalContext.current), onClearSearchText = {})
 //    }
-//}
+// }
 
 @Preview(showBackground = true)
 @Composable
@@ -299,7 +298,7 @@ fun VacancyRowPreview() {
         company = Employer(
             id = "2",
             name = "Microsoft",
-            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png"
+            logoUrl = "https://upload.wikimedia.org"
         ),
         location = "Москва",
         industry = Industry(
@@ -309,13 +308,15 @@ fun VacancyRowPreview() {
     )
 
     VacancyTheme(isDarkTheme = false) {
-        VacancyRow(vacancies, onClick = {}
+        VacancyRow(
+            vacancies,
+            onClick = {}
         )
     }
 }
-//@Preview(showSystemUi = true)
-//@Composable
-//fun VacancyListItemPreview() {
+// @Preview(showSystemUi = true)
+// @Composable
+// fun VacancyListItemPreview() {
 //    VacancyListItem(
 //        vacancies = listOf(
 //            Vacancy(
@@ -358,4 +359,4 @@ fun VacancyRowPreview() {
 //                )
 //            )
 //        ), onItemClick = {})
-//}
+// }
