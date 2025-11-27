@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.util
 
-import android.annotation.SuppressLint
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
