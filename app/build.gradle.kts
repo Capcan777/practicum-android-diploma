@@ -30,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -70,10 +70,6 @@ dependencies {
     // Koin (DI)
     implementation(libs.koin.android)
 
-    // Glide (Image Loading)
-    implementation(libs.glide)
-    ksp(libs.compiler) // KSP для Glide
-
     // Room (Database)
     ksp(libs.room.compiler.v261) // KSP для Room
     implementation(libs.room.ktx) // Поддержка корутин
@@ -95,4 +91,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.navigation.compose)
+
+    // Coil for image loading in Compose
+    implementation(libs.coil.compose)
 }

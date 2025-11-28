@@ -2,10 +2,9 @@
 
 activityCompose = "1.11.0"
 kotlin = "2.1.20"
-java = "VERSION_1_8"
-compiler = "5.0.5"
+java = "VERSION_17"
 koin = "3.3.0"
-glide = "5.0.5"
+coil = "2.5.0"
 kotlinxCoroutinesAndroid = "1.10.2"
 lifecycleViewmodelKtx = "2.10.0"
 material3 = "1.4.0"
@@ -37,11 +36,6 @@ androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedat
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroid" }
-
-# Glide (Image Loading)
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
-
 
 # Room (Database)
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
@@ -89,6 +83,8 @@ uiTests-espressoCore = "androidx.test.espresso:espresso-core:3.7.0"
 #Compose
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "ui" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+
 
 [plugins]
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

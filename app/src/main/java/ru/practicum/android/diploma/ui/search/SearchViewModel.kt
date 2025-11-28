@@ -4,10 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import ru.practicum.android.diploma.ui.search.state.SearchScreenState
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.domain.SearchInteractor
-import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor
@@ -15,8 +16,8 @@ class SearchViewModel(
 
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
-    private val _vacancies = MutableStateFlow<List<Vacancy>>(emptyList())
-    val vacancies = _vacancies.asStateFlow()
+    private val _screenState = MutableStateFlow<SearchScreenState>(SearchScreenState.Nothing)
+    val screenState = _screenState.asStateFlow()
 
     fun clearSearchText() {
         _searchText.value = ""
@@ -28,7 +29,10 @@ class SearchViewModel(
             searchInteractor.searchVacancies(request).collect { vacancyList ->
                 // обработать ошибку
                 if (vacancyList != null) {
-                    _vacancies.value = vacancyList
+                    _screenState.value = SearchScreenState.Content(
+                        vacancies = vacancyList.map { vacancy ->
+                            VacancyUiModel(vacancy)
+                        })
                 }
             }
         }
