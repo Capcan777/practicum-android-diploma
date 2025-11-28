@@ -11,6 +11,10 @@
     <string name="not_found">Не удалось получить\nсписок вакансий</string>
 
 
+    <string name="main_title">Главная</string>
+    <string name="favourites_title">Избранное</string>
+    <string name="team_title">Команда</string>
+
 
     <string name="currency_rub">RUB</string>
     <string name="currency_usd">USD</string>
