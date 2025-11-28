@@ -75,11 +75,7 @@ class SearchViewModel(
     fun loadNextPage() {
         val nextPage = _currentPage.value + 1
 
-        if (_isLoadingNextPage.value ||
-            !_hasMorePages.value ||
-            _searchText.value.isEmpty() ||
-            nextPage <= _currentPage.value
-        ) {
+        if (shouldNotLoadNextPage(nextPage)) {
             return
         }
 
@@ -91,6 +87,13 @@ class SearchViewModel(
                 _isLoadingNextPage.value = false
             }
         }
+    }
+
+    private fun shouldNotLoadNextPage(nextPage: Int): Boolean {
+        return _isLoadingNextPage.value ||
+            !_hasMorePages.value ||
+            _searchText.value.isEmpty() ||
+            nextPage <= _currentPage.value
     }
 
     private fun handleSearchResult(searchResult: SearchResult?, isFirstPage: Boolean) {
