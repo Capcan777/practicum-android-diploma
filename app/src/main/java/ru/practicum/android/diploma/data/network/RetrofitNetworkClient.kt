@@ -3,7 +3,6 @@ package ru.practicum.android.diploma.data.network
 import android.content.Context
 import android.util.Log
 import retrofit2.HttpException
-import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.util.InternetConnectionStatus
@@ -24,13 +23,13 @@ class RetrofitNetworkClient(
         return when (dto) {
             is SearchRequest -> {
                 try {
-                    val token = BuildConfig.API_ACCESS_TOKEN
-                    val authorizationHeader = "Bearer $token"
-                    val contentType = "application/json"
-
                     val filters = createFilters(dto)
+                    val searchResponse = api.getVacancies(
+                        filters = filters,
+                        text = dto.text ?: "",
+                        page = dto.page
+                    )
 
-                    val searchResponse = api.getVacancies(authorizationHeader, contentType, filters, dto.page)
                     searchResponse.apply {
                         result = ResponseCodes.SUCCESS
                     }

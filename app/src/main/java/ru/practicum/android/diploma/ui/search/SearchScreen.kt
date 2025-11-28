@@ -101,7 +101,10 @@ fun SearchScreen(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = searchQuery,
-            onValueChange = { searchQuery = it },
+            onValueChange = {
+                searchQuery = it
+                viewModel.onSearchTextChanged(searchQuery)
+            },
             singleLine = true,
             placeholder = {
                 Text(

@@ -18,7 +18,7 @@ class VacancyRepositoryImpl(
         val response = networkClient.doRequest(request)
         when (response.result) {
             ResponseCodes.SUCCESS -> {
-                val vacancies = (response as SearchResponse).vacancies.map { vacancyDto ->
+                val vacancies = (response as SearchResponse).items.map { vacancyDto ->
                     mapper.mapVacancy(vacancyDto)
                 }
                 emit(vacancies)

@@ -54,7 +54,7 @@ val tokenInterceptor = Interceptor { chain: Interceptor.Chain ->
     val token = BuildConfig.API_ACCESS_TOKEN
 
     val request: Request = original.newBuilder()
-        .header("Authorization", token)
+        .header("Authorization", "Bearer $token")
         .method(original.method, original.body)
         .build()
 
