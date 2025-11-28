@@ -21,7 +21,9 @@ class SearchViewModel(
     val screenState = _screenState.asStateFlow()
 
     private val debounceHandler = debounce<String>(
-        SEARCH_DEBOUNCE_DELAY, viewModelScope, true
+        SEARCH_DEBOUNCE_DELAY,
+        viewModelScope,
+        true
     ) { query ->
         searchVacancies(query)
     }

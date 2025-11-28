@@ -14,7 +14,6 @@ import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.data.network.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.VacancyApi
 
-
 private const val DATABASE_NAME = "vacancy_db.db"
 private const val URL_VACANCY = "https://practicum-diploma-8bc38133faba.herokuapp.com/"
 

@@ -25,7 +25,10 @@ class RetrofitNetworkClient(
                 try {
                     val filters = createFilters(dto)
                     val searchResponse = api.getVacancies(
-                         filters = filters, text = dto.text ?: "", page = dto.page)
+                        filters = filters,
+                        text = dto.text ?: "",
+                        page = dto.page
+                    )
 
                     searchResponse.apply {
                         result = ResponseCodes.SUCCESS
