@@ -10,9 +10,9 @@ import ru.practicum.android.diploma.data.dto.SearchResponse
 interface VacancyApi {
     @GET("vacancies")
     suspend fun getVacancies(
-        @Header("Authorization") token: String,
-        @Header("Content-Type") contentType: String,
+        @Header("Content-Type") contentType: String = "application/json",
         @QueryMap(encoded = true) filters: Map<String, String>,
+        @Query("text") text: String,
         @Query("page") page: Int
     ): SearchResponse
 

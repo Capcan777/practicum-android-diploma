@@ -14,6 +14,7 @@ import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.data.network.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.VacancyApi
 
+
 private const val DATABASE_NAME = "vacancy_db.db"
 private const val URL_VACANCY = "https://practicum-diploma-8bc38133faba.herokuapp.com/"
 
@@ -54,7 +55,7 @@ val tokenInterceptor = Interceptor { chain: Interceptor.Chain ->
     val token = BuildConfig.API_ACCESS_TOKEN
 
     val request: Request = original.newBuilder()
-        .header("Authorization", token)
+        .header("Authorization", "Bearer $token")
         .method(original.method, original.body)
         .build()
 
