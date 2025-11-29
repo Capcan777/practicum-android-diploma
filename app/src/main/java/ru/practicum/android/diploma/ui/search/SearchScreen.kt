@@ -257,8 +257,8 @@ fun VacancyRow(
                 ImageRequest.Builder(context)
                     .data(logoUrl)
                     .setHeader(
-                        "User-Agent",
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                        USER_AGENT,
+                        VALUE_USER_AGENT
                     )
                     .build()
             }
@@ -302,6 +302,10 @@ fun VacancyRow(
     }
 }
 
+private const val VALUE_USER_AGENT =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+private const val USER_AGENT = "User-Agent"
+
 // @Preview(showSystemUi = true)
 // @Composable
 // fun SearchScreenPreview() {
@@ -326,9 +330,9 @@ fun VacancyRow(
 //    }
 // }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun VacancyRowPreview() {
+// @Preview(showBackground = true)
+// @Composable
+// fun VacancyRowPreview() {
 //    val vacancies = VacancyUiModel(Vacancy(
 //        id = "2222",
 //        title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
@@ -352,7 +356,7 @@ fun VacancyRow(
 //            onClick = {}
 //        )
 //    }
-//}
+// }
 // @Preview(showSystemUi = true)
 // @Composable
 // fun VacancyListItemPreview() {
