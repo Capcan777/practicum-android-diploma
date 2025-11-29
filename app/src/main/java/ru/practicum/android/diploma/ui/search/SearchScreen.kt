@@ -154,18 +154,18 @@ fun SearchScreen(
                 })
             }
 
-            is SearchScreenState.NoConnection -> {
+            is SearchScreenState.Error.NoConnection -> {
                 Placeholder(
                     imageResId = R.drawable.placeholder_no_connection,
                     title = stringResource(R.string.no_connection)
                 )
             }
 
-            is SearchScreenState.ServerError -> {
+            is SearchScreenState.Error.ServerError -> {
                 // показать экран ошибки сервера
             }
 
-            is SearchScreenState.NotFound -> {
+            is SearchScreenState.Error.NotFound -> {
                 Placeholder(
                     imageResId = R.drawable.placeholder_error_riecive,
                     title = stringResource(R.string.not_found)
