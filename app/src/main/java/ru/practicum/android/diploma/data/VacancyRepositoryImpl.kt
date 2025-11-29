@@ -7,47 +7,30 @@ import ru.practicum.android.diploma.data.dto.SearchResponse
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.DomainMapper
 import ru.practicum.android.diploma.domain.api.VacancyRepository
-import ru.practicum.android.diploma.domain.models.SearchResult
-import ru.practicum.android.diploma.util.ResponseCodes
+import ru.practicum.android.diploma.domain.models.SearchOutcome
 
 class VacancyRepositoryImpl(
     private val networkClient: NetworkClient,
     private val mapper: DomainMapper
 ) : VacancyRepository {
-    override suspend fun searchVacancies(request: SearchRequest): Flow<SearchResult?> = flow {
+    override suspend fun searchVacancies(request: SearchRequest): Flow<SearchOutcome> = flow {
         val response = networkClient.doRequest(request)
-        when (response.result) {
-            ResponseCodes.SUCCESS -> {
-                val searchResponse = response as SearchResponse
-                val searchResult = mapper.mapSearchResult(searchResponse)
-                emit(searchResult)
-            }
 
-            else -> {
-                // возвращаем null при ошибке (изменить желательно)
-                emit(null)
-            }
-        }
+        val searchResponse = response as SearchResponse
+        val outcomeResult = mapper.mapSearchOutcome(searchResponse)
+        emit(outcomeResult)
     }
 
-    override suspend fun loadNextPage(query: String, nextPage: Int): Flow<SearchResult?> = flow {
+    override suspend fun loadNextPage(query: String, nextPage: Int): Flow<SearchOutcome> = flow {
         val request = SearchRequest(
             text = query,
             page = nextPage,
         )
 
         val response = networkClient.doRequest(request)
-        when (response.result) {
-            ResponseCodes.SUCCESS -> {
-                val searchResponse = response as SearchResponse
-                val searchResult = mapper.mapSearchResult(searchResponse)
-                emit(searchResult)
-            }
+        val searchResponse = response as SearchResponse
+        val searchResult = mapper.mapSearchOutcome(searchResponse)
+        emit(searchResult)
 
-            else -> {
-                // возвращаем null при ошибке (изменить желательно)
-                emit(null)
-            }
-        }
     }
 }

@@ -5,11 +5,14 @@ import ru.practicum.android.diploma.data.dto.FilterIndustryDto
 import ru.practicum.android.diploma.data.dto.SalaryDto
 import ru.practicum.android.diploma.data.dto.SearchResponse
 import ru.practicum.android.diploma.data.dto.VacancyItemDto
+import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.domain.models.Employer
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.SalaryRange
-import ru.practicum.android.diploma.domain.models.SearchResult
+import ru.practicum.android.diploma.domain.models.SearchOutcome
 import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
+import ru.practicum.android.diploma.util.ResponseCodes
 
 class DomainMapper {
     fun mapVacancy(dto: VacancyItemDto): Vacancy {
@@ -47,14 +50,32 @@ class DomainMapper {
         )
     }
 
-    fun mapSearchResult(response: SearchResponse): SearchResult {
-        return SearchResult(
-            vacancies = response.items.map { vacancyDto ->
-                mapVacancy(vacancyDto)
-            },
-            currentPage = response.page,
-            totalPages = response.pages,
-            found = response.found
-        )
+    fun mapToVacancyUiModel(vacancy: Vacancy): VacancyUiModel {
+        return VacancyUiModel(vacancy = vacancy, )
+    }
+
+    fun mapSearchOutcome(response: SearchResponse): SearchOutcome {
+        if (response.result == ResponseCodes.SUCCESS) {
+            return SearchOutcome.SearchResult(
+                vacancies = response.items.map { vacancyDto ->
+                    mapVacancy(vacancyDto)
+                },
+                currentPage = response.page,
+                totalPages = response.pages,
+                found = response.found
+            )
+        } else {
+            return when(response.result) {
+                ResponseCodes.NO_CONNECTION -> {
+                    SearchOutcome.Error(DomainError.NoConnection)
+                }
+                ResponseCodes.ERROR_SERVER -> {
+                    SearchOutcome.Error(DomainError.OtherError)
+                }
+                else -> {
+                    SearchOutcome.Error(DomainError.OtherError)
+                }
+            }
+        }
     }
 }
