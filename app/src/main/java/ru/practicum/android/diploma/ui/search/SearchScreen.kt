@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.search
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,19 +39,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
-import ru.practicum.android.diploma.domain.models.Employer
-import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.search.state.SearchScreenState
@@ -214,7 +214,7 @@ fun VacancyListItem(
     ) {
         items(vacancies) { uiVacancy ->
             VacancyRow(
-                vacancy = uiVacancy.vacancy,
+                vacancyUiModel = uiVacancy,
                 onClick = { onItemClick(uiVacancy.vacancy) }
             )
         }
@@ -223,24 +223,57 @@ fun VacancyListItem(
 
 @Composable
 fun VacancyRow(
-    vacancy: Vacancy,
+    vacancyUiModel: VacancyUiModel,
 //    formattedSalary: String,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 9.dp)
             .clickable { onClick() },
         verticalAlignment = Alignment.Top
     ) {
-        AsyncImage(
-            model = vacancy.company.logoUrl,
-            contentDescription = null,
-            modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(12.dp)),
-            contentScale = ContentScale.Crop
+        val logoUrl = vacancyUiModel.vacancy.company.logoUrl
+        Log.d(
+            "VacancyRow",
+            "logoUrl: $logoUrl, isBlank: ${logoUrl.isBlank()}, isValid: ${
+                logoUrl.startsWith("http://") || logoUrl.startsWith("https://")
+            }"
         )
+
+        if (logoUrl.isBlank() || (!logoUrl.startsWith("http://") && !logoUrl.startsWith("https://"))) {
+            Image(
+                painter = painterResource(id = R.drawable.placeholder_logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            val context = LocalContext.current
+            val imageRequest = remember(logoUrl) {
+                ImageRequest.Builder(context)
+                    .data(logoUrl)
+                    .setHeader(
+                        "User-Agent",
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                    )
+                    .build()
+            }
+
+            AsyncImage(
+                model = imageRequest,
+                contentDescription = null,
+                placeholder = painterResource(id = R.drawable.placeholder_logo),
+                error = painterResource(id = R.drawable.placeholder_logo),
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                contentScale = ContentScale.Inside
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -248,19 +281,22 @@ fun VacancyRow(
                 .padding(start = 12.dp)
         ) {
             Text(
-                text = "${vacancy.title}, ${vacancy.location}",
+                text = "${vacancyUiModel.vacancy.title}, ${vacancyUiModel.vacancy.location}",
                 style = VacancyTheme.typography.medium22,
                 color = VacancyTheme.colorScheme.inverseSurface,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = vacancy.company.name,
+                text = vacancyUiModel.vacancy.company.name,
                 style = VacancyTheme.typography.regular16,
+                color = VacancyTheme.colorScheme.inverseSurface
+
             )
             Text(
-                text = "${vacancy.salary?.from}",
+                text = "${vacancyUiModel.vacancy.salary?.from}",
                 style = VacancyTheme.typography.regular16,
+                color = VacancyTheme.colorScheme.inverseSurface
             )
         }
     }
@@ -290,33 +326,33 @@ fun VacancyRow(
 //    }
 // }
 
-@Preview(showBackground = true)
-@Composable
-fun VacancyRowPreview() {
-    val vacancies = Vacancy(
-        id = "2222",
-        title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
-        description = "Здесь описание работы",
-        salary = null,
-        company = Employer(
-            id = "2",
-            name = "Microsoft",
-            logoUrl = "https://upload.wikimedia.org"
-        ),
-        location = "Москва",
-        industry = Industry(
-            id = 2,
-            name = "Нефтянка"
-        )
-    )
-
-    VacancyTheme(isDarkTheme = false) {
-        VacancyRow(
-            vacancies,
-            onClick = {}
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun VacancyRowPreview() {
+//    val vacancies = VacancyUiModel(Vacancy(
+//        id = "2222",
+//        title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
+//        description = "Здесь описание работы",
+//        salary = null,
+//        company = Employer(
+//            id = "2",
+//            name = "Microsoft",
+//            logoUrl = "https://upload.wikimedia.org"
+//        ),
+//        location = "Москва",
+//        industry = Industry(
+//            id = 2,
+//            name = "Нефтянка"
+//        ))
+//    )
+//
+//    VacancyTheme(isDarkTheme = false) {
+//        VacancyRow(
+//            vacancies,
+//            onClick = {}
+//        )
+//    }
+//}
 // @Preview(showSystemUi = true)
 // @Composable
 // fun VacancyListItemPreview() {
