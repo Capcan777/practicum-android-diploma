@@ -123,8 +123,6 @@ fun SearchScreen(
                             searchQuery = ""
                             onClearSearchText()
                             viewModel.clearCountVacancies()
-
-
                         }
                     }
                 )
