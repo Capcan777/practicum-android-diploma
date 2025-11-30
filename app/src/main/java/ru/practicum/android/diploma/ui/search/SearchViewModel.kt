@@ -37,6 +37,8 @@ class SearchViewModel(
 
     private var currentVacancies = mutableListOf<VacancyUiModel>()
 
+    private val logTag = "SearchViewModel"
+
     private val debounceHandler = debounce<String>(
         SEARCH_DEBOUNCE_DELAY,
         viewModelScope,
@@ -82,14 +84,11 @@ class SearchViewModel(
                     }
                 }
             } catch (e: HttpException) {
-                Log.e("SearchViewModel", "HTTP error: ${e.message}", e)
+                Log.e(logTag, "HTTP error: ${e.message}", e)
                 _screenState.value = SearchScreenState.Error.ServerError
             } catch (e: IOException) {
-                Log.e("SearchViewModel", "Network error: ${e.message}", e)
+                Log.e(logTag, "Network error: ${e.message}", e)
                 _screenState.value = SearchScreenState.Error.NoConnection
-            } catch (e: Exception) {
-                Log.e("SearchViewModel", "Unexpected error: ${e.message}", e)
-                _screenState.value = SearchScreenState.Error.ServerError
             }
         }
     }

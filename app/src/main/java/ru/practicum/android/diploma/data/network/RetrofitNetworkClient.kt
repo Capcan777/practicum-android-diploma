@@ -44,11 +44,6 @@ class RetrofitNetworkClient(
                     return Response().apply {
                         result = ResponseCodes.ERROR_SERVER
                     }
-                } catch (e: Exception) {
-                    Log.e("RetrofitNetworkClient", "Unexpected error: ${e.message}", e)
-                    return Response().apply {
-                        result = ResponseCodes.ERROR_SERVER
-                    }
                 }
             }
 
