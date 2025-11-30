@@ -6,8 +6,8 @@ sealed class SearchOutcome {
         val totalPages: Int,
         val currentPage: Int,
         val vacancies: List<Vacancy>,
-    ): SearchOutcome()
+    ) : SearchOutcome()
     data class Error(
         val type: DomainError
-    ): SearchOutcome()
+    ) : SearchOutcome()
 }

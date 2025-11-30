@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,10 +82,13 @@ class SearchViewModel(
                     }
                 }
             } catch (e: HttpException) {
+                Log.e("SearchViewModel", "HTTP error: ${e.message}", e)
                 _screenState.value = SearchScreenState.Error.ServerError
             } catch (e: IOException) {
+                Log.e("SearchViewModel", "Network error: ${e.message}", e)
                 _screenState.value = SearchScreenState.Error.NoConnection
             } catch (e: Exception) {
+                Log.e("SearchViewModel", "Unexpected error: ${e.message}", e)
                 _screenState.value = SearchScreenState.Error.ServerError
             }
         }

@@ -60,7 +60,7 @@ class DomainMapper {
                 found = response.found
             )
         } else {
-            return when(response.result) {
+            return when (response.result) {
                 ResponseCodes.NO_CONNECTION -> {
                     SearchOutcome.Error(DomainError.NoConnection)
                 }

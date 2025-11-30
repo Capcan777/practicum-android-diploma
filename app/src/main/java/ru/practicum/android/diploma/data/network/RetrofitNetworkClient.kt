@@ -15,7 +15,6 @@ class RetrofitNetworkClient(
 ) : NetworkClient {
     override suspend fun doRequest(dto: Any): Response {
         if (!isConnected()) {
-            Log.w("RetrofitNetworkClient", "No internet connection")
             return Response().apply {
                 result = ResponseCodes.NO_CONNECTION
             }
@@ -46,6 +45,7 @@ class RetrofitNetworkClient(
                         result = ResponseCodes.ERROR_SERVER
                     }
                 } catch (e: Exception) {
+                    Log.e("RetrofitNetworkClient", "Unexpected error: ${e.message}", e)
                     return Response().apply {
                         result = ResponseCodes.ERROR_SERVER
                     }
