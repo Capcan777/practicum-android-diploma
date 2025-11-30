@@ -11,7 +11,6 @@ import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.SalaryRange
 import ru.practicum.android.diploma.domain.models.SearchOutcome
 import ru.practicum.android.diploma.domain.models.Vacancy
-import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
 import ru.practicum.android.diploma.util.ResponseCodes
 
 class DomainMapper {
@@ -48,10 +47,6 @@ class DomainMapper {
             id = dto.id,
             name = dto.name
         )
-    }
-
-    fun mapToVacancyUiModel(vacancy: Vacancy): VacancyUiModel {
-        return VacancyUiModel(vacancy = vacancy, )
     }
 
     fun mapSearchOutcome(response: SearchResponse): SearchOutcome {

@@ -155,7 +155,7 @@ class SearchViewModel(
     }
 
     fun handleError(error: SearchOutcome.Error) {
-        when (error) {
+        when (error.type) {
             DomainError.NoConnection -> {
                 _screenState.value = SearchScreenState.Error.NoConnection
             }

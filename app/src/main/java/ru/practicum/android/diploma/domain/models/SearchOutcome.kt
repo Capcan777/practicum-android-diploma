@@ -1,7 +1,5 @@
 package ru.practicum.android.diploma.domain.models
 
-import ru.practicum.android.diploma.domain.models.DomainError
-
 sealed class SearchOutcome {
     data class SearchResult(
         val found: Int,

@@ -8,6 +8,8 @@ import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.DomainMapper
 import ru.practicum.android.diploma.domain.api.VacancyRepository
 import ru.practicum.android.diploma.domain.models.SearchOutcome
+import ru.practicum.android.diploma.domain.models.DomainError
+import ru.practicum.android.diploma.util.ResponseCodes
 
 class VacancyRepositoryImpl(
     private val networkClient: NetworkClient,
@@ -16,9 +18,21 @@ class VacancyRepositoryImpl(
     override suspend fun searchVacancies(request: SearchRequest): Flow<SearchOutcome> = flow {
         val response = networkClient.doRequest(request)
 
-        val searchResponse = response as SearchResponse
-        val outcomeResult = mapper.mapSearchOutcome(searchResponse)
-        emit(outcomeResult)
+        when (response) {
+            is SearchResponse -> {
+                val outcomeResult = mapper.mapSearchOutcome(response)
+                emit(outcomeResult)
+            }
+            else -> {
+                val code = response.result
+                val outcome = when (code) {
+                    ResponseCodes.NO_CONNECTION -> SearchOutcome.Error(DomainError.NoConnection)
+                    ResponseCodes.ERROR_SERVER -> SearchOutcome.Error(DomainError.OtherError)
+                    else -> SearchOutcome.Error(DomainError.OtherError)
+                }
+                emit(outcome)
+            }
+        }
     }
 
     override suspend fun loadNextPage(query: String, nextPage: Int): Flow<SearchOutcome> = flow {
@@ -28,9 +42,21 @@ class VacancyRepositoryImpl(
         )
 
         val response = networkClient.doRequest(request)
-        val searchResponse = response as SearchResponse
-        val searchResult = mapper.mapSearchOutcome(searchResponse)
-        emit(searchResult)
 
+        when (response) {
+            is SearchResponse -> {
+                val outcomeResult = mapper.mapSearchOutcome(response)
+                emit(outcomeResult)
+            }
+            else -> {
+                val code = response.result
+                val outcome = when (code) {
+                    ResponseCodes.NO_CONNECTION -> SearchOutcome.Error(DomainError.NoConnection)
+                    ResponseCodes.ERROR_SERVER -> SearchOutcome.Error(DomainError.OtherError)
+                    else -> SearchOutcome.Error(DomainError.OtherError)
+                }
+                emit(outcome)
+            }
+        }
     }
 }
