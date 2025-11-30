@@ -68,7 +68,11 @@ dependencies {
     implementation(libs.retrofit2.converter.gson)
 
     // Koin (DI)
+    implementation(platform(libs.koin.bom))
+    implementation("io.insert-koin:koin-core")
     implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.androidx.compose)
 
     // Room (Database)
     ksp(libs.room.compiler.v261) // KSP для Room
@@ -83,15 +87,15 @@ dependencies {
     implementation(libs.navigation.ui.ktx)
 
     // Jetpack Compose
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.runtime.livedata)
-    implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.navigation.compose)
 
     // Coil for image loading in Compose
-    implementation(libs.coil.compose)
+    implementation(platform(libs.coil.bom))
+    implementation(libs.bundles.coil)
+
 }

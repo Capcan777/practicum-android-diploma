@@ -38,19 +38,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
-import ru.practicum.android.diploma.domain.models.Employer
-import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.search.state.SearchScreenState
@@ -135,6 +136,7 @@ fun SearchScreen(
                 unfocusedContainerColor = VacancyTheme.colorScheme.secondaryContainer
             )
         )
+        CountVacancies(screenState)
 
         if (searchQuery.isEmpty()) SearchPlaceholder()
 
@@ -214,7 +216,7 @@ fun VacancyListItem(
     ) {
         items(vacancies) { uiVacancy ->
             VacancyRow(
-                vacancy = uiVacancy.vacancy,
+                vacancyUiModel = uiVacancy,
                 onClick = { onItemClick(uiVacancy.vacancy) }
             )
         }
@@ -223,23 +225,29 @@ fun VacancyListItem(
 
 @Composable
 fun VacancyRow(
-    vacancy: Vacancy,
-//    formattedSalary: String,
+    vacancyUiModel: VacancyUiModel,
     onClick: () -> Unit
 ) {
+    val imageLoader: ImageLoader = koinInject()
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 9.dp)
             .clickable { onClick() },
         verticalAlignment = Alignment.Top
     ) {
+        val logoUrl = vacancyUiModel.vacancy.company.logoUrl
         AsyncImage(
-            model = vacancy.company.logoUrl,
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(logoUrl)
+                .build(),
+            imageLoader = imageLoader,
             contentDescription = null,
+            placeholder = painterResource(id = R.drawable.placeholder_logo),
             modifier = Modifier
                 .size(48.dp)
                 .clip(RoundedCornerShape(12.dp)),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Inside
         )
 
         Column(
@@ -248,24 +256,41 @@ fun VacancyRow(
                 .padding(start = 12.dp)
         ) {
             Text(
-                text = "${vacancy.title}, ${vacancy.location}",
+                text = "${vacancyUiModel.vacancy.title}, ${vacancyUiModel.vacancy.location}",
                 style = VacancyTheme.typography.medium22,
                 color = VacancyTheme.colorScheme.inverseSurface,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = vacancy.company.name,
+                text = vacancyUiModel.vacancy.company.name,
                 style = VacancyTheme.typography.regular16,
+                color = VacancyTheme.colorScheme.inverseSurface
+
             )
             Text(
-                text = "${vacancy.salary?.from}",
+                text = "${vacancyUiModel.vacancy.salary?.from}",
                 style = VacancyTheme.typography.regular16,
+                color = VacancyTheme.colorScheme.inverseSurface
             )
         }
     }
 }
 
+@Composable
+fun CountVacancies(screenState: SearchScreenState) {
+    val vacancies = (screenState as? SearchScreenState.Content)?.vacancies ?: emptyList()
+    Text(
+        text = stringResource(R.string.found_count_vacancies, vacancies.size),
+        modifier = Modifier
+            .background(VacancyTheme.colorScheme.primary)
+            .padding(16.dp, 8.dp)
+            .clip(RoundedCornerShape(12.dp)),
+        textAlign = TextAlign.Center,
+        style = VacancyTheme.typography.regular16,
+        color = VacancyTheme.colorScheme.inverseSurface
+    )
+}
 // @Preview(showSystemUi = true)
 // @Composable
 // fun SearchScreenPreview() {
@@ -290,33 +315,33 @@ fun VacancyRow(
 //    }
 // }
 
-@Preview(showBackground = true)
-@Composable
-fun VacancyRowPreview() {
-    val vacancies = Vacancy(
-        id = "2222",
-        title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
-        description = "Здесь описание работы",
-        salary = null,
-        company = Employer(
-            id = "2",
-            name = "Microsoft",
-            logoUrl = "https://upload.wikimedia.org"
-        ),
-        location = "Москва",
-        industry = Industry(
-            id = 2,
-            name = "Нефтянка"
-        )
-    )
-
-    VacancyTheme(isDarkTheme = false) {
-        VacancyRow(
-            vacancies,
-            onClick = {}
-        )
-    }
-}
+// @Preview(showBackground = true)
+// @Composable
+// fun VacancyRowPreview() {
+//    val vacancies = VacancyUiModel(Vacancy(
+//        id = "2222",
+//        title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
+//        description = "Здесь описание работы",
+//        salary = null,
+//        company = Employer(
+//            id = "2",
+//            name = "Microsoft",
+//            logoUrl = "https://upload.wikimedia.org"
+//        ),
+//        location = "Москва",
+//        industry = Industry(
+//            id = 2,
+//            name = "Нефтянка"
+//        ))
+//    )
+//
+//    VacancyTheme(isDarkTheme = false) {
+//        VacancyRow(
+//            vacancies,
+//            onClick = {}
+//        )
+//    }
+// }
 // @Preview(showSystemUi = true)
 // @Composable
 // fun VacancyListItemPreview() {

@@ -24,5 +24,6 @@
     <string name="currency_usd_sym">$</string>
     <string name="currency_eur_sym">€</string>
     <string name="salary_not_specified">Зарплата не указана</string>
+    <string name="found_count_vacancies">Найдено %1$d вакансий</string>
 
 </resources>
