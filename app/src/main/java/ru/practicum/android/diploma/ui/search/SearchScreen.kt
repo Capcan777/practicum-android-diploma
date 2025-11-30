@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
@@ -64,7 +63,7 @@ fun SearchScreen(
     viewModel: SearchViewModel = koinViewModel()
 ) {
     val screenState by viewModel.screenState.collectAsState(initial = SearchScreenState.Nothing)
-    // добавить список поиска вакансий
+    val vacancies = (screenState as? SearchScreenState.Content)?.vacancies ?: emptyList()
     var searchQuery by remember { mutableStateOf("") }
 
     Column(
@@ -123,6 +122,9 @@ fun SearchScreen(
                         if (searchQuery.isNotEmpty()) {
                             searchQuery = ""
                             onClearSearchText()
+                            viewModel.clearCountVacancies()
+
+
                         }
                     }
                 )
@@ -136,7 +138,6 @@ fun SearchScreen(
                 unfocusedContainerColor = VacancyTheme.colorScheme.secondaryContainer
             )
         )
-        CountVacancies(screenState)
 
         if (searchQuery.isEmpty()) SearchPlaceholder()
 
@@ -151,6 +152,17 @@ fun SearchScreen(
             }
 
             is SearchScreenState.Content -> {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 8.dp)
+                ) {
+                    CountVacancies(
+                        screenState,
+                        vacancies,
+                        textMessage = stringResource(R.string.found_count_vacancies, vacancies.size)
+                    )
+                }
                 VacancyListItem(vacancies = state.vacancies, onItemClick = {
                     navController.navigate("vacancyDetails")
                 })
@@ -168,6 +180,17 @@ fun SearchScreen(
             }
 
             is SearchScreenState.Error.NotFound -> {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 8.dp)
+                ) {
+                    CountVacancies(
+                        screenState,
+                        vacancies,
+                        textMessage = "Таких вакансий нет"
+                    )
+                }
                 Placeholder(
                     imageResId = R.drawable.placeholder_error_riecive,
                     title = stringResource(R.string.not_found)
@@ -246,7 +269,7 @@ fun VacancyRow(
             placeholder = painterResource(id = R.drawable.placeholder_logo),
             modifier = Modifier
                 .size(48.dp)
-                .clip(RoundedCornerShape(12.dp)),
+                .clip(VacancyTheme.shapes.shape12dp),
             contentScale = ContentScale.Inside
         )
 
@@ -278,113 +301,30 @@ fun VacancyRow(
 }
 
 @Composable
-fun CountVacancies(screenState: SearchScreenState) {
-    val vacancies = (screenState as? SearchScreenState.Content)?.vacancies ?: emptyList()
-    Text(
-        text = stringResource(R.string.found_count_vacancies, vacancies.size),
+fun CountVacancies(
+    screenState: SearchScreenState,
+    vacancies: List<VacancyUiModel>,
+    textMessage: String
+) {
+    Box(
         modifier = Modifier
-            .background(VacancyTheme.colorScheme.primary)
-            .padding(16.dp, 8.dp)
-            .clip(RoundedCornerShape(12.dp)),
-        textAlign = TextAlign.Center,
-        style = VacancyTheme.typography.regular16,
-        color = VacancyTheme.colorScheme.inverseSurface
-    )
+            .fillMaxWidth()
+            .padding(top = 3.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    color = VacancyTheme.colorScheme.primary,
+                    shape = VacancyTheme.shapes.shape12dp
+                )
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = textMessage,
+                color = VacancyTheme.colorScheme.onPrimary,
+                style = VacancyTheme.typography.regular16,
+            )
+        }
+    }
 }
-// @Preview(showSystemUi = true)
-// @Composable
-// fun SearchScreenPreview() {
-//    val vacancies = Vacancy(
-//        id = "2222",
-//        title = "Engineer в Microsoft",
-//        description = "Здесь описание работы",
-//        salary = null,
-//        company = Employer(
-//            id = "2",
-//            name = "Microsoft",
-//            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png"
-//        ),
-//        location = "Москва",
-//        industry = Industry(
-//            id = 2,
-//            name = "Нефтянка"
-//        )
-//    )
-//    VacancyTheme(isDarkTheme = false) {
-//        SearchScreen(navController = NavController(LocalContext.current), onClearSearchText = {})
-//    }
-// }
-
-// @Preview(showBackground = true)
-// @Composable
-// fun VacancyRowPreview() {
-//    val vacancies = VacancyUiModel(Vacancy(
-//        id = "2222",
-//        title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
-//        description = "Здесь описание работы",
-//        salary = null,
-//        company = Employer(
-//            id = "2",
-//            name = "Microsoft",
-//            logoUrl = "https://upload.wikimedia.org"
-//        ),
-//        location = "Москва",
-//        industry = Industry(
-//            id = 2,
-//            name = "Нефтянка"
-//        ))
-//    )
-//
-//    VacancyTheme(isDarkTheme = false) {
-//        VacancyRow(
-//            vacancies,
-//            onClick = {}
-//        )
-//    }
-// }
-// @Preview(showSystemUi = true)
-// @Composable
-// fun VacancyListItemPreview() {
-//    VacancyListItem(
-//        vacancies = listOf(
-//            Vacancy(
-//            id = "2222",
-//            title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
-//            description = "Здесь описание работы",
-//            salary = SalaryRange(
-//                from = 1200,
-//                to = null,
-//                currency = "Руб."
-//            ),
-//            company = Employer(
-//                id = "2",
-//                name = "Microsoft",
-//                logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png"
-//            ),
-//            location = "Москва",
-//            industry = Industry(
-//                id = 2,
-//                name = "Нефтянка"
-//            )
-//            ), Vacancy(
-//                id = "2222",
-//                title = "fgsfgsfgsfgsfgDevOps Engineer в Microsoft",
-//                description = "Здесь описание работы",
-//                salary = SalaryRange(
-//                    from = 1200,
-//                    to = null,
-//                    currency = "Руб."
-//                ),
-//                company = Employer(
-//                    id = "2",
-//                    name = "Microsoft",
-//                    logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png"
-//                ),
-//                location = "Москва",
-//                industry = Industry(
-//                    id = 2,
-//                    name = "Нефтянка"
-//                )
-//            )
-//        ), onItemClick = {})
-// }

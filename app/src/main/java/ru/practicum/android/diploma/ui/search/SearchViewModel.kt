@@ -154,6 +154,10 @@ class SearchViewModel(
         currentVacancies.clear()
     }
 
+    fun clearCountVacancies() {
+        _screenState.value = SearchScreenState.Nothing
+    }
+
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
