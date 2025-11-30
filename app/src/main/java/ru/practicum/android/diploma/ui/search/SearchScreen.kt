@@ -69,7 +69,8 @@ fun SearchScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 19.dp)
+            .padding(horizontal = 16.dp)
+            .padding(top = 19.dp)
             .background(VacancyTheme.colorScheme.background)
     ) {
         Row(
@@ -186,7 +187,7 @@ fun SearchScreen(
                     CountVacancies(
                         screenState,
                         vacancies,
-                        textMessage = "Таких вакансий нет"
+                        textMessage = stringResource(R.string.empty_seach_vacancies)
                     )
                 }
                 Placeholder(
@@ -233,7 +234,6 @@ fun VacancyListItem(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
-        contentPadding = PaddingValues(bottom = 18.dp)
     ) {
         items(vacancies) { uiVacancy ->
             VacancyRow(
