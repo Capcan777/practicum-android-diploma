@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -46,9 +47,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.domain.models.Vacancy
@@ -135,6 +138,7 @@ fun SearchScreen(
                 unfocusedContainerColor = VacancyTheme.colorScheme.secondaryContainer
             )
         )
+        CountVacancies(screenState)
 
         if (searchQuery.isEmpty()) SearchPlaceholder()
 
@@ -224,9 +228,9 @@ fun VacancyListItem(
 @Composable
 fun VacancyRow(
     vacancyUiModel: VacancyUiModel,
-//    formattedSalary: String,
     onClick: () -> Unit
 ) {
+    val imageLoader: ImageLoader = koinInject()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -235,45 +239,18 @@ fun VacancyRow(
         verticalAlignment = Alignment.Top
     ) {
         val logoUrl = vacancyUiModel.vacancy.company.logoUrl
-        Log.d(
-            "VacancyRow",
-            "logoUrl: $logoUrl, isBlank: ${logoUrl.isBlank()}, isValid: ${
-                logoUrl.startsWith("http://") || logoUrl.startsWith("https://")
-            }"
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(logoUrl)
+                .build(),
+            imageLoader = imageLoader,
+            contentDescription = null,
+            placeholder = painterResource(id = R.drawable.placeholder_logo),
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(12.dp)),
+            contentScale = ContentScale.Inside
         )
-
-        if (logoUrl.isBlank() || (!logoUrl.startsWith("http://") && !logoUrl.startsWith("https://"))) {
-            Image(
-                painter = painterResource(id = R.drawable.placeholder_logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Crop
-            )
-        } else {
-            val context = LocalContext.current
-            val imageRequest = remember(logoUrl) {
-                ImageRequest.Builder(context)
-                    .data(logoUrl)
-                    .setHeader(
-                        USER_AGENT,
-                        VALUE_USER_AGENT
-                    )
-                    .build()
-            }
-
-            AsyncImage(
-                model = imageRequest,
-                contentDescription = null,
-                placeholder = painterResource(id = R.drawable.placeholder_logo),
-                error = painterResource(id = R.drawable.placeholder_logo),
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Inside
-            )
-        }
 
         Column(
             modifier = Modifier
@@ -302,10 +279,20 @@ fun VacancyRow(
     }
 }
 
-private const val VALUE_USER_AGENT =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-private const val USER_AGENT = "User-Agent"
-
+@Composable
+fun CountVacancies(screenState: SearchScreenState) {
+    val vacancies = (screenState as? SearchScreenState.Content)?.vacancies ?: emptyList()
+    Text(
+        text = stringResource(R.string.found_count_vacancies, vacancies.size),
+        modifier = Modifier
+            .background(Color(0xFF007BFF))
+            .padding(16.dp, 8.dp)
+            .clip(RoundedCornerShape(12.dp)),
+        textAlign = TextAlign.Center,
+        style = VacancyTheme.typography.regular16,
+        color = VacancyTheme.colorScheme.inverseSurface
+    )
+}
 // @Preview(showSystemUi = true)
 // @Composable
 // fun SearchScreenPreview() {

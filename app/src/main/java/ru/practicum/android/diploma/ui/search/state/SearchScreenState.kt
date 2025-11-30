@@ -4,7 +4,7 @@ import ru.practicum.android.diploma.domain.models.Vacancy
 
 data class VacancyUiModel(
     val vacancy: Vacancy,
-//    val formatedSalary: String,
+    val salaryDisplay: String? = null
 )
 
 sealed interface SearchScreenState {
