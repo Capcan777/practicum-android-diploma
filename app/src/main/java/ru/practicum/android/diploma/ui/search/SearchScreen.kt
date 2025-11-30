@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.search
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -285,7 +284,7 @@ fun CountVacancies(screenState: SearchScreenState) {
     Text(
         text = stringResource(R.string.found_count_vacancies, vacancies.size),
         modifier = Modifier
-            .background(Color(0xFF007BFF))
+            .background(VacancyTheme.colorScheme.primary)
             .padding(16.dp, 8.dp)
             .clip(RoundedCornerShape(12.dp)),
         textAlign = TextAlign.Center,

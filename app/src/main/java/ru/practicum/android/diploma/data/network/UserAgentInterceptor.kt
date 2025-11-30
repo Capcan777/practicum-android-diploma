@@ -9,7 +9,7 @@ class UserAgentInterceptor(private val context: Context) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        val userAgent = GetSystemUserAgent.getSystemUserAgent(context)
+        val userAgent = GetSystemUserAgent.systemUserAgent(context)
         val requestWithUserAgent = originalRequest.newBuilder()
             .header("User-Agent", userAgent)
             .build()

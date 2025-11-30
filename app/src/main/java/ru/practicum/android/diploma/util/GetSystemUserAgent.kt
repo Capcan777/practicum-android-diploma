@@ -5,8 +5,7 @@ import android.webkit.WebSettings
 
 object GetSystemUserAgent {
 
-    fun getSystemUserAgent(context: Context): String {
+    fun systemUserAgent(context: Context): String {
         return WebSettings.getDefaultUserAgent(context)
     }
-
 }
