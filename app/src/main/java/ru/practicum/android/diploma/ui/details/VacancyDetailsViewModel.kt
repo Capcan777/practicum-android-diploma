@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.details
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +41,7 @@ class VacancyDetailsViewModel(
                     }
                 }
             } catch (e: HttpException) {
+                Log.e("VacancyDetailsViewModel", "HTTP error: ${e.code()}", e)
                 _screenState.value = VacancyDetailsScreenState.Error.ServerError
             }
         }
