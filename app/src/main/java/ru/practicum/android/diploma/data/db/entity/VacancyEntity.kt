@@ -12,6 +12,7 @@ data class VacancyEntity(
     val title: String,
     val description: String,
     val salary: String,
+    val experience: String,
     val company: String,
     val location: String,
 )

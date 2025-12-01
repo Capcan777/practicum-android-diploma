@@ -53,6 +53,7 @@ dependencies {
     // UI layer libraries
     implementation(libs.ui.material)
     implementation(libs.ui.constraintLayout)
+    implementation(libs.androidx.compose.foundation)
 
     // region Unit tests
     testImplementation(libs.unitTests.junit)

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
@@ -23,14 +24,19 @@ class VacancyDetailsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 VacancyTheme(isDarkTheme = false) {
                     val navController = findNavController()
-                    vacancyId?.let { id ->
-                        VacancyDetailsScreen(vacancyId = id, navController)
-                    }
+                    VacancyDetailsScreen(
+                        vacancyId = vacancyId ?: "",
+                        navController = navController,
+                        onBack = { navController.popBackStack() },
+                        onShare = { },
+                        onToggleFavorite = { }
+                    )
                 }
             }
         }

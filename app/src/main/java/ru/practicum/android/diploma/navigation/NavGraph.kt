@@ -22,7 +22,17 @@ fun NavGraph(navController: NavHostController) {
         composable(Routes.VacancyDetails.route) { backStackEntry ->
             val vacancyId = backStackEntry.arguments?.getString("vacancyId")
             if (vacancyId != null) {
-                VacancyDetailsScreen(vacancyId, navController)
+                VacancyDetailsScreen(
+                    vacancyId = vacancyId,
+                    navController = navController,
+                    onBack = { navController.popBackStack() },
+                    onShare = {
+                        // обработка функции поделиться
+                    },
+                    onToggleFavorite = {
+                        // обработка функции добавить в избранное
+                    }
+                )
             } else {
                 // Обработать ошибку
             }

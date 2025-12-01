@@ -20,6 +20,7 @@ targetSdk = "33"
 # Detekt
 detekt = "1.23.8"
 detektTwitterComposeRules ="0.0.26"
+foundation = "1.9.5"
 
 [libraries]
 
@@ -86,6 +87,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [bundles]
 coil = ["coil-compose", "coil-svg"]

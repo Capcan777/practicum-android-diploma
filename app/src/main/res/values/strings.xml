@@ -27,4 +27,7 @@
     <string name="found_count_vacancies">Найдено %1$d вакансий</string>
     <string name="empty_search_vacancies">Таких вакансий нет</string>
 
+    <string name="required_experience">Требуемый опыт</string>
+    <string name="vacancy_desc">Описание вакансии</string>
+
 </resources>
