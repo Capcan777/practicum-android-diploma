@@ -55,6 +55,31 @@ class RetrofitNetworkClient(
         }
     }
 
+    override suspend fun getVacancyById(vacancyId: String): Response {
+        if (!isConnected()) {
+            return Response().apply {
+                result = ResponseCodes.NO_CONNECTION
+            }
+        }
+
+        return try {
+            val vacancyResponse = api.getVacancyById(vacancyId = vacancyId)
+            vacancyResponse.apply {
+                result = ResponseCodes.SUCCESS
+            }
+        } catch (e: IOException) {
+            Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
+            Response().apply {
+                result = ResponseCodes.ERROR_SERVER
+            }
+        } catch (e: HttpException) {
+            Log.e("RetrofitNetworkClient", "HTTP error: ${e.message}", e)
+            Response().apply {
+                result = ResponseCodes.ERROR_SERVER
+            }
+        }
+    }
+
     private fun isConnected(): Boolean {
         return InternetConnectionStatus.isInternetAvailable(context)
     }

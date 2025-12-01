@@ -1,6 +1,6 @@
 package ru.practicum.android.diploma.data.dto
 
-data class VacancyItemDto(
+class VacancyResponse(
     val id: String,
     val name: String,
     val description: String,
@@ -9,4 +9,4 @@ data class VacancyItemDto(
     val employer: EmployerDto,
     val industry: FilterIndustryDto,
     val area: FilterAreaDto
-)
+) : Response()

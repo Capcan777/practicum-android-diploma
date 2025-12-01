@@ -165,6 +165,10 @@ class SearchViewModel(
             DomainError.OtherError -> {
                 _screenState.value = SearchScreenState.Error.ServerError
             }
+
+            else -> {
+                _screenState.value = SearchScreenState.Error.ServerError
+            }
         }
     }
 

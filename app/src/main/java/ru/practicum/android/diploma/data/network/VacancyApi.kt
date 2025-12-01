@@ -6,6 +6,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
 import ru.practicum.android.diploma.data.dto.SearchResponse
+import ru.practicum.android.diploma.data.dto.VacancyResponse
 
 interface VacancyApi {
     @GET("vacancies")
@@ -18,9 +19,8 @@ interface VacancyApi {
 
     @GET("vacancies/{vacancyId}")
     suspend fun getVacancyById(
-        @Header("Authorization") token: String,
-        @Header("Content-Type") contentType: String,
+        @Header("Content-Type") contentType: String = "application/json",
         @Path("vacancyId") vacancyId: String
-    ): SearchResponse
+    ): VacancyResponse
 
 }

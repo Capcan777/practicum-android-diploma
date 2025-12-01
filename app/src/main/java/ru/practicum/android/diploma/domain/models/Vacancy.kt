@@ -5,6 +5,7 @@ data class Vacancy(
     val title: String,
     val description: String,
     val salary: SalaryRange?,
+    val experience: Experience?,
     val company: Employer,
     val location: String?,
     val industry: Industry

@@ -2,14 +2,22 @@ package ru.practicum.android.diploma.util
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.domain.models.SalaryRange
+import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import java.util.Locale
 
 @Composable
-fun SalaryDisplay(salaryRange: SalaryRange?) {
+fun SalaryDisplay(
+    salaryRange: SalaryRange?,
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle,
+    textColor: Color
+) {
     if (salaryRange == null) {
         Text(
             text = stringResource(R.string.salary_not_specified),
@@ -35,8 +43,9 @@ fun SalaryDisplay(salaryRange: SalaryRange?) {
     }
     Text(
         text = displaySalary,
-        style = VacancyTheme.typography.regular16,
-        color = VacancyTheme.colorScheme.onPrimaryContainer
+        style = textStyle,
+        color = textColor,
+        modifier = modifier
     )
 }
 
