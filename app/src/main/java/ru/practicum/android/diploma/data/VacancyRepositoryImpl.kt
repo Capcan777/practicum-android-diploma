@@ -7,46 +7,55 @@ import ru.practicum.android.diploma.data.dto.SearchResponse
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.DomainMapper
 import ru.practicum.android.diploma.domain.api.VacancyRepository
-import ru.practicum.android.diploma.domain.models.SearchResult
+import ru.practicum.android.diploma.domain.models.SearchOutcome
+import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.util.ResponseCodes
 
 class VacancyRepositoryImpl(
     private val networkClient: NetworkClient,
     private val mapper: DomainMapper
 ) : VacancyRepository {
-    override suspend fun searchVacancies(request: SearchRequest): Flow<SearchResult?> = flow {
+    override suspend fun searchVacancies(request: SearchRequest): Flow<SearchOutcome> = flow {
         val response = networkClient.doRequest(request)
-        when (response.result) {
-            ResponseCodes.SUCCESS -> {
-                val searchResponse = response as SearchResponse
-                val searchResult = mapper.mapSearchResult(searchResponse)
-                emit(searchResult)
-            }
 
+        when (response) {
+            is SearchResponse -> {
+                val outcomeResult = mapper.mapSearchOutcome(response)
+                emit(outcomeResult)
+            }
             else -> {
-                // возвращаем null при ошибке (изменить желательно)
-                emit(null)
+                val code = response.result
+                val outcome = when (code) {
+                    ResponseCodes.NO_CONNECTION -> SearchOutcome.Error(DomainError.NoConnection)
+                    ResponseCodes.ERROR_SERVER -> SearchOutcome.Error(DomainError.OtherError)
+                    else -> SearchOutcome.Error(DomainError.OtherError)
+                }
+                emit(outcome)
             }
         }
     }
 
-    override suspend fun loadNextPage(query: String, nextPage: Int): Flow<SearchResult?> = flow {
+    override suspend fun loadNextPage(query: String, nextPage: Int): Flow<SearchOutcome> = flow {
         val request = SearchRequest(
             text = query,
             page = nextPage,
         )
 
         val response = networkClient.doRequest(request)
-        when (response.result) {
-            ResponseCodes.SUCCESS -> {
-                val searchResponse = response as SearchResponse
-                val searchResult = mapper.mapSearchResult(searchResponse)
-                emit(searchResult)
-            }
 
+        when (response) {
+            is SearchResponse -> {
+                val outcomeResult = mapper.mapSearchOutcome(response)
+                emit(outcomeResult)
+            }
             else -> {
-                // возвращаем null при ошибке (изменить желательно)
-                emit(null)
+                val code = response.result
+                val outcome = when (code) {
+                    ResponseCodes.NO_CONNECTION -> SearchOutcome.Error(DomainError.NoConnection)
+                    ResponseCodes.ERROR_SERVER -> SearchOutcome.Error(DomainError.OtherError)
+                    else -> SearchOutcome.Error(DomainError.OtherError)
+                }
+                emit(outcome)
             }
         }
     }

@@ -1,16 +1,20 @@
 package ru.practicum.android.diploma.ui.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.domain.SearchInteractor
-import ru.practicum.android.diploma.domain.models.SearchResult
+import ru.practicum.android.diploma.domain.models.DomainError
+import ru.practicum.android.diploma.domain.models.SearchOutcome
 import ru.practicum.android.diploma.ui.search.state.SearchScreenState
 import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
 import ru.practicum.android.diploma.util.debounce
+import java.io.IOException
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor
@@ -32,6 +36,8 @@ class SearchViewModel(
     val hasMorePages = _hasMorePages.asStateFlow()
 
     private var currentVacancies = mutableListOf<VacancyUiModel>()
+
+    private val logTag = "SearchViewModel"
 
     private val debounceHandler = debounce<String>(
         SEARCH_DEBOUNCE_DELAY,
@@ -66,8 +72,23 @@ class SearchViewModel(
 
         viewModelScope.launch {
             _screenState.value = SearchScreenState.Loading
-            searchInteractor.searchVacancies(request).collect { searchResult ->
-                handleSearchResult(searchResult, isFirstPage = true)
+            try {
+                searchInteractor.searchVacancies(request).collect { searchOutcome ->
+                    when (searchOutcome) {
+                        is SearchOutcome.SearchResult -> {
+                            handleSearchResult(searchOutcome, isFirstPage = false)
+                        }
+                        is SearchOutcome.Error -> {
+                            handleError(searchOutcome)
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                Log.e(logTag, "HTTP error: ${e.message}", e)
+                _screenState.value = SearchScreenState.Error.ServerError
+            } catch (e: IOException) {
+                Log.e(logTag, "Network error: ${e.message}", e)
+                _screenState.value = SearchScreenState.Error.NoConnection
             }
         }
     }
@@ -82,9 +103,16 @@ class SearchViewModel(
         _isLoadingNextPage.value = true
 
         viewModelScope.launch {
-            searchInteractor.loadNextPage(_searchText.value, nextPage).collect { searchResult ->
-                handleSearchResult(searchResult, isFirstPage = false)
-                _isLoadingNextPage.value = false
+            searchInteractor.loadNextPage(_searchText.value, nextPage).collect { searchOutcome ->
+                when (searchOutcome) {
+                    is SearchOutcome.SearchResult -> {
+                        handleSearchResult(searchOutcome, isFirstPage = false)
+                        _isLoadingNextPage.value = false
+                    }
+                    is SearchOutcome.Error -> {
+                        handleError(searchOutcome)
+                    }
+                }
             }
         }
     }
@@ -96,15 +124,12 @@ class SearchViewModel(
             nextPage <= _currentPage.value
     }
 
-    private fun handleSearchResult(searchResult: SearchResult?, isFirstPage: Boolean) {
-        when {
-            searchResult == null -> {
-                if (isFirstPage) {
-                    _screenState.value = SearchScreenState.Error.ServerError
-                }
-                _hasMorePages.value = false
-            }
+    private fun handleSearchResult(searchResult: SearchOutcome.SearchResult, isFirstPage: Boolean) {
+        val vacancyUiModels: List<VacancyUiModel> = searchResult.vacancies.map {
+            VacancyUiModel(it)
+        }
 
+        when {
             searchResult.vacancies.isEmpty() -> {
                 if (isFirstPage) {
                     _screenState.value = SearchScreenState.Error.NotFound
@@ -113,16 +138,12 @@ class SearchViewModel(
             }
 
             else -> {
-                val newVacancies = searchResult.vacancies.map { vacancy ->
-                    VacancyUiModel(vacancy)
-                }
-
                 if (isFirstPage) {
                     currentVacancies.clear()
-                    currentVacancies.addAll(newVacancies)
+                    currentVacancies.addAll(vacancyUiModels)
                     _currentPage.value = searchResult.currentPage
                 } else {
-                    currentVacancies.addAll(newVacancies)
+                    currentVacancies.addAll(vacancyUiModels)
                     _currentPage.value = searchResult.currentPage
                 }
 
@@ -132,6 +153,17 @@ class SearchViewModel(
 
                 // проверка доступности страниц
                 _hasMorePages.value = searchResult.currentPage < searchResult.totalPages - 1
+            }
+        }
+    }
+
+    fun handleError(error: SearchOutcome.Error) {
+        when (error.type) {
+            DomainError.NoConnection -> {
+                _screenState.value = SearchScreenState.Error.NoConnection
+            }
+            DomainError.OtherError -> {
+                _screenState.value = SearchScreenState.Error.ServerError
             }
         }
     }
