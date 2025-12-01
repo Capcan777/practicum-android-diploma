@@ -4,11 +4,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.data.dto.SearchResponse
+import ru.practicum.android.diploma.data.dto.VacancyResponse
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.DomainMapper
 import ru.practicum.android.diploma.domain.api.VacancyRepository
 import ru.practicum.android.diploma.domain.models.SearchOutcome
 import ru.practicum.android.diploma.domain.models.DomainError
+import ru.practicum.android.diploma.domain.models.VacancyOutcome
 import ru.practicum.android.diploma.util.ResponseCodes
 
 class VacancyRepositoryImpl(
@@ -57,6 +59,16 @@ class VacancyRepositoryImpl(
                 }
                 emit(outcome)
             }
+        }
+    }
+
+    override suspend fun getVacancyById(vacancyId: String): Flow<VacancyOutcome> = flow {
+        val response = networkClient.getVacancyById(vacancyId)
+
+        if (response is VacancyResponse) {
+            emit(mapper.mapVacancyOutcome(response))
+        } else {
+            emit(VacancyOutcome.Error(DomainError.OtherError))
         }
     }
 }

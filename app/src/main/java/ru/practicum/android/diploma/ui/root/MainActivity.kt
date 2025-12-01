@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.navigation.NavGraph
+import ru.practicum.android.diploma.navigation.Routes
 import ru.practicum.android.diploma.navigation.bottomnavigation.BottomNavigationBar
 
 class MainActivity : ComponentActivity() {
@@ -27,9 +30,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MainScreen() {
         val navController = rememberNavController()
+        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = currentBackStackEntry?.destination?.route
         Scaffold(
             bottomBar = {
-                BottomNavigationBar(navController = navController)
+                if (currentRoute != Routes.VacancyDetails.route) {
+                    BottomNavigationBar(navController = navController)
+                }
             }
         ) { innerPadding ->
             Surface(

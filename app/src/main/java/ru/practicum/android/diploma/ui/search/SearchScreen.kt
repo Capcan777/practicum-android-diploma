@@ -50,7 +50,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
-import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.navigation.Routes
 import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.search.state.SearchScreenState
 import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
@@ -161,8 +161,8 @@ fun SearchScreen(
                         textMessage = stringResource(R.string.found_count_vacancies, vacancies.size)
                     )
                 }
-                VacancyListItem(vacancies = state.vacancies, onItemClick = {
-                    navController.navigate("vacancyDetails")
+                VacancyListItem(vacancies = state.vacancies, onItemClick = { vacancyId ->
+                    navController.navigate(Routes.createVacancyDetailsRoute(vacancyId))
                 })
             }
 
@@ -228,7 +228,7 @@ fun SearchPlaceholder() {
 @Composable
 fun VacancyListItem(
     vacancies: List<VacancyUiModel>,
-    onItemClick: (Vacancy) -> Unit
+    onItemClick: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -237,7 +237,7 @@ fun VacancyListItem(
         items(vacancies) { uiVacancy ->
             VacancyRow(
                 vacancyUiModel = uiVacancy,
-                onClick = { onItemClick(uiVacancy.vacancy) }
+                onClick = { onItemClick(uiVacancy.vacancy.id) }
             )
         }
     }
