@@ -8,5 +8,11 @@ data class Vacancy(
     val experience: Experience?,
     val company: Employer,
     val location: String?,
-    val industry: Industry
+    val industry: Industry,
+    val address: Address? = null,
+    val contacts: Contacts? = null,
+    val employment: Employment? = null,
+    val schedule: Schedule? = null,
+    val skills: List<String> = emptyList(),
+    val url: String? = null
 )

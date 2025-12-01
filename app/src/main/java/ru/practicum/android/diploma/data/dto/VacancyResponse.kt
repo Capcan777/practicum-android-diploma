@@ -5,8 +5,14 @@ class VacancyResponse(
     val name: String,
     val description: String,
     val salary: SalaryDto? = null,
+    val address: AddressDto? = null,
     val experience: ExperienceDto? = null,
+    val schedule: ScheduleDto? = null,
+    val employment: EmploymentDto? = null,
+    val contacts: ContactsDto? = null,
     val employer: EmployerDto,
-    val industry: FilterIndustryDto,
-    val area: FilterAreaDto
+    val area: FilterAreaDto,
+    val skills: List<String>? = null,
+    val url: String? = null,
+    val industry: FilterIndustryDto
 ) : Response()
