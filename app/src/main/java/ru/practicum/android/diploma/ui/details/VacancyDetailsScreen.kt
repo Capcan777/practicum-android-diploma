@@ -55,7 +55,6 @@ fun VacancyDetailsScreen(
     onToggleFavorite: () -> Unit,
     viewModel: VacancyDetailsViewModel = koinViewModel { parametersOf(vacancyId) }
 ) {
-
     val screenState by viewModel.screenState.collectAsState()
 
     Scaffold(
@@ -67,13 +66,15 @@ fun VacancyDetailsScreen(
                     IconButton(
                         onClick = {
                             // обработка функции поделиться
-                        }) {
+                        }
+                    ) {
                         Icon(imageVector = Icons.Default.Share, contentDescription = "Поделиться")
                     }
                     IconButton(
                         onClick = {
                             // обработка функции добавить в избранное
-                        }) {
+                        }
+                    ) {
                         Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "В избранное")
                     }
                 }
@@ -123,7 +124,6 @@ fun VacancyDetailsScreen(
                                 .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-
                             CompanyLogo(logoUrl = vacancy.company.logoUrl)
 
                             Spacer(modifier = Modifier.width(8.dp))

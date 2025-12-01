@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.domain
 
-import android.util.Log
 import ru.practicum.android.diploma.data.dto.EmployerDto
 import ru.practicum.android.diploma.data.dto.ExperienceDto
 import ru.practicum.android.diploma.data.dto.FilterIndustryDto
@@ -20,7 +19,6 @@ import ru.practicum.android.diploma.util.ResponseCodes
 
 class DomainMapper {
     fun mapVacancy(dto: VacancyItemDto): Vacancy {
-        Log.d("DomainMapper", "Mapping Vacancy: ${dto.name}")
         return Vacancy(
             id = dto.id,
             title = dto.name,
@@ -109,7 +107,6 @@ class DomainMapper {
     }
 
     fun mapFromVacancyResponse(dto: VacancyResponse): Vacancy {
-        Log.d("DomainMapper", "Mapping Vacancy: ${dto.name}")
         return Vacancy(
             id = dto.id,
             title = dto.name,
