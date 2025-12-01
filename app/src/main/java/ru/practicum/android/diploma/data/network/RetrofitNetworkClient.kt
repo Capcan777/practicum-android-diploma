@@ -1,96 +1,96 @@
-package ru.practicum.android.diploma.data.network
+    package ru.practicum.android.diploma.data.network
 
-import android.content.Context
-import android.util.Log
-import retrofit2.HttpException
-import ru.practicum.android.diploma.data.dto.Response
-import ru.practicum.android.diploma.data.dto.SearchRequest
-import ru.practicum.android.diploma.util.InternetConnectionStatus
-import ru.practicum.android.diploma.util.ResponseCodes
-import java.io.IOException
+    import android.content.Context
+    import android.util.Log
+    import retrofit2.HttpException
+    import ru.practicum.android.diploma.data.dto.Response
+    import ru.practicum.android.diploma.data.dto.SearchRequest
+    import ru.practicum.android.diploma.util.InternetConnectionStatus
+    import ru.practicum.android.diploma.util.ResponseCodes
+    import java.io.IOException
 
-class RetrofitNetworkClient(
-    private val api: VacancyApi,
-    private val context: Context
-) : NetworkClient {
-    override suspend fun doRequest(dto: Any): Response {
-        if (!isConnected()) {
-            return Response().apply {
-                result = ResponseCodes.NO_CONNECTION
+    class RetrofitNetworkClient(
+        private val api: VacancyApi,
+        private val context: Context
+    ) : NetworkClient {
+        override suspend fun doRequest(dto: Any): Response {
+            if (!isConnected()) {
+                return Response().apply {
+                    result = ResponseCodes.NO_CONNECTION
+                }
             }
-        }
 
-        return when (dto) {
-            is SearchRequest -> {
-                try {
-                    val filters = createFilters(dto)
-                    val searchResponse = api.getVacancies(
-                        filters = filters,
-                        text = dto.text ?: "",
-                        page = dto.page
-                    )
+            return when (dto) {
+                is SearchRequest -> {
+                    try {
+                        val filters = createFilters(dto)
+                        val searchResponse = api.getVacancies(
+                            filters = filters,
+                            text = dto.text ?: "",
+                            page = dto.page
+                        )
 
-                    searchResponse.apply {
-                        result = ResponseCodes.SUCCESS
+                        searchResponse.apply {
+                            result = ResponseCodes.SUCCESS
+                        }
+                    } catch (e: IOException) {
+                        Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
+                        Response().apply {
+                            result = ResponseCodes.ERROR_SERVER
+                        }
+                    } catch (e: HttpException) {
+                        val code = e.code()
+                        Log.e("RetrofitNetworkClient", "HTTP error: ${e.message}", e)
+                        return Response().apply {
+                            result = ResponseCodes.ERROR_SERVER
+                        }
                     }
-                } catch (e: IOException) {
-                    Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
+                }
+
+                else -> {
                     Response().apply {
-                        result = ResponseCodes.ERROR_SERVER
-                    }
-                } catch (e: HttpException) {
-                    val code = e.code()
-                    Log.e("RetrofitNetworkClient", "HTTP error: ${e.message}", e)
-                    return Response().apply {
                         result = ResponseCodes.ERROR_SERVER
                     }
                 }
             }
+        }
 
-            else -> {
+        override suspend fun getVacancyById(vacancyId: String): Response {
+            if (!isConnected()) {
+                return Response().apply {
+                    result = ResponseCodes.NO_CONNECTION
+                }
+            }
+
+            return try {
+                val vacancyResponse = api.getVacancyById(vacancyId = vacancyId)
+                vacancyResponse.apply {
+                    result = ResponseCodes.SUCCESS
+                }
+            } catch (e: IOException) {
+                Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
+                Response().apply {
+                    result = ResponseCodes.ERROR_SERVER
+                }
+            } catch (e: HttpException) {
+                Log.e("RetrofitNetworkClient", "HTTP error: ${e.message}", e)
                 Response().apply {
                     result = ResponseCodes.ERROR_SERVER
                 }
             }
         }
-    }
 
-    override suspend fun getVacancyById(vacancyId: String): Response {
-        if (!isConnected()) {
-            return Response().apply {
-                result = ResponseCodes.NO_CONNECTION
-            }
+        private fun isConnected(): Boolean {
+            return InternetConnectionStatus.isInternetAvailable(context)
         }
 
-        return try {
-            val vacancyResponse = api.getVacancyById(vacancyId = vacancyId)
-            vacancyResponse.apply {
-                result = ResponseCodes.SUCCESS
-            }
-        } catch (e: IOException) {
-            Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
-            Response().apply {
-                result = ResponseCodes.ERROR_SERVER
-            }
-        } catch (e: HttpException) {
-            Log.e("RetrofitNetworkClient", "HTTP error: ${e.message}", e)
-            Response().apply {
-                result = ResponseCodes.ERROR_SERVER
+        private fun createFilters(dto: SearchRequest): HashMap<String, String> {
+            return HashMap<String, String>().apply {
+                dto.industry?.let { put("industry", it.toString()) }
+                dto.text?.let { put("text", it) }
+                dto.salary?.let { put("salary", it.toString()) }
+                put("page", dto.page.toString())
+                put("only_with_salary", dto.onlyWithSalary.toString())
             }
         }
     }
-
-    private fun isConnected(): Boolean {
-        return InternetConnectionStatus.isInternetAvailable(context)
-    }
-
-    private fun createFilters(dto: SearchRequest): HashMap<String, String> {
-        return HashMap<String, String>().apply {
-            dto.industry?.let { put("industry", it.toString()) }
-            dto.text?.let { put("text", it) }
-            dto.salary?.let { put("salary", it.toString()) }
-            put("page", dto.page.toString())
-            put("only_with_salary", dto.onlyWithSalary.toString())
-        }
-    }
-}

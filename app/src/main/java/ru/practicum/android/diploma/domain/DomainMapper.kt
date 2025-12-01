@@ -1,9 +1,13 @@
 package ru.practicum.android.diploma.domain
 
+import ru.practicum.android.diploma.data.dto.AddressDto
+import ru.practicum.android.diploma.data.dto.ContactsDto
 import ru.practicum.android.diploma.data.dto.EmployerDto
+import ru.practicum.android.diploma.data.dto.EmploymentDto
 import ru.practicum.android.diploma.data.dto.ExperienceDto
 import ru.practicum.android.diploma.data.dto.FilterIndustryDto
 import ru.practicum.android.diploma.data.dto.SalaryDto
+import ru.practicum.android.diploma.data.dto.ScheduleDto
 import ru.practicum.android.diploma.data.dto.SearchResponse
 import ru.practicum.android.diploma.data.dto.VacancyItemDto
 import ru.practicum.android.diploma.domain.models.DomainError
@@ -14,6 +18,10 @@ import ru.practicum.android.diploma.domain.models.SalaryRange
 import ru.practicum.android.diploma.domain.models.SearchOutcome
 import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.data.dto.VacancyResponse
+import ru.practicum.android.diploma.domain.models.Address
+import ru.practicum.android.diploma.domain.models.Contacts
+import ru.practicum.android.diploma.domain.models.Employment
+import ru.practicum.android.diploma.domain.models.Schedule
 import ru.practicum.android.diploma.domain.models.VacancyOutcome
 import ru.practicum.android.diploma.util.ResponseCodes
 
@@ -31,7 +39,7 @@ class DomainMapper {
         )
     }
 
-    fun mapSalary(dto: SalaryDto?): SalaryRange {
+    private fun mapSalary(dto: SalaryDto?): SalaryRange {
         return SalaryRange(
             from = dto?.from,
             to = dto?.to,
@@ -39,7 +47,7 @@ class DomainMapper {
         )
     }
 
-    fun mapEmployer(dto: EmployerDto): Employer {
+    private fun mapEmployer(dto: EmployerDto): Employer {
         return Employer(
             id = dto.id,
             name = dto.name,
@@ -47,17 +55,48 @@ class DomainMapper {
         )
     }
 
-    fun mapIndustry(dto: FilterIndustryDto): Industry {
+    private fun mapIndustry(dto: FilterIndustryDto): Industry {
         return Industry(
             id = dto.id,
             name = dto.name
         )
     }
 
-    fun mapExperience(dto: ExperienceDto?): Experience {
+    private fun mapExperience(dto: ExperienceDto?): Experience {
         return Experience(
             id = dto?.id,
             name = dto?.name
+        )
+    }
+
+    private fun mapAddress(dto: AddressDto): Address {
+        return Address(
+            city = dto.city,
+            street = dto.street,
+            building = dto.building,
+            fullAddress = dto.fullAddress
+        )
+    }
+
+    private fun mapContacts(dto: ContactsDto): Contacts {
+        return Contacts(
+            name = dto.name,
+            email = dto.email,
+            phones = dto.phone
+        )
+    }
+
+    private fun mapEmployment(dto: EmploymentDto): Employment {
+        return Employment(
+            id = dto.id,
+            name = dto.name
+        )
+    }
+
+    private fun mapSchedule(dto: ScheduleDto): Schedule {
+        return Schedule(
+            id = dto.id,
+            name = dto.name
         )
     }
 
@@ -76,9 +115,11 @@ class DomainMapper {
                 ResponseCodes.NO_CONNECTION -> {
                     SearchOutcome.Error(DomainError.NoConnection)
                 }
+
                 ResponseCodes.ERROR_SERVER -> {
                     SearchOutcome.Error(DomainError.OtherError)
                 }
+
                 else -> {
                     SearchOutcome.Error(DomainError.OtherError)
                 }
@@ -96,9 +137,11 @@ class DomainMapper {
                 ResponseCodes.NO_CONNECTION -> {
                     VacancyOutcome.Error(DomainError.NoConnection)
                 }
+
                 ResponseCodes.ERROR_SERVER -> {
                     VacancyOutcome.Error(DomainError.OtherError)
                 }
+
                 else -> {
                     VacancyOutcome.Error(DomainError.OtherError)
                 }
@@ -114,8 +157,14 @@ class DomainMapper {
             salary = mapSalary(dto.salary),
             experience = mapExperience(dto.experience),
             company = mapEmployer(dto.employer),
-            location = dto.area.name,
-            industry = mapIndustry(dto.industry)
+            location = dto.address?.fullAddress ?: dto.area.name,
+            industry = mapIndustry(dto.industry),
+            address = dto.address?.let { mapAddress(it) },
+            contacts = dto.contacts?.let { mapContacts(it) },
+            employment = dto.employment?.let { mapEmployment(it) },
+            schedule = dto.schedule?.let { mapSchedule(it) },
+            skills = dto.skills ?: emptyList(),
+            url = dto.url
         )
     }
 }
