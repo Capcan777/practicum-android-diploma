@@ -10,18 +10,18 @@ import ru.practicum.android.diploma.data.dto.SalaryDto
 import ru.practicum.android.diploma.data.dto.ScheduleDto
 import ru.practicum.android.diploma.data.dto.SearchResponse
 import ru.practicum.android.diploma.data.dto.VacancyItemDto
-import ru.practicum.android.diploma.domain.models.DomainError
-import ru.practicum.android.diploma.domain.models.Employer
-import ru.practicum.android.diploma.domain.models.Experience
-import ru.practicum.android.diploma.domain.models.Industry
-import ru.practicum.android.diploma.domain.models.SalaryRange
-import ru.practicum.android.diploma.domain.models.SearchOutcome
-import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.data.dto.VacancyResponse
 import ru.practicum.android.diploma.domain.models.Address
 import ru.practicum.android.diploma.domain.models.Contacts
+import ru.practicum.android.diploma.domain.models.DomainError
+import ru.practicum.android.diploma.domain.models.Employer
 import ru.practicum.android.diploma.domain.models.Employment
+import ru.practicum.android.diploma.domain.models.Experience
+import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.domain.models.SalaryRange
 import ru.practicum.android.diploma.domain.models.Schedule
+import ru.practicum.android.diploma.domain.models.SearchOutcome
+import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.domain.models.VacancyOutcome
 import ru.practicum.android.diploma.util.ResponseCodes
 
