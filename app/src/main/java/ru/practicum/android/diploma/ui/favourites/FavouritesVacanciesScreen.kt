@@ -35,7 +35,7 @@ import org.koin.compose.koinInject
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.ui.common.Placeholder
-import ru.practicum.android.diploma.ui.favourites.state.FavoritesScreenState
+import ru.practicum.android.diploma.ui.favourites.state.FavouritesScreenState
 import ru.practicum.android.diploma.util.SalaryDisplay
 
 
@@ -61,8 +61,7 @@ fun FavouritesVacanciesScreen(
         )
 
         when (val state = screenState) {
-
-            is FavoritesScreenState.Loading -> {
+            is FavouritesScreenState.Loading -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -71,19 +70,19 @@ fun FavouritesVacanciesScreen(
                 }
             }
 
-            is FavoritesScreenState.Empty -> {
+            is FavouritesScreenState.Empty -> {
                 Placeholder(
                     imageResId = R.drawable.placeholder_empty_favourites,
                     title = stringResource(R.string.empty_favourites)
                 )
             }
 
-            is FavoritesScreenState.Error -> {
+            is FavouritesScreenState.Error -> {
                 // сделать плейсхолдер
                 Text(state.message)
             }
 
-            is FavoritesScreenState.Content -> {
+            is FavouritesScreenState.Content -> {
                 val vacancies = state.items
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(vacancies, key = { it.id }) { vacancy ->
@@ -97,7 +96,7 @@ fun FavouritesVacanciesScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                    //.clickable { onClick() },
+                                // .clickable { onClick() },
                                 verticalAlignment = Alignment.Top
                             ) {
                                 val logoUrl = vacancy.company.logoUrl

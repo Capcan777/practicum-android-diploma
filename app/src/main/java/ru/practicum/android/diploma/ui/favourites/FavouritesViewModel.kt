@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.FavVacanciesInteractor
 import ru.practicum.android.diploma.domain.models.Vacancy
-import ru.practicum.android.diploma.ui.favourites.state.FavoritesScreenState
+import ru.practicum.android.diploma.ui.favourites.state.FavouritesScreenState
 
 class FavouritesViewModel(
     private val favVacanciesInteractor: FavVacanciesInteractor
@@ -17,11 +17,11 @@ class FavouritesViewModel(
 
     private var vacancies: List<Vacancy> = emptyList()
 
-    private val _screenState = MutableStateFlow<FavoritesScreenState>(FavoritesScreenState.Loading)
-    val screenState: StateFlow<FavoritesScreenState> = _screenState.asStateFlow()
+    private val _screenState = MutableStateFlow<FavouritesScreenState>(FavouritesScreenState.Loading)
+    val screenState: StateFlow<FavouritesScreenState> = _screenState.asStateFlow()
 
     init {
-        _screenState.value = FavoritesScreenState.Loading
+        _screenState.value = FavouritesScreenState.Loading
         updateFavouriteList()
     }
 
@@ -38,9 +38,9 @@ class FavouritesViewModel(
     fun loadResult(vacancyList: List<Vacancy>) {
         vacancies = vacancyList
         if (vacancies.isEmpty()) {
-            _screenState.value = FavoritesScreenState.Empty
+            _screenState.value = FavouritesScreenState.Empty
         } else {
-            _screenState.value = FavoritesScreenState.Content(vacancies)
+            _screenState.value = FavouritesScreenState.Content(vacancies)
         }
     }
 }
