@@ -58,7 +58,6 @@ fun VacancyDetailsScreen(
     vacancyId: String,
     navController: NavController,
     onBack: () -> Unit,
-    onShare: () -> Unit,
     viewModel: VacancyDetailsViewModel = koinViewModel { parametersOf(vacancyId) }
 ) {
     val screenState by viewModel.screenState.collectAsState()
@@ -72,7 +71,7 @@ fun VacancyDetailsScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            // обработка функции поделиться
+                            viewModel.handleShare()
                         }
                     ) {
                         Icon(

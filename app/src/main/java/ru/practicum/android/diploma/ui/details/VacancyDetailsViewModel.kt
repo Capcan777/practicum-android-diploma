@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.practicum.android.diploma.domain.FavVacanciesInteractor
 import ru.practicum.android.diploma.domain.SearchInteractor
+import ru.practicum.android.diploma.domain.SharingInteractor
 import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.domain.models.VacancyOutcome
 import ru.practicum.android.diploma.ui.details.state.VacancyDetailsScreenState
@@ -17,7 +18,8 @@ import ru.practicum.android.diploma.ui.details.state.VacancyDetailsScreenState
 class VacancyDetailsViewModel(
     private val vacancyId: String,
     private val searchInteractor: SearchInteractor,
-    private val favVacanciesInteractor: FavVacanciesInteractor
+    private val favVacanciesInteractor: FavVacanciesInteractor,
+    private val sharingInteractor: SharingInteractor
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<VacancyDetailsScreenState>(VacancyDetailsScreenState.Loading)
@@ -91,5 +93,11 @@ class VacancyDetailsViewModel(
                 _isFavourite.value = false
             }
         }
+    }
+
+    fun handleShare() {
+        val contentState = screenState.value as? VacancyDetailsScreenState.Content ?: return
+        val curVacancy = contentState.vacancy
+        sharingInteractor.shareVacancy(curVacancy)
     }
 }

@@ -33,5 +33,6 @@
 
     <string name="share_vacancy">Поделиться</string>
     <string name="add_vacancy_to_favourite">Добавить в избранное</string>
+    <string name="salary_for_sharing">Зарплата</string>
 
 </resources>
