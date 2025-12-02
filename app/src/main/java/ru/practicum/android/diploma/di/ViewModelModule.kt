@@ -4,6 +4,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import ru.practicum.android.diploma.ui.details.VacancyDetailsViewModel
+import ru.practicum.android.diploma.ui.favourites.FavouritesViewModel
 import ru.practicum.android.diploma.ui.search.SearchViewModel
 import ru.practicum.android.diploma.util.ResourceProvider
 
@@ -20,6 +21,10 @@ val viewModelModule = module {
             get(),
             get()
         )
+    }
+
+    viewModel {
+        FavouritesViewModel(get())
     }
 
     single { ResourceProvider(androidContext()) }

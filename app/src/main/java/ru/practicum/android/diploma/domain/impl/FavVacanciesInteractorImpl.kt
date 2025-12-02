@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.domain.impl
 
+import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.domain.FavVacanciesInteractor
 import ru.practicum.android.diploma.domain.api.FavVacanciesRepository
 import ru.practicum.android.diploma.domain.models.Vacancy
@@ -17,5 +18,9 @@ class FavVacanciesInteractorImpl(
 
     override suspend fun isVacancyFavorite(vacancyId: String): Boolean {
         return favVacanciesRepository.isVacancyFavorite(vacancyId)
+    }
+
+    override suspend fun getFavVacancies(): Flow<List<Vacancy>> {
+        return favVacanciesRepository.getFavVacancies()
     }
 }
