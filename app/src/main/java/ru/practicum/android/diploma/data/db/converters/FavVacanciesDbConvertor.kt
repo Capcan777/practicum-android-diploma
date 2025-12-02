@@ -9,6 +9,9 @@ import ru.practicum.android.diploma.domain.models.Vacancy
 
 class FavVacanciesDbConvertor {
 
+    private val employerParts = 3
+    private val employerMinParts = 2
+
     fun map(vacancyEntity: VacancyEntity): Vacancy {
         return Vacancy(
             id = vacancyEntity.vacancyId,
@@ -66,11 +69,12 @@ class FavVacanciesDbConvertor {
         val from = salary.from
         val to = salary.to
         val currency = salary.currency?.trim() ?: ""
+        val currencySuffix = if (currency.isNotBlank()) " $currency" else ""
 
         return when {
-            from != null && to != null -> "${from}-${to}${if (currency.isNotBlank()) " $currency" else ""}"
-            from != null -> "от${from}${if (currency.isNotBlank()) " $currency" else ""}"
-            to != null -> "до${to}${if (currency.isNotBlank()) " $currency" else ""}"
+            from != null && to != null -> "$from-$to$currencySuffix"
+            from != null -> "от$from$currencySuffix"
+            to != null -> "до$to$currencySuffix"
             else -> ""
         }
     }
@@ -78,22 +82,47 @@ class FavVacanciesDbConvertor {
     fun parseExperienceString(s: String?): Experience? {
         if (s.isNullOrBlank()) return null
         val parts = s.split("|", limit = 2)
-        return if (parts.size == 2) Experience(id = parts[0].takeIf { it.isNotBlank() }, name = parts[1].takeIf { it.isNotBlank() })
-        else Experience(id = null, name = s)
+        return if (parts.size == 2) {
+            Experience(
+                id = parts[0].takeIf { it.isNotBlank() },
+                name = parts[1].takeIf { it.isNotBlank() }
+            )
+        } else {
+            Experience(
+                id = null,
+                name = s
+            )
+        }
     }
 
     fun experienceToString(exp: Experience?): String {
         if (exp == null) return ""
-        return if (!exp.id.isNullOrBlank() && !exp.name.isNullOrBlank()) "${exp.id}|${exp.name}" else (exp.name ?: "")
+        return if (!exp.id.isNullOrBlank() && !exp.name.isNullOrBlank()) {
+            "${exp.id}|${exp.name}"
+        } else {
+            exp.name ?: ""
+        }
     }
 
     fun parseEmployerString(s: String?): Employer {
         if (s.isNullOrBlank()) return Employer(id = "", name = "", logoUrl = "")
-        val parts = s.split("|", limit = 3)
+        val parts = s.split("|", limit = employerParts)
         return when {
-            parts.size == 3 -> Employer(id = parts[0], name = parts[1], logoUrl = parts[2])
-            parts.size == 2 -> Employer(id = parts[0], name = parts[1], logoUrl = "")
-            else -> Employer(id = "", name = s, logoUrl = "")
+            parts.size == employerParts -> Employer(
+                id = parts[0],
+                name = parts[1],
+                logoUrl = parts[2]
+            )
+            parts.size == employerMinParts -> Employer(
+                id = parts[0],
+                name = parts[1],
+                logoUrl = ""
+            )
+            else -> Employer(
+                id = "",
+                name = s,
+                logoUrl = ""
+            )
         }
     }
 

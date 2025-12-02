@@ -72,7 +72,10 @@ fun VacancyDetailsScreen(
                             // обработка функции поделиться
                         }
                     ) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = stringResource(R.string.share_vacancy))
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = stringResource(R.string.share_vacancy)
+                        )
                     }
                     FavoriteButton(isFavourite = isFavourite) {
                         if (screenState is VacancyDetailsScreenState.Content) viewModel.toggleFavorite()
@@ -223,10 +226,13 @@ private fun FavoriteButton(
     isFavourite: Boolean,
     onToggle: () -> Unit
 ) {
+    val favouriteScale = 1.12f
+    val defaultScale = 1f
+
     val inactiveColor = VacancyTheme.colorScheme.onSurface
     val targetColor = if (isFavourite) VacancyTheme.colorScheme.error else inactiveColor
     val animatedTint by animateColorAsState(targetColor)
-    val scale by animateFloatAsState(if (isFavourite) 1.12f else 1f)
+    val scale by animateFloatAsState(if (isFavourite) favouriteScale else defaultScale)
 
     IconButton(onClick = onToggle) {
         Icon(

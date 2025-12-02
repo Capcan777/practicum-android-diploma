@@ -57,7 +57,7 @@ fun formatCurrency(currency: String?): String {
 
         stringResource(R.string.currency_usd),
         stringResource(R.string.currency_aud),
-        stringResource(R.string.currency_hkd)->
+        stringResource(R.string.currency_hkd) ->
             stringResource(R.string.currency_usd_sym)
 
         stringResource(R.string.currency_eur) ->
