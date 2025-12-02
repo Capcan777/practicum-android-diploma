@@ -25,10 +25,7 @@ fun NavGraph(navController: NavHostController) {
                 VacancyDetailsScreen(
                     vacancyId = vacancyId,
                     navController = navController,
-                    onBack = { navController.popBackStack() },
-                    onShare = {
-                        // обработка функции поделиться
-                    }
+                    onBack = { navController.popBackStack() }
                 )
             } else {
                 // Обработать ошибку

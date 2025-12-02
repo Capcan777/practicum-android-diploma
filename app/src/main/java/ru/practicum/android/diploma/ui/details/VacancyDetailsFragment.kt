@@ -33,8 +33,7 @@ class VacancyDetailsFragment : Fragment() {
                     VacancyDetailsScreen(
                         vacancyId = vacancyId ?: "",
                         navController = navController,
-                        onBack = { navController.popBackStack() },
-                        onShare = { }
+                        onBack = { navController.popBackStack() }
                     )
                 }
             }
