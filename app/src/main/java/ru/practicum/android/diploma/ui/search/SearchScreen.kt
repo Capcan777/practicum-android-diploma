@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -299,7 +298,7 @@ fun VacancyListItem(
                 }
             }
         }
-        //В макете нет примера этой кнопки, поэтому пока убрал из ui
+        // В макете нет примера этой кнопки, поэтому пока убрал из ui
         /*else if (hasMorePages) {
             item {
                 Column(
