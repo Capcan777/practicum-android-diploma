@@ -7,14 +7,12 @@ import ru.practicum.android.diploma.ui.search.SearchViewModel
 
 val viewModelModule = module {
 
-    // добавить инициализацию viewmodel'ов для каждого экрана
-
     viewModel {
         SearchViewModel(get())
     }
 
     viewModel { (vacancyId: String) ->
-        VacancyDetailsViewModel(vacancyId, get())
+        VacancyDetailsViewModel(vacancyId, get(), get())
     }
 
 }

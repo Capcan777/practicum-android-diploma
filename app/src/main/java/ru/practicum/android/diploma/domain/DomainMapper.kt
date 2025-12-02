@@ -69,7 +69,8 @@ class DomainMapper {
         )
     }
 
-    private fun mapAddress(dto: AddressDto): Address {
+    private fun mapAddress(dto: AddressDto?): Address? {
+        if (dto == null) return null
         return Address(
             city = dto.city,
             street = dto.street,

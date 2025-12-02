@@ -28,9 +28,6 @@ fun NavGraph(navController: NavHostController) {
                     onBack = { navController.popBackStack() },
                     onShare = {
                         // обработка функции поделиться
-                    },
-                    onToggleFavorite = {
-                        // обработка функции добавить в избранное
                     }
                 )
             } else {

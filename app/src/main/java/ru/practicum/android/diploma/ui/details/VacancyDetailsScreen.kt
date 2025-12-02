@@ -1,5 +1,7 @@
 package ru.practicum.android.diploma.ui.details
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -46,16 +50,19 @@ import ru.practicum.android.diploma.ui.common.AppBar
 import ru.practicum.android.diploma.ui.details.state.VacancyDetailsScreenState
 import ru.practicum.android.diploma.util.SalaryDisplay
 
+private const val FAVOURITE_SCALE = 1.12f
+private const val DEFAULT_SCALE = 1f
+
 @Composable
 fun VacancyDetailsScreen(
     vacancyId: String,
     navController: NavController,
     onBack: () -> Unit,
     onShare: () -> Unit,
-    onToggleFavorite: () -> Unit,
     viewModel: VacancyDetailsViewModel = koinViewModel { parametersOf(vacancyId) }
 ) {
     val screenState by viewModel.screenState.collectAsState()
+    val isFavourite by viewModel.isFavourite.collectAsState()
 
     Scaffold(
         topBar = {
@@ -68,14 +75,13 @@ fun VacancyDetailsScreen(
                             // обработка функции поделиться
                         }
                     ) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = "Поделиться")
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = stringResource(R.string.share_vacancy)
+                        )
                     }
-                    IconButton(
-                        onClick = {
-                            // обработка функции добавить в избранное
-                        }
-                    ) {
-                        Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "В избранное")
+                    FavoriteButton(isFavourite = isFavourite) {
+                        if (screenState is VacancyDetailsScreenState.Content) viewModel.toggleFavorite()
                     }
                 }
             )
@@ -214,6 +220,26 @@ fun CompanyLogo(logoUrl: String?) {
                 .size(48.dp)
                 .clip(VacancyTheme.shapes.shape12dp),
             contentScale = ContentScale.Crop
+        )
+    }
+}
+
+@Composable
+private fun FavoriteButton(
+    isFavourite: Boolean,
+    onToggle: () -> Unit
+) {
+    val inactiveColor = VacancyTheme.colorScheme.onSurface
+    val targetColor = if (isFavourite) VacancyTheme.colorScheme.error else inactiveColor
+    val animatedTint by animateColorAsState(targetColor)
+    val scale by animateFloatAsState(if (isFavourite) FAVOURITE_SCALE else DEFAULT_SCALE)
+
+    IconButton(onClick = onToggle) {
+        Icon(
+            imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+            contentDescription = stringResource(R.string.add_vacancy_to_favourite),
+            tint = animatedTint,
+            modifier = Modifier.scale(scale)
         )
     }
 }
