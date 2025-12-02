@@ -7,10 +7,10 @@ import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.SalaryRange
 import ru.practicum.android.diploma.domain.models.Vacancy
 
-class FavVacanciesDbConvertor {
+private const val EMPLOYER_PARTS = 3
+private const val EMPLOYER_MIN_PARTS = 2
 
-    private val employerParts = 3
-    private val employerMinParts = 2
+class FavVacanciesDbConvertor {
 
     fun map(vacancyEntity: VacancyEntity): Vacancy {
         return Vacancy(
@@ -106,14 +106,14 @@ class FavVacanciesDbConvertor {
 
     fun parseEmployerString(s: String?): Employer {
         if (s.isNullOrBlank()) return Employer(id = "", name = "", logoUrl = "")
-        val parts = s.split("|", limit = employerParts)
+        val parts = s.split("|", limit = EMPLOYER_PARTS)
         return when {
-            parts.size == employerParts -> Employer(
+            parts.size == EMPLOYER_PARTS -> Employer(
                 id = parts[0],
                 name = parts[1],
                 logoUrl = parts[2]
             )
-            parts.size == employerMinParts -> Employer(
+            parts.size == EMPLOYER_MIN_PARTS -> Employer(
                 id = parts[0],
                 name = parts[1],
                 logoUrl = ""

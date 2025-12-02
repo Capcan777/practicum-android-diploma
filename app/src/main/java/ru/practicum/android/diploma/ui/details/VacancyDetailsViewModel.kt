@@ -79,11 +79,9 @@ class VacancyDetailsViewModel(
     }
 
     fun toggleFavorite() {
+        val contentState = screenState.value as? VacancyDetailsScreenState.Content ?: return
         viewModelScope.launch {
             val current = _isFavourite.value
-            val contentState = screenState.value as? VacancyDetailsScreenState.Content
-            if (contentState == null) return@launch
-
             val vacancy = contentState.vacancy
             if (!current) {
                 favVacanciesInteractor.addFavVacancy(vacancy)

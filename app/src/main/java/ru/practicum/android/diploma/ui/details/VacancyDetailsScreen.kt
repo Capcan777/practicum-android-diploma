@@ -50,6 +50,9 @@ import ru.practicum.android.diploma.ui.common.AppBar
 import ru.practicum.android.diploma.ui.details.state.VacancyDetailsScreenState
 import ru.practicum.android.diploma.util.SalaryDisplay
 
+private const val FAVOURITE_SCALE = 1.12f
+private const val DEFAULT_SCALE = 1f
+
 @Composable
 fun VacancyDetailsScreen(
     vacancyId: String,
@@ -226,13 +229,10 @@ private fun FavoriteButton(
     isFavourite: Boolean,
     onToggle: () -> Unit
 ) {
-    val favouriteScale = 1.12f
-    val defaultScale = 1f
-
     val inactiveColor = VacancyTheme.colorScheme.onSurface
     val targetColor = if (isFavourite) VacancyTheme.colorScheme.error else inactiveColor
     val animatedTint by animateColorAsState(targetColor)
-    val scale by animateFloatAsState(if (isFavourite) favouriteScale else defaultScale)
+    val scale by animateFloatAsState(if (isFavourite) FAVOURITE_SCALE else DEFAULT_SCALE)
 
     IconButton(onClick = onToggle) {
         Icon(
