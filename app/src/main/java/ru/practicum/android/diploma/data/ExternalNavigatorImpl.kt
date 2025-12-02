@@ -8,6 +8,8 @@ import ru.practicum.android.diploma.domain.models.SalaryRange
 import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.util.ResourceProvider
 
+private const val DESCRIPTION_PREVIEW_LENGTH = 200
+
 class ExternalNavigatorImpl(
     private val application: Application,
     private val resourceProvider: ResourceProvider
@@ -40,7 +42,7 @@ class ExternalNavigatorImpl(
                 .append(salaryRangeToStr(it))
         }
         strBuilder.append("\n\n")
-        strBuilder.append(vacancy.description.take(200))
+        strBuilder.append(vacancy.description.take(DESCRIPTION_PREVIEW_LENGTH))
         strBuilder.append("...")
         vacancy.url?.let { strBuilder.append("\n\n").append(it) }
         return strBuilder.toString()
@@ -52,7 +54,9 @@ class ExternalNavigatorImpl(
             salary.from != null && salary.to != null ->
                 if (salary.from == salary.to) {
                     "$salary.from$curr"
-                } else "$salary.from — $salary.to$curr"
+                } else {
+                    "$salary.from — $salary.to$curr"
+                }
 
             salary.from != null -> "от $salary.from$curr"
             salary.to != null -> "до $salary.to$curr"
