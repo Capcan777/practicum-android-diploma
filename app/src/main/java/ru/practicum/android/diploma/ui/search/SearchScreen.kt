@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
@@ -27,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +67,25 @@ fun SearchScreen(
     val screenState by viewModel.screenState.collectAsState(initial = SearchScreenState.Nothing)
     val vacancies = (screenState as? SearchScreenState.Content)?.vacancies ?: emptyList()
     var searchQuery by remember { mutableStateOf("") }
+    val isLoadingNextPage by viewModel.isLoadingNextPage.collectAsState()
+    val hasMorePages by viewModel.hasMorePages.collectAsState()
+
+    val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(lazyListState.isScrollInProgress) {
+        if (!lazyListState.isScrollInProgress) {
+            val layoutInfo = lazyListState.layoutInfo
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
+            val totalItemsCount = layoutInfo.totalItemsCount
+
+            val isAtEnd = lastVisibleItem?.index == totalItemsCount - 1
+            val hasMoreToLoad = hasMorePages && !isLoadingNextPage && vacancies.isNotEmpty()
+
+            if (isAtEnd && hasMoreToLoad) {
+                viewModel.loadNextPage()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -161,9 +183,14 @@ fun SearchScreen(
                         textMessage = stringResource(R.string.found_count_vacancies, vacancies.size)
                     )
                 }
-                VacancyListItem(vacancies = state.vacancies, onItemClick = { vacancyId ->
-                    navController.navigate(Routes.createVacancyDetailsRoute(vacancyId))
-                })
+                VacancyListItem(
+                    vacancies = state.vacancies,
+                    onItemClick = { vacancyId ->
+                        navController.navigate(Routes.createVacancyDetailsRoute(vacancyId))
+                    },
+                    lazyListState = lazyListState,
+                    isLoadingNextPage = isLoadingNextPage,
+                )
             }
 
             is SearchScreenState.Error.NoConnection -> {
@@ -228,17 +255,33 @@ fun SearchPlaceholder() {
 @Composable
 fun VacancyListItem(
     vacancies: List<VacancyUiModel>,
-    onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit,
+    lazyListState: LazyListState,
+    isLoadingNextPage: Boolean,
 ) {
     LazyColumn(
+        state = lazyListState,
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(vacancies) { uiVacancy ->
             VacancyRow(
                 vacancyUiModel = uiVacancy,
                 onClick = { onItemClick(uiVacancy.vacancy.id) }
             )
+        }
+
+        if (isLoadingNextPage) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
         }
     }
 }

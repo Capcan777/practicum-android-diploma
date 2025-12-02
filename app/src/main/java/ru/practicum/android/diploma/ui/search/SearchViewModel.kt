@@ -76,7 +76,7 @@ class SearchViewModel(
                 searchInteractor.searchVacancies(request).collect { searchOutcome ->
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
-                            handleSearchResult(searchOutcome, isFirstPage = false)
+                            handleSearchResult(searchOutcome, isFirstPage = true)
                         }
                         is SearchOutcome.Error -> {
                             handleError(searchOutcome)
@@ -96,32 +96,38 @@ class SearchViewModel(
     fun loadNextPage() {
         val nextPage = _currentPage.value + 1
 
-        if (shouldNotLoadNextPage(nextPage)) {
+        if (shouldNotLoadNextPage()) {
             return
         }
 
         _isLoadingNextPage.value = true
 
         viewModelScope.launch {
-            searchInteractor.loadNextPage(_searchText.value, nextPage).collect { searchOutcome ->
-                when (searchOutcome) {
-                    is SearchOutcome.SearchResult -> {
-                        handleSearchResult(searchOutcome, isFirstPage = false)
-                        _isLoadingNextPage.value = false
-                    }
-                    is SearchOutcome.Error -> {
-                        handleError(searchOutcome)
+            try {
+                searchInteractor.loadNextPage(_searchText.value, nextPage).collect { searchOutcome ->
+                    when (searchOutcome) {
+                        is SearchOutcome.SearchResult -> {
+                            handleSearchResult(searchOutcome, isFirstPage = false)
+                        }
+                        is SearchOutcome.Error -> {
+                            handleError(searchOutcome)
+                        }
                     }
                 }
+            } catch (_: IOException) {
+                _screenState.value = SearchScreenState.Error.NoConnection
+            } catch (_: HttpException) {
+                _screenState.value = SearchScreenState.Error.ServerError
+            } finally {
+                _isLoadingNextPage.value = false
             }
         }
     }
 
-    private fun shouldNotLoadNextPage(nextPage: Int): Boolean {
+    private fun shouldNotLoadNextPage(): Boolean {
         return _isLoadingNextPage.value ||
             !_hasMorePages.value ||
-            _searchText.value.isEmpty() ||
-            nextPage <= _currentPage.value
+            _searchText.value.isEmpty()
     }
 
     private fun handleSearchResult(searchResult: SearchOutcome.SearchResult, isFirstPage: Boolean) {
