@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.search
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,12 +31,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,7 +49,6 @@ import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import ru.practicum.android.diploma.R
@@ -82,11 +78,10 @@ fun SearchScreen(
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
             val totalItemsCount = layoutInfo.totalItemsCount
 
-            if (lastVisibleItem?.index == totalItemsCount - 1
-                && hasMorePages
-                && !isLoadingNextPage
-                && vacancies.isNotEmpty()
-            ) {
+            val isAtEnd = lastVisibleItem?.index == totalItemsCount - 1
+            val hasMoreToLoad = hasMorePages && !isLoadingNextPage && vacancies.isNotEmpty()
+
+            if (isAtEnd && hasMoreToLoad) {
                 viewModel.loadNextPage()
             }
         }

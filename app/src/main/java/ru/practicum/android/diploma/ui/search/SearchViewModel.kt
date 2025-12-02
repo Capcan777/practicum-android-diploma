@@ -108,15 +108,17 @@ class SearchViewModel(
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
                             handleSearchResult(searchOutcome, isFirstPage = false)
-                            _isLoadingNextPage.value = false
                         }
                         is SearchOutcome.Error -> {
                             handleError(searchOutcome)
-                            _isLoadingNextPage.value = false
                         }
                     }
                 }
-            } catch (e: Exception) {
+            } catch (_: IOException) {
+                _screenState.value = SearchScreenState.Error.NoConnection
+            } catch (_: HttpException) {
+                _screenState.value = SearchScreenState.Error.ServerError
+            } finally {
                 _isLoadingNextPage.value = false
             }
         }
