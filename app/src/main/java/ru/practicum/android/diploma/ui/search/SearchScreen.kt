@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.search
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -69,8 +70,10 @@ fun SearchScreen(
     var searchQuery by remember { mutableStateOf("") }
     val isLoadingNextPage by viewModel.isLoadingNextPage.collectAsState()
     val hasMorePages by viewModel.hasMorePages.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
 
     val lazyListState = rememberLazyListState()
+    val context = LocalContext.current
 
     LaunchedEffect(lazyListState.isScrollInProgress) {
         if (!lazyListState.isScrollInProgress) {
@@ -159,6 +162,14 @@ fun SearchScreen(
             )
         )
 
+        // Обработка Toast сообщений
+        LaunchedEffect(toastMessage) {
+            toastMessage?.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                viewModel.clearToastMessage()
+            }
+        }
+
         if (searchQuery.isEmpty()) SearchPlaceholder()
 
         when (val state = screenState) {
@@ -190,6 +201,8 @@ fun SearchScreen(
                     },
                     lazyListState = lazyListState,
                     isLoadingNextPage = isLoadingNextPage,
+                    hasMorePages = hasMorePages,
+                    onRetryClick = { viewModel.retryLastFailedPage() }
                 )
             }
 
@@ -258,6 +271,8 @@ fun VacancyListItem(
     onItemClick: (String) -> Unit,
     lazyListState: LazyListState,
     isLoadingNextPage: Boolean,
+    hasMorePages: Boolean,
+    onRetryClick: () -> Unit
 ) {
     LazyColumn(
         state = lazyListState,
@@ -283,6 +298,39 @@ fun VacancyListItem(
                 }
             }
         }
+        // В макете нет примера этой кнопки, поэтому пока убрал из ui
+        /*else if (hasMorePages) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Не удалось загрузить данные",
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        style = VacancyTheme.typography.regular12,
+                        color = VacancyTheme.colorScheme.onSurfaceVariant
+                    )
+                    Button(onClick = onRetryClick) {
+                        Text("Повторить")
+                    }
+                }
+            }
+        } else if (vacancies.isNotEmpty()) {
+            item {
+                Text(
+                    text = "Это все вакансии",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center,
+                    style = VacancyTheme.typography.regular12,
+                    color = VacancyTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }*/
     }
 }
 
