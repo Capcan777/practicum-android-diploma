@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.search
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +10,7 @@ import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.domain.SearchInteractor
 import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.domain.models.SearchOutcome
+import ru.practicum.android.diploma.ui.common.Event
 import ru.practicum.android.diploma.ui.search.state.SearchScreenState
 import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
 import ru.practicum.android.diploma.util.debounce
@@ -35,9 +35,13 @@ class SearchViewModel(
     private val _hasMorePages = MutableStateFlow(true)
     val hasMorePages = _hasMorePages.asStateFlow()
 
-    private var currentVacancies = mutableListOf<VacancyUiModel>()
+    private val _toastMessage = MutableStateFlow<Event<String>?>(null)
+    val toastMessage = _toastMessage.asStateFlow()
 
-    private val logTag = "SearchViewModel"
+    private var _retryPage: Int? = null
+    private var _retryQuery: String? = null
+
+    private var currentVacancies = mutableListOf<VacancyUiModel>()
 
     private val debounceHandler = debounce<String>(
         SEARCH_DEBOUNCE_DELAY,
@@ -78,16 +82,15 @@ class SearchViewModel(
                         is SearchOutcome.SearchResult -> {
                             handleSearchResult(searchOutcome, isFirstPage = true)
                         }
+
                         is SearchOutcome.Error -> {
-                            handleError(searchOutcome)
+                            handleError(searchOutcome, isFirstPage = true)
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                Log.e(logTag, "HTTP error: ${e.message}", e)
+            } catch (_: HttpException) {
                 _screenState.value = SearchScreenState.Error.ServerError
-            } catch (e: IOException) {
-                Log.e(logTag, "Network error: ${e.message}", e)
+            } catch (_: IOException) {
                 _screenState.value = SearchScreenState.Error.NoConnection
             }
         }
@@ -100,6 +103,9 @@ class SearchViewModel(
             return
         }
 
+        _retryPage = nextPage
+        _retryQuery = _searchText.value
+
         _isLoadingNextPage.value = true
 
         viewModelScope.launch {
@@ -108,20 +114,59 @@ class SearchViewModel(
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
                             handleSearchResult(searchOutcome, isFirstPage = false)
+                            _retryPage = null
+                            _retryQuery = null
                         }
+
                         is SearchOutcome.Error -> {
-                            handleError(searchOutcome)
+                            handleError(searchOutcome, isFirstPage = false)
                         }
                     }
                 }
             } catch (_: IOException) {
-                _screenState.value = SearchScreenState.Error.NoConnection
+                handlePaginationError("Нет подключения к интернету")
             } catch (_: HttpException) {
-                _screenState.value = SearchScreenState.Error.ServerError
+                handlePaginationError("Ошибка сервера")
             } finally {
                 _isLoadingNextPage.value = false
             }
         }
+    }
+
+    fun retryLastFailedPage() {
+        val retryPage = _retryPage ?: return
+        val retryQuery = _retryQuery ?: return
+
+        _isLoadingNextPage.value = true
+
+        viewModelScope.launch {
+            try {
+                searchInteractor.loadNextPage(retryQuery, retryPage).collect { searchOutcome ->
+                    when (searchOutcome) {
+                        is SearchOutcome.SearchResult -> {
+                            handleSearchResult(searchOutcome, isFirstPage = false)
+                            _retryPage = null
+                            _retryQuery = null
+                        }
+
+                        is SearchOutcome.Error -> {
+                            handleError(searchOutcome, isFirstPage = false)
+                        }
+                    }
+                }
+            } catch (_: IOException) {
+                handlePaginationError("Не удалось загрузить данные. Проверьте подключение")
+            } catch (_: HttpException) {
+                handlePaginationError("Ошибка сервера при загрузке данных")
+            } finally {
+                _isLoadingNextPage.value = false
+            }
+        }
+    }
+
+    private fun handlePaginationError(message: String) {
+        _toastMessage.value = Event(message)
+        _isLoadingNextPage.value = false
     }
 
     private fun shouldNotLoadNextPage(): Boolean {
@@ -157,29 +202,39 @@ class SearchViewModel(
                     vacancies = currentVacancies.toList()
                 )
 
-                // проверка доступности страниц
                 _hasMorePages.value = searchResult.currentPage < searchResult.totalPages - 1
             }
         }
     }
 
-    fun handleError(error: SearchOutcome.Error) {
-        when (error.type) {
-            DomainError.NoConnection -> {
-                _screenState.value = SearchScreenState.Error.NoConnection
-            }
-            DomainError.OtherError -> {
-                _screenState.value = SearchScreenState.Error.ServerError
-            }
+    private fun handleError(error: SearchOutcome.Error, isFirstPage: Boolean) {
+        if (isFirstPage) {
+            when (error.type) {
+                DomainError.NoConnection -> {
+                    _screenState.value = SearchScreenState.Error.NoConnection
+                }
 
-            else -> {
-                _screenState.value = SearchScreenState.Error.ServerError
+                DomainError.NotFound -> {
+                    _screenState.value = SearchScreenState.Error.NotFound
+                }
+
+                DomainError.OtherError -> {
+                    _screenState.value = SearchScreenState.Error.ServerError
+                }
             }
+        } else {
+            // Пока оставил тут, так как нет конкретных ошибок, если что перенесём
+            val errorMessage = when (error.type) {
+                DomainError.NoConnection -> "Не удалось загрузить данные. Проверьте подключение"
+                DomainError.NotFound -> "Данные не найдены"
+                DomainError.OtherError -> "Ошибка сервера при загрузке данных"
+            }
+            _toastMessage.value = Event(errorMessage)
+            _isLoadingNextPage.value = false
         }
     }
 
     private fun createSearchRequest(query: String, page: Int): SearchRequest {
-        // брать параметры из фильтрации
         return SearchRequest(
             industry = null,
             text = query,
@@ -193,11 +248,17 @@ class SearchViewModel(
         _currentPage.value = 0
         _isLoadingNextPage.value = false
         _hasMorePages.value = true
+        _retryPage = null
+        _retryQuery = null
         currentVacancies.clear()
     }
 
     fun clearCountVacancies() {
         _screenState.value = SearchScreenState.Nothing
+    }
+
+    fun clearToastMessage() {
+        _toastMessage.value = null
     }
 
     companion object {
