@@ -15,6 +15,9 @@ interface VacancyDao {
     @Query("SELECT * FROM vacancies_table")
     suspend fun getFavoriteVacancies(): List<VacancyEntity>
 
-    @Delete(entity = VacancyEntity::class)
-    suspend fun deleteVacancyFromFavorites(vacancy: VacancyEntity)
+    @Query("DELETE FROM vacancies_table WHERE vacancyId = :vacancyId")
+    suspend fun deleteVacancyById(vacancyId: String)
+
+    @Query("SELECT COUNT(*) FROM vacancies_table WHERE vacancyId = :vacancyId")
+    suspend fun isVacancyExists(vacancyId: String): Int
 }

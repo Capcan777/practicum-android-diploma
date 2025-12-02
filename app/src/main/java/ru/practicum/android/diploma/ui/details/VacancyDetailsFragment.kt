@@ -34,8 +34,7 @@ class VacancyDetailsFragment : Fragment() {
                         vacancyId = vacancyId ?: "",
                         navController = navController,
                         onBack = { navController.popBackStack() },
-                        onShare = { },
-                        onToggleFavorite = { }
+                        onShare = { }
                     )
                 }
             }

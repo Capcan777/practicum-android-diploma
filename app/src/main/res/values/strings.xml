@@ -20,6 +20,7 @@
     <string name="currency_usd">USD</string>
     <string name="currency_aud">AUD</string>
     <string name="currency_eur">EUR</string>
+    <string name="currency_hkd">HKD</string>
     <string name="currency_rub_sym">₽</string>
     <string name="currency_usd_sym">$</string>
     <string name="currency_eur_sym">€</string>
@@ -29,5 +30,8 @@
 
     <string name="required_experience">Требуемый опыт</string>
     <string name="vacancy_desc">Описание вакансии</string>
+
+    <string name="share_vacancy">Поделиться</string>
+    <string name="add_vacancy_to_favourite">Добавить в избранное</string>
 
 </resources>

@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import ru.practicum.android.diploma.domain.FavVacanciesInteractor
 import ru.practicum.android.diploma.domain.SearchInteractor
 import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.domain.models.VacancyOutcome
@@ -14,13 +16,20 @@ import ru.practicum.android.diploma.ui.details.state.VacancyDetailsScreenState
 
 class VacancyDetailsViewModel(
     private val vacancyId: String,
-    private val searchInteractor: SearchInteractor
+    private val searchInteractor: SearchInteractor,
+    private val favVacanciesInteractor: FavVacanciesInteractor
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<VacancyDetailsScreenState>(VacancyDetailsScreenState.Loading)
     val screenState = _screenState.asStateFlow()
 
+    private val _isFavourite = MutableStateFlow(false)
+    val isFavourite: StateFlow<Boolean> = _isFavourite.asStateFlow()
+
     init {
+        viewModelScope.launch {
+            _isFavourite.value = favVacanciesInteractor.isVacancyFavorite(vacancyId)
+        }
         loadVacancyDetails()
     }
 
@@ -65,6 +74,20 @@ class VacancyDetailsViewModel(
 
             else -> {
                 _screenState.value = VacancyDetailsScreenState.Error.ServerError
+            }
+        }
+    }
+
+    fun toggleFavorite() {
+        viewModelScope.launch {
+            val current = _isFavourite.value
+            val vacancy = (screenState.value as? VacancyDetailsScreenState.Content)?.vacancy ?: return@launch
+            if (!current) {
+                favVacanciesInteractor.addFavVacancy(vacancy)
+                _isFavourite.value = true
+            } else {
+                favVacanciesInteractor.removeFavVacancy(vacancy)
+                _isFavourite.value = false
             }
         }
     }

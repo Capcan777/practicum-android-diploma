@@ -78,4 +78,6 @@ val dataModule = module {
     single<NetworkClient> {
         RetrofitNetworkClient(get(), androidContext()) // Уберите androidContext(), если не нужен
     }
+
+    single { get<AppDatabase>().vacancyDao() }
 }
