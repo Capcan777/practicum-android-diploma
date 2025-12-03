@@ -203,7 +203,7 @@ fun VacancyDetailsScreen(
                     if (contacts != null &&
                         (contacts.name?.isNotBlank() == true ||
                             contacts.email?.isNotBlank() == true ||
-                            (contacts.phones?.isNotEmpty() == true))
+                            contacts.phones?.isNotEmpty() == true)
                     ) {
                         Spacer(modifier = Modifier.padding(top = 32.dp))
 
