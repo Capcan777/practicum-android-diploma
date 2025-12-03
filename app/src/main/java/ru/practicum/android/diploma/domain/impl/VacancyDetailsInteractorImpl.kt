@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.domain.impl
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
@@ -18,6 +19,7 @@ class VacancyDetailsInteractorImpl(
         val remoteResult: VacancyOutcome? = try {
             vacancyRepository.getVacancyById(vacancyId).firstOrNull()
         } catch (e: IOException) {
+            Log.e("VacancyDetailsInteractor", "Error: ${e.message}")
             null
         }
 
