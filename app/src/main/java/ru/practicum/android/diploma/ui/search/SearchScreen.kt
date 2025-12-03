@@ -213,7 +213,7 @@ fun SearchScreen(
                 Placeholder(
                     imageResId = R.drawable.placeholder_no_connection,
                     title = stringResource(R.string.no_connection),
-                    modifier = Modifier
+                    modifier = Modifier.padding(top = 135.dp)
                 )
             }
 
