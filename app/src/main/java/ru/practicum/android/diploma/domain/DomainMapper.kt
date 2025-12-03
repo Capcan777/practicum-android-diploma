@@ -82,10 +82,6 @@ class DomainMapper {
     }
 
     private fun mapContacts(dto: ContactsDto): Contacts {
-        Log.d(
-            "DomainMapper",
-            "mapContacts: id=${dto.id}, name=${dto.name}, email=${dto.email}, phone=${dto.phone}, phone.size=${dto.phone?.size}"
-        )
         val phones = dto.phone?.mapNotNull { phoneString ->
             phoneString.takeIf { it.isNotBlank() }?.let {
                 Phone(
@@ -94,7 +90,6 @@ class DomainMapper {
                 )
             }
         }
-        Log.d("DomainMapper", "mapContacts: mapped phones=${phones?.map { it.formatted }}, phones.size=${phones?.size}")
         return Contacts(
             name = dto.name,
             email = dto.email,
