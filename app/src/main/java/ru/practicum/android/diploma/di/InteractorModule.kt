@@ -4,9 +4,11 @@ import org.koin.dsl.module
 import ru.practicum.android.diploma.domain.FavVacanciesInteractor
 import ru.practicum.android.diploma.domain.SearchInteractor
 import ru.practicum.android.diploma.domain.SharingInteractor
+import ru.practicum.android.diploma.domain.VacancyDetailsInteractor
 import ru.practicum.android.diploma.domain.impl.FavVacanciesInteractorImpl
 import ru.practicum.android.diploma.domain.impl.SearchInteractorImpl
 import ru.practicum.android.diploma.domain.impl.SharingInteractorImpl
+import ru.practicum.android.diploma.domain.impl.VacancyDetailsInteractorImpl
 
 val interactorModule = module {
 
@@ -20,5 +22,9 @@ val interactorModule = module {
 
     single<SharingInteractor> {
         SharingInteractorImpl(get())
+    }
+
+    single<VacancyDetailsInteractor> {
+        VacancyDetailsInteractorImpl(get())
     }
 }

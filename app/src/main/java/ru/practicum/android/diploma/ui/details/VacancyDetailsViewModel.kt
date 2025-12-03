@@ -9,15 +9,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.practicum.android.diploma.domain.FavVacanciesInteractor
-import ru.practicum.android.diploma.domain.SearchInteractor
 import ru.practicum.android.diploma.domain.SharingInteractor
+import ru.practicum.android.diploma.domain.VacancyDetailsInteractor
 import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.domain.models.VacancyOutcome
 import ru.practicum.android.diploma.ui.details.state.VacancyDetailsScreenState
 
 class VacancyDetailsViewModel(
     private val vacancyId: String,
-    private val searchInteractor: SearchInteractor,
+    private val vacancyDetailsInteractor: VacancyDetailsInteractor,
     private val favVacanciesInteractor: FavVacanciesInteractor,
     private val sharingInteractor: SharingInteractor
 ) : ViewModel() {
@@ -40,7 +40,7 @@ class VacancyDetailsViewModel(
             _screenState.value = VacancyDetailsScreenState.Loading
 
             try {
-                searchInteractor.getVacancyById(vacancyId).collect { vacancyOutcome ->
+                vacancyDetailsInteractor.getVacancyById(vacancyId).collect { vacancyOutcome ->
                     when (vacancyOutcome) {
                         is VacancyOutcome.Success -> {
                             handleVacancy(vacancyOutcome)

@@ -1,5 +1,7 @@
 package ru.practicum.android.diploma.data
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import ru.practicum.android.diploma.data.db.converters.FavVacanciesDbConvertor
 import ru.practicum.android.diploma.data.db.dao.VacancyDao
 import ru.practicum.android.diploma.data.db.entity.VacancyEntity
@@ -11,7 +13,11 @@ class FavVacanciesRepositoryImpl(
     private val favVacanciesDbConvertor: FavVacanciesDbConvertor
 ) : FavVacanciesRepository {
     override suspend fun addFavVacancy(vacancy: Vacancy) {
-        vacancyDao.addVacancyToFavorites(convertFromVacancy(vacancy))
+        val entity = convertFromVacancy(vacancy)
+        val exists = vacancyDao.isVacancyExists(entity.vacancyId) > 0
+        if (!exists) {
+            vacancyDao.addVacancyToFavorites(entity)
+        }
     }
 
     override suspend fun removeFavVacancy(vacancy: Vacancy) {
@@ -23,7 +29,16 @@ class FavVacanciesRepositoryImpl(
         return count > 0
     }
 
+    override suspend fun getFavVacancies(): Flow<List<Vacancy>> = flow {
+        val vacancies = vacancyDao.getFavoriteVacancies()
+        emit(convertFromFavVacanciesEntity(vacancies))
+    }
+
     private fun convertFromVacancy(vacancy: Vacancy): VacancyEntity {
         return favVacanciesDbConvertor.map(vacancy)
+    }
+
+    private fun convertFromFavVacanciesEntity(vacancies: List<VacancyEntity>): List<Vacancy> {
+        return vacancies.map { vacancy -> favVacanciesDbConvertor.map(vacancy) }
     }
 }
