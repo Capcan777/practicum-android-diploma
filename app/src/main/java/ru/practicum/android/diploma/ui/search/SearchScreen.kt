@@ -60,6 +60,7 @@ import ru.practicum.android.diploma.navigation.Routes
 import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.search.state.SearchScreenState
 import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
+import ru.practicum.android.diploma.util.SalaryDisplay
 
 @Composable
 fun SearchScreen(
@@ -392,10 +393,10 @@ fun VacancyRow(
                 color = VacancyTheme.colorScheme.inverseSurface
 
             )
-            Text(
-                text = "${vacancyUiModel.vacancy.salary?.from}",
-                style = VacancyTheme.typography.regular16,
-                color = VacancyTheme.colorScheme.inverseSurface
+            SalaryDisplay(
+                salaryRange = vacancyUiModel.vacancy.salary,
+                textStyle = VacancyTheme.typography.regular16,
+                textColor = VacancyTheme.colorScheme.inverseSurface
             )
         }
     }
