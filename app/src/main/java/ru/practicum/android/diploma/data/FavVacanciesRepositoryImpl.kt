@@ -1,7 +1,7 @@
 package ru.practicum.android.diploma.data
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import ru.practicum.android.diploma.data.db.converters.FavVacanciesDbConvertor
 import ru.practicum.android.diploma.data.db.dao.VacancyDao
 import ru.practicum.android.diploma.data.db.entity.VacancyEntity
@@ -29,9 +29,9 @@ class FavVacanciesRepositoryImpl(
         return count > 0
     }
 
-    override suspend fun getFavVacancies(): Flow<List<Vacancy>> = flow {
-        val vacancies = vacancyDao.getFavoriteVacancies()
-        emit(convertFromFavVacanciesEntity(vacancies))
+    override fun getFavVacancies(): Flow<List<Vacancy>> {
+        return vacancyDao.observeFavoriteVacancies()
+            .map { entities -> convertFromFavVacanciesEntity(entities) }
     }
 
     private fun convertFromVacancy(vacancy: Vacancy): VacancyEntity {

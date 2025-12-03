@@ -20,7 +20,7 @@ class FavVacanciesInteractorImpl(
         return favVacanciesRepository.isVacancyFavorite(vacancyId)
     }
 
-    override suspend fun getFavVacancies(): Flow<List<Vacancy>> {
+    override fun getFavVacancies(): Flow<List<Vacancy>> {
         return favVacanciesRepository.getFavVacancies()
     }
 }

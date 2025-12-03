@@ -10,5 +10,5 @@ interface FavVacanciesRepository {
 
     suspend fun isVacancyFavorite(vacancyId: String): Boolean
 
-    suspend fun getFavVacancies(): Flow<List<Vacancy>>
+    fun getFavVacancies(): Flow<List<Vacancy>>
 }
