@@ -249,7 +249,7 @@ fun VacancyDetailsScreen(
                     is VacancyDetailsScreenState.Error.NotFound -> {
                         Placeholder(
                             imageResId = R.drawable.placeholder_vacancy_delete_or_not_found,
-                            title = "Вакансия не найдена или\nудалена",
+                            title = stringResource(R.string.vacancy_delete_or_not_found),
                             modifier = Modifier.padding(187.dp)
                         )
                     }
