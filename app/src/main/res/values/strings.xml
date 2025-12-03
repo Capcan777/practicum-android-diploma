@@ -36,6 +36,10 @@
     <string name="add_vacancy_to_favourite">Добавить в избранное</string>
     <string name="salary_for_sharing">Зарплата</string>
     <string name="server_error">Ошибка сервера</string>
+    <string name="error_no_internet_connection">Нет подключения к интернету</string>
+    <string name="error_failed_to_load_data">Не удалось загрузить данные. Проверьте подключение</string>
+    <string name="error_server_loading_data">Ошибка сервера при загрузке данных</string>
+    <string name="error_data_not_found">Данные не найдены</string>
 
     <string name="team_working_on_app">Над приложением работали</string>
     <string name="vacancy_delete_or_not_found">Вакансия не найдена или\nудалена</string>

@@ -6,18 +6,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.domain.SearchInteractor
-import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.domain.models.SearchOutcome
 import ru.practicum.android.diploma.ui.common.Event
+import ru.practicum.android.diploma.ui.search.state.PaginationState
 import ru.practicum.android.diploma.ui.search.state.SearchScreenState
-import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
+import ru.practicum.android.diploma.ui.search.state.SearchStateHandler
+import ru.practicum.android.diploma.util.ResourceProvider
 import ru.practicum.android.diploma.util.debounce
 import java.io.IOException
 
 class SearchViewModel(
-    private val searchInteractor: SearchInteractor
+    private val searchInteractor: SearchInteractor,
+    private val resourceProvider: ResourceProvider
 ) : ViewModel() {
 
     private val _searchText = MutableStateFlow("")
@@ -25,23 +28,20 @@ class SearchViewModel(
     private val _screenState = MutableStateFlow<SearchScreenState>(SearchScreenState.Nothing)
     val screenState = _screenState.asStateFlow()
 
-    // State переменные для пагинации
-    private val _currentPage = MutableStateFlow(0)
-    val currentPage = _currentPage.asStateFlow()
-
-    private val _isLoadingNextPage = MutableStateFlow(false)
-    val isLoadingNextPage = _isLoadingNextPage.asStateFlow()
-
-    private val _hasMorePages = MutableStateFlow(true)
-    val hasMorePages = _hasMorePages.asStateFlow()
-
     private val _toastMessage = MutableStateFlow<Event<String>?>(null)
     val toastMessage = _toastMessage.asStateFlow()
 
-    private var _retryPage: Int? = null
-    private var _retryQuery: String? = null
+    private val paginationState = PaginationState()
+    val currentPage = paginationState.currentPage
+    val isLoadingNextPage = paginationState.isLoadingNextPage
+    val hasMorePages = paginationState.hasMorePages
 
-    private var currentVacancies = mutableListOf<VacancyUiModel>()
+    private val stateHandler = SearchStateHandler(
+        _screenState = _screenState,
+        _toastMessage = _toastMessage,
+        paginationState = paginationState,
+        resourceProvider = resourceProvider
+    )
 
     private val debounceHandler = debounce<String>(
         SEARCH_DEBOUNCE_DELAY,
@@ -80,11 +80,11 @@ class SearchViewModel(
                 searchInteractor.searchVacancies(request).collect { searchOutcome ->
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
-                            handleSearchResult(searchOutcome, isFirstPage = true)
+                            stateHandler.handleSearchResult(searchOutcome, isFirstPage = true)
                         }
 
                         is SearchOutcome.Error -> {
-                            handleError(searchOutcome, isFirstPage = true)
+                            stateHandler.handleError(searchOutcome, isFirstPage = true)
                         }
                     }
                 }
@@ -97,143 +97,77 @@ class SearchViewModel(
     }
 
     fun loadNextPage() {
-        val nextPage = _currentPage.value + 1
+        val nextPage = currentPage.value + 1
 
-        if (shouldNotLoadNextPage()) {
+        if (paginationState.shouldNotLoadNextPage(_searchText.value)) {
             return
         }
 
-        _retryPage = nextPage
-        _retryQuery = _searchText.value
-
-        _isLoadingNextPage.value = true
+        paginationState.setRetryInfo(nextPage, _searchText.value)
+        paginationState.setLoading(true)
 
         viewModelScope.launch {
             try {
                 searchInteractor.loadNextPage(_searchText.value, nextPage).collect { searchOutcome ->
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
-                            handleSearchResult(searchOutcome, isFirstPage = false)
-                            _retryPage = null
-                            _retryQuery = null
+                            stateHandler.handleSearchResult(searchOutcome, isFirstPage = false)
+                            paginationState.clearRetryInfo()
                         }
 
                         is SearchOutcome.Error -> {
-                            handleError(searchOutcome, isFirstPage = false)
+                            stateHandler.handleError(searchOutcome, isFirstPage = false)
                         }
                     }
                 }
             } catch (_: IOException) {
-                handlePaginationError("Нет подключения к интернету")
+                stateHandler.handlePaginationError(
+                    resourceProvider.getString(R.string.error_no_internet_connection)
+                )
             } catch (_: HttpException) {
-                handlePaginationError("Ошибка сервера")
+                stateHandler.handlePaginationError(
+                    resourceProvider.getString(R.string.server_error)
+                )
             } finally {
-                _isLoadingNextPage.value = false
+                paginationState.setLoading(false)
             }
         }
     }
 
     fun retryLastFailedPage() {
-        val retryPage = _retryPage ?: return
-        val retryQuery = _retryQuery ?: return
+        val retryPage = paginationState.retryPage ?: return
+        val retryQuery = paginationState.retryQuery ?: return
 
-        _isLoadingNextPage.value = true
+        paginationState.setLoading(true)
 
         viewModelScope.launch {
             try {
                 searchInteractor.loadNextPage(retryQuery, retryPage).collect { searchOutcome ->
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
-                            handleSearchResult(searchOutcome, isFirstPage = false)
-                            _retryPage = null
-                            _retryQuery = null
+                            stateHandler.handleSearchResult(searchOutcome, isFirstPage = false)
+                            paginationState.clearRetryInfo()
                         }
 
                         is SearchOutcome.Error -> {
-                            handleError(searchOutcome, isFirstPage = false)
+                            stateHandler.handleError(searchOutcome, isFirstPage = false)
                         }
                     }
                 }
             } catch (_: IOException) {
-                handlePaginationError("Не удалось загрузить данные. Проверьте подключение")
-            } catch (_: HttpException) {
-                handlePaginationError("Ошибка сервера при загрузке данных")
-            } finally {
-                _isLoadingNextPage.value = false
-            }
-        }
-    }
-
-    private fun handlePaginationError(message: String) {
-        _toastMessage.value = Event(message)
-        _isLoadingNextPage.value = false
-    }
-
-    private fun shouldNotLoadNextPage(): Boolean {
-        return _isLoadingNextPage.value ||
-            !_hasMorePages.value ||
-            _searchText.value.isEmpty()
-    }
-
-    private fun handleSearchResult(searchResult: SearchOutcome.SearchResult, isFirstPage: Boolean) {
-        val vacancyUiModels: List<VacancyUiModel> = searchResult.vacancies.map {
-            VacancyUiModel(it)
-        }
-
-        when {
-            searchResult.vacancies.isEmpty() -> {
-                if (isFirstPage) {
-                    _screenState.value = SearchScreenState.Error.NotFound
-                }
-                _hasMorePages.value = false
-            }
-
-            else -> {
-                if (isFirstPage) {
-                    currentVacancies.clear()
-                    currentVacancies.addAll(vacancyUiModels)
-                    _currentPage.value = searchResult.currentPage
-                } else {
-                    currentVacancies.addAll(vacancyUiModels)
-                    _currentPage.value = searchResult.currentPage
-                }
-
-                _screenState.value = SearchScreenState.Content(
-                    vacancies = currentVacancies.toList(),
-                    foundCount = searchResult.found
+                stateHandler.handlePaginationError(
+                    resourceProvider.getString(R.string.error_failed_to_load_data)
                 )
-
-                _hasMorePages.value = searchResult.currentPage < searchResult.totalPages - 1
+            } catch (_: HttpException) {
+                stateHandler.handlePaginationError(
+                    resourceProvider.getString(R.string.error_server_loading_data)
+                )
+            } finally {
+                paginationState.setLoading(false)
             }
         }
     }
 
-    private fun handleError(error: SearchOutcome.Error, isFirstPage: Boolean) {
-        if (isFirstPage) {
-            when (error.type) {
-                DomainError.NoConnection -> {
-                    _screenState.value = SearchScreenState.Error.NoConnection
-                }
-
-                DomainError.NotFound -> {
-                    _screenState.value = SearchScreenState.Error.NotFound
-                }
-
-                DomainError.OtherError -> {
-                    _screenState.value = SearchScreenState.Error.ServerError
-                }
-            }
-        } else {
-            // Пока оставил тут, так как нет конкретных ошибок, если что перенесём
-            val errorMessage = when (error.type) {
-                DomainError.NoConnection -> "Не удалось загрузить данные. Проверьте подключение"
-                DomainError.NotFound -> "Данные не найдены"
-                DomainError.OtherError -> "Ошибка сервера при загрузке данных"
-            }
-            _toastMessage.value = Event(errorMessage)
-            _isLoadingNextPage.value = false
-        }
-    }
 
     private fun createSearchRequest(query: String, page: Int): SearchRequest {
         return SearchRequest(
@@ -246,12 +180,8 @@ class SearchViewModel(
     }
 
     private fun resetPagination() {
-        _currentPage.value = 0
-        _isLoadingNextPage.value = false
-        _hasMorePages.value = true
-        _retryPage = null
-        _retryQuery = null
-        currentVacancies.clear()
+        paginationState.reset()
+        stateHandler.clearVacancies()
     }
 
     fun clearToastMessage() {
