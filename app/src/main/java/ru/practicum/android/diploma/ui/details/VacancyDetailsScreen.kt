@@ -200,39 +200,39 @@ fun VacancyDetailsScreen(
                         }
                     }
                     val contacts = vacancy.contacts
-                    if (contacts != null &&
-                        (contacts.name?.isNotBlank() == true ||
-                            contacts.email?.isNotBlank() == true ||
-                            contacts.phones?.isNotEmpty() == true)
-                    ) {
-                        Spacer(modifier = Modifier.padding(top = 32.dp))
+                    contacts?.let { contact ->
+                        if (contact.name?.isNotBlank() == true ||
+                            contact.email?.isNotBlank() == true ||
+                            contact.phones?.isNotEmpty() == true
+                        ) {
+                            Spacer(modifier = Modifier.padding(top = 32.dp))
 
-                        Text(
-                            text = stringResource(R.string.contacts),
-                            style = VacancyTheme.typography.medium22,
-                        )
-                        Spacer(modifier = Modifier.padding(top = 16.dp))
+                            Text(
+                                text = stringResource(R.string.contacts),
+                                style = VacancyTheme.typography.medium22,
+                            )
+                            Spacer(modifier = Modifier.padding(top = 16.dp))
 
-                        Column {
-                            contacts.name?.takeIf { it.isNotBlank() }?.let { name ->
-                                Text(
-                                    text = name,
-                                    style = VacancyTheme.typography.regular16,
-                                    modifier = Modifier.padding(bottom = 4.dp)
-                                )
-                            }
-                            contacts.phones?.forEach { phone ->
-                                if (phone.isNotBlank()) {
+                            Column {
+                                contacts.name?.takeIf { it.isNotBlank() }?.let { name ->
                                     Text(
-                                        text = phone,
+                                        text = name,
                                         style = VacancyTheme.typography.regular16,
                                         modifier = Modifier.padding(bottom = 4.dp)
                                     )
                                 }
+                                contacts.phones?.forEach { phone ->
+                                    if (phone.isNotBlank()) {
+                                        Text(
+                                            text = phone,
+                                            style = VacancyTheme.typography.regular16,
+                                            modifier = Modifier.padding(bottom = 4.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
-
                 }
             }
 
