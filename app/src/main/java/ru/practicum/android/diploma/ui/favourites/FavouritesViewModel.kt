@@ -21,14 +21,12 @@ class FavouritesViewModel(
     val screenState: StateFlow<FavouritesScreenState> = _screenState.asStateFlow()
 
     init {
-        _screenState.value = FavouritesScreenState.Loading
-        updateFavouriteList()
+        observeFavouriteList()
     }
 
-    fun updateFavouriteList() {
+    private fun observeFavouriteList() {
         viewModelScope.launch(Dispatchers.IO) {
-            favVacanciesInteractor
-                .getFavVacancies()
+            favVacanciesInteractor.getFavVacancies()
                 .collect { vacancies ->
                     loadResult(vacancies)
                 }
