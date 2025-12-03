@@ -39,8 +39,9 @@ fun NavGraph(navController: NavHostController) {
 
 data class Routes(val route: String) {
     companion object {
+        const val VACANCY_DETAILS_BASE = "vacancy_details"
         val Search = Routes("search")
-        val VacancyDetails = Routes("vacancy_details/{vacancyId}")
+        val VacancyDetails = Routes("$VACANCY_DETAILS_BASE/{vacancyId}")
         val Favourites = Routes("favourites")
         val SettingsFilter = Routes("filter")
         val About = Routes("about")
