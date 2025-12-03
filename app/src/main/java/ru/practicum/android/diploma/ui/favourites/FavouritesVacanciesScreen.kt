@@ -57,6 +57,7 @@ fun FavouritesVacanciesScreen(
             color = VacancyTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 8.dp)
                 .padding(horizontal = 16.dp, vertical = 19.dp)
         )
 
