@@ -87,9 +87,9 @@ class RetrofitNetworkClient(
     private fun createFilters(dto: SearchRequest): HashMap<String, String> {
         return HashMap<String, String>().apply {
             dto.industry?.let { put("industry", it.toString()) }
-            dto.text?.let { put("text", it) }
+//            dto.text?.let { put("text", it) }
             dto.salary?.let { put("salary", it.toString()) }
-            put("page", dto.page.toString())
+//            put("page", dto.page.toString())
             put("only_with_salary", dto.onlyWithSalary.toString())
         }
     }

@@ -199,7 +199,8 @@ class SearchViewModel(
                 }
 
                 _screenState.value = SearchScreenState.Content(
-                    vacancies = currentVacancies.toList()
+                    vacancies = currentVacancies.toList(),
+                    foundCount = searchResult.found
                 )
 
                 _hasMorePages.value = searchResult.currentPage < searchResult.totalPages - 1

@@ -35,6 +35,7 @@
     <string name="share_vacancy">Поделиться</string>
     <string name="add_vacancy_to_favourite">Добавить в избранное</string>
     <string name="salary_for_sharing">Зарплата</string>
+    <string name="server_error">Ошибка сервера</string>
 
     <string name="team_working_on_app">Над приложением работали</string>
 

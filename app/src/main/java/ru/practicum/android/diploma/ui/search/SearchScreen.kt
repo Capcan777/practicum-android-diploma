@@ -1,8 +1,10 @@
 package ru.practicum.android.diploma.ui.search
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,6 +60,7 @@ import ru.practicum.android.diploma.navigation.Routes
 import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.search.state.SearchScreenState
 import ru.practicum.android.diploma.ui.search.state.VacancyUiModel
+import ru.practicum.android.diploma.util.SalaryDisplay
 
 @Composable
 fun SearchScreen(
@@ -94,7 +97,7 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .padding(top = 19.dp)
+            .padding(top = 16.dp)
             .background(VacancyTheme.colorScheme.background)
     ) {
         Row(
@@ -191,7 +194,7 @@ fun SearchScreen(
                     CountVacancies(
                         screenState,
                         vacancies,
-                        textMessage = stringResource(R.string.found_count_vacancies, vacancies.size)
+                        textMessage = stringResource(R.string.found_count_vacancies, state.foundCount)
                     )
                 }
                 VacancyListItem(
@@ -209,12 +212,17 @@ fun SearchScreen(
             is SearchScreenState.Error.NoConnection -> {
                 Placeholder(
                     imageResId = R.drawable.placeholder_no_connection,
-                    title = stringResource(R.string.no_connection)
+                    title = stringResource(R.string.no_connection),
+                    modifier = Modifier.padding(top = 135.dp)
                 )
             }
 
             is SearchScreenState.Error.ServerError -> {
-                // показать экран ошибки сервера
+                Placeholder(
+                    imageResId = R.drawable.placeholder_server_error,
+                    title = stringResource(R.string.server_error),
+                    modifier = Modifier.padding(top = 135.dp)
+                )
             }
 
             is SearchScreenState.Error.NotFound -> {
@@ -231,7 +239,8 @@ fun SearchScreen(
                 }
                 Placeholder(
                     imageResId = R.drawable.placeholder_error_riecive,
-                    title = stringResource(R.string.not_found)
+                    title = stringResource(R.string.not_found),
+                    modifier = Modifier.padding(top = 111.dp)
                 )
             }
 
@@ -351,12 +360,17 @@ fun VacancyRow(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(logoUrl)
+                .crossfade(true)
                 .build(),
             imageLoader = imageLoader,
             contentDescription = null,
             placeholder = painterResource(id = R.drawable.placeholder_logo),
             modifier = Modifier
                 .size(48.dp)
+                .border(
+                    shape = VacancyTheme.shapes.shape12dp,
+                    border = BorderStroke(1.dp, VacancyTheme.colorScheme.secondaryContainer)
+                )
                 .clip(VacancyTheme.shapes.shape12dp),
             contentScale = ContentScale.Inside
         )
@@ -379,10 +393,10 @@ fun VacancyRow(
                 color = VacancyTheme.colorScheme.inverseSurface
 
             )
-            Text(
-                text = "${vacancyUiModel.vacancy.salary?.from}",
-                style = VacancyTheme.typography.regular16,
-                color = VacancyTheme.colorScheme.inverseSurface
+            SalaryDisplay(
+                salaryRange = vacancyUiModel.vacancy.salary,
+                textStyle = VacancyTheme.typography.regular16,
+                textColor = VacancyTheme.colorScheme.inverseSurface
             )
         }
     }

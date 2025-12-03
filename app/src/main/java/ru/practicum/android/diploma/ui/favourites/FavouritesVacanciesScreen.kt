@@ -54,9 +54,10 @@ fun FavouritesVacanciesScreen(
         Text(
             text = stringResource(R.string.favourites),
             style = VacancyTheme.typography.medium22,
-            color = VacancyTheme.colorScheme.onPrimaryContainer,
+            color = VacancyTheme.colorScheme.inverseSurface,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 8.dp)
                 .padding(horizontal = 16.dp, vertical = 19.dp)
         )
 
@@ -73,13 +74,17 @@ fun FavouritesVacanciesScreen(
             is FavouritesScreenState.Empty -> {
                 Placeholder(
                     imageResId = R.drawable.placeholder_empty_favourites,
-                    title = stringResource(R.string.empty_favourites)
+                    title = stringResource(R.string.empty_favourites),
+                    modifier = Modifier.padding(top = 171.dp)
                 )
             }
 
             is FavouritesScreenState.Error -> {
-                // сделать плейсхолдер
-                Text(state.message)
+                Placeholder(
+                    imageResId = R.drawable.placeholder_error_riecive,
+                    title = stringResource(R.string.not_found),
+                    modifier = Modifier.padding(top = 158.dp)
+                )
             }
 
             is FavouritesScreenState.Content -> {

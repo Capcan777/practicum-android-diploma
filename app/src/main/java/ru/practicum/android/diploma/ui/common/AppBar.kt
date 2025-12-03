@@ -42,14 +42,20 @@ fun AppBar(
             modifier = Modifier
                 .height(56.dp)
                 .fillMaxWidth()
+                .padding(top = 19.dp)
                 .padding(start = 4.dp, end = 8.dp)
         ) {
             IconButton(onClick = onBack) {
-                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = VacancyTheme.colorScheme.inverseSurface
+                )
             }
             Text(
                 text = title,
                 style = VacancyTheme.typography.medium22,
+                color = VacancyTheme.colorScheme.inverseSurface,
                 modifier = Modifier.padding(start = 8.dp)
             )
 

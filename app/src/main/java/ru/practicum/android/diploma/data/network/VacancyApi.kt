@@ -12,7 +12,7 @@ interface VacancyApi {
     @GET("vacancies")
     suspend fun getVacancies(
         @Header("Content-Type") contentType: String = "application/json",
-        @QueryMap(encoded = true) filters: Map<String, String>,
+        @QueryMap filters: Map<String, String>,
         @Query("text") text: String,
         @Query("page") page: Int
     ): SearchResponse
