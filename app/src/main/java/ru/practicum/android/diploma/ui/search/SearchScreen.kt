@@ -37,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.AsyncImage
@@ -66,11 +68,23 @@ import ru.practicum.android.diploma.util.SalaryDisplay
 fun SearchScreen(
     navController: NavController,
     onClearSearchText: () -> Unit,
-    viewModel: SearchViewModel = koinViewModel()
+    viewModelStoreOwner: ViewModelStoreOwner? = null
 ) {
+    val viewModel: SearchViewModel = if (viewModelStoreOwner != null) {
+        koinViewModel(viewModelStoreOwner = viewModelStoreOwner)
+    } else {
+        koinViewModel()
+    }
     val screenState by viewModel.screenState.collectAsState(initial = SearchScreenState.Nothing)
     val vacancies = (screenState as? SearchScreenState.Content)?.vacancies ?: emptyList()
-    var searchQuery by remember { mutableStateOf("") }
+    val searchTextFromViewModel by viewModel.searchText.collectAsState()
+    var searchQuery by rememberSaveable() { mutableStateOf(searchTextFromViewModel) }
+
+    LaunchedEffect(searchTextFromViewModel) {
+        if (searchQuery != searchTextFromViewModel) {
+            searchQuery = searchTextFromViewModel
+        }
+    }
     val isLoadingNextPage by viewModel.isLoadingNextPage.collectAsState()
     val hasMorePages by viewModel.hasMorePages.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState()
@@ -129,9 +143,9 @@ fun SearchScreen(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = searchQuery,
-            onValueChange = {
-                searchQuery = it
-                viewModel.onSearchTextChanged(searchQuery)
+            onValueChange = { newValue ->
+                searchQuery = newValue
+                viewModel.onSearchTextChanged(newValue)
             },
             singleLine = true,
             placeholder = {

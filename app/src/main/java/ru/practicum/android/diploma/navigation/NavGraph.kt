@@ -13,10 +13,11 @@ import ru.practicum.android.diploma.ui.search.SearchScreen
 @Composable
 fun NavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.Search.route) {
-        composable(Routes.Search.route) {
+        composable(Routes.Search.route) { backStackEntry ->
             SearchScreen(
                 navController,
-                onClearSearchText = {} // добавить функцию очистки поля поиска
+                onClearSearchText = {}, // добавить функцию очистки поля поиска
+                viewModelStoreOwner = backStackEntry
             )
         }
         composable(Routes.VacancyDetails.route) { backStackEntry ->
