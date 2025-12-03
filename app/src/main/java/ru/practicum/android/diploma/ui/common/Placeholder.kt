@@ -24,11 +24,10 @@ import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 fun Placeholder(
     imageResId: Int,
     title: String,
+    modifier: Modifier
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 111.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -55,6 +54,6 @@ fun Placeholder(
 @Composable
 fun PlaceholderPreview() {
     VacancyTheme(isDarkTheme = false) {
-        Placeholder(imageResId = R.drawable.placeholder_error_riecive, title = "No connection")
+        Placeholder(imageResId = R.drawable.placeholder_error_riecive, title = "No connection", modifier = Modifier)
     }
 }

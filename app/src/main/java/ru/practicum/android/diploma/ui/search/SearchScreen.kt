@@ -211,14 +211,16 @@ fun SearchScreen(
             is SearchScreenState.Error.NoConnection -> {
                 Placeholder(
                     imageResId = R.drawable.placeholder_no_connection,
-                    title = stringResource(R.string.no_connection)
+                    title = stringResource(R.string.no_connection),
+                    modifier = Modifier
                 )
             }
 
             is SearchScreenState.Error.ServerError -> {
                 Placeholder(
                     imageResId = R.drawable.placeholder_server_error,
-                    title = stringResource(R.string.server_error)
+                    title = stringResource(R.string.server_error),
+                    modifier = Modifier.padding(top = 135.dp)
                 )
             }
 
@@ -236,7 +238,8 @@ fun SearchScreen(
                 }
                 Placeholder(
                     imageResId = R.drawable.placeholder_error_riecive,
-                    title = stringResource(R.string.not_found)
+                    title = stringResource(R.string.not_found),
+                    modifier = Modifier.padding(top = 111.dp)
                 )
             }
 
