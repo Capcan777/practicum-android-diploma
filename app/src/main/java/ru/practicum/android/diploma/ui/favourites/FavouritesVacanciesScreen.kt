@@ -34,6 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
+import ru.practicum.android.diploma.navigation.Routes
 import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.favourites.state.FavouritesScreenState
 import ru.practicum.android.diploma.util.SalaryDisplay
@@ -94,14 +95,15 @@ fun FavouritesVacanciesScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { navController.navigate("details/${vacancy.id}") }
+                                .clickable {
+                                    navController.navigate(Routes.createVacancyDetailsRoute(vacancy.id))
+                                }
                                 .padding(vertical = 12.dp)
                         ) {
                             val imageLoader: ImageLoader = koinInject()
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                // .clickable { onClick() },
                                 verticalAlignment = Alignment.Top
                             ) {
                                 val logoUrl = vacancy.company.logoUrl

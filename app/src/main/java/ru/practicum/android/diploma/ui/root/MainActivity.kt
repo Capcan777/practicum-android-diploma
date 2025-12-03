@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         val currentRoute = currentBackStackEntry?.destination?.route
         Scaffold(
             bottomBar = {
-                if (currentRoute != Routes.VacancyDetails.route) {
+                if (currentRoute?.startsWith(Routes.VACANCY_DETAILS_BASE) != true) {
                     BottomNavigationBar(navController = navController)
                 }
             }

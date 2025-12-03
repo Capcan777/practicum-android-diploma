@@ -64,11 +64,17 @@ class VacancyRepositoryImpl(
 
     override suspend fun getVacancyById(vacancyId: String): Flow<VacancyOutcome> = flow {
         val response = networkClient.getVacancyById(vacancyId)
-
-        if (response is VacancyResponse) {
-            emit(mapper.mapVacancyOutcome(response))
-        } else {
-            emit(VacancyOutcome.Error(DomainError.OtherError))
+        when (response) {
+            is VacancyResponse -> emit(mapper.mapVacancyOutcome(response))
+            else -> {
+                val code = (response as? SearchResponse)?.result ?: ResponseCodes.ERROR_SERVER
+                val outcome = when (code) {
+                    ResponseCodes.NO_CONNECTION -> VacancyOutcome.Error(DomainError.NoConnection)
+                    ResponseCodes.ERROR_SERVER -> VacancyOutcome.Error(DomainError.OtherError)
+                    else -> VacancyOutcome.Error(DomainError.OtherError)
+                }
+                emit(outcome)
+            }
         }
     }
 }
