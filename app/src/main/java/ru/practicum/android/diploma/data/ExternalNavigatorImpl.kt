@@ -1,10 +1,8 @@
 package ru.practicum.android.diploma.data
 
 import android.app.Application
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.api.ExternalNavigator
 import ru.practicum.android.diploma.domain.models.SalaryRange

@@ -103,7 +103,6 @@ class DomainMapper {
         )
     }
 
-
     private fun mapSchedule(dto: ScheduleDto): Schedule {
         return Schedule(
             id = dto.id,
