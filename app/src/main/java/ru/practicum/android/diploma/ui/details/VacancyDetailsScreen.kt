@@ -47,6 +47,7 @@ import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.ui.common.AppBar
+import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.details.state.VacancyDetailsScreenState
 import ru.practicum.android.diploma.util.SalaryDisplay
 
@@ -134,7 +135,11 @@ fun VacancyDetailsScreen(
 
                             Spacer(modifier = Modifier.width(8.dp))
 
-                            Column(modifier = Modifier.weight(1f)) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(start = 8.dp)
+                            ) {
                                 Text(
                                     text = vacancy.industry.name,
                                     style = VacancyTheme.typography.medium22,
@@ -160,9 +165,14 @@ fun VacancyDetailsScreen(
                         Text(
                             text = vacancy.experience.name,
                             style = VacancyTheme.typography.regular16,
-                            modifier = Modifier.padding(bottom = 32.dp)
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
                     }
+                    Text(
+                        text = "${vacancy.employment?.name}. ${vacancy.schedule?.name}",
+                        style = VacancyTheme.typography.regular16
+                    )
+                    Spacer(modifier = Modifier.padding(top = 32.dp))
 
                     Text(
                         text = stringResource(R.string.vacancy_desc),
@@ -174,18 +184,74 @@ fun VacancyDetailsScreen(
                         style = VacancyTheme.typography.regular16,
                         modifier = Modifier.padding(top = 16.dp)
                     )
+                    if (vacancy.skills.isNotEmpty()) {
+                        Spacer(modifier = Modifier.padding(top = 24.dp))
 
+                        Text(
+                            text = stringResource(R.string.key_skills),
+                            style = VacancyTheme.typography.medium22,
+                        )
+                        Spacer(modifier = Modifier.padding(top = 16.dp))
+
+                        Column {
+                            vacancy.skills.forEach { skill ->
+                                BulletsRow(text = skill)
+                            }
+                        }
+                    }
+                    val contacts = vacancy.contacts
+                    contacts?.let { contact ->
+                        if (contact.name?.isNotBlank() == true ||
+                            contact.email?.isNotBlank() == true ||
+                            contact.phones?.isNotEmpty() == true
+                        ) {
+                            Spacer(modifier = Modifier.padding(top = 32.dp))
+
+                            Text(
+                                text = stringResource(R.string.contacts),
+                                style = VacancyTheme.typography.medium22,
+                            )
+                            Spacer(modifier = Modifier.padding(top = 16.dp))
+
+                            Column {
+                                contacts.name?.takeIf { it.isNotBlank() }?.let { name ->
+                                    Text(
+                                        text = name,
+                                        style = VacancyTheme.typography.regular16,
+                                        modifier = Modifier.padding(bottom = 4.dp)
+                                    )
+                                }
+                                contacts.phones?.forEach { phone ->
+                                    if (phone.isNotBlank()) {
+                                        Text(
+                                            text = phone,
+                                            style = VacancyTheme.typography.regular16,
+                                            modifier = Modifier.padding(bottom = 4.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
             is VacancyDetailsScreenState.Error -> {
                 when (screenState) {
                     is VacancyDetailsScreenState.Error.ServerError -> {
-                        // добавить плейсхолдер
+                        Placeholder(
+                            imageResId = R.drawable.placeholder_vacancy_server_error,
+                            title = stringResource(R.string.server_error),
+                            modifier = Modifier.padding(top = 207.dp)
+                        )
                     }
 
                     is VacancyDetailsScreenState.Error.NotFound -> {
-                        // добавить плейсхолдер
+                        Placeholder(
+                            imageResId = R.drawable.placeholder_vacancy_delete_or_not_found,
+                            title = stringResource(R.string.vacancy_delete_or_not_found),
+                            modifier = Modifier.padding(187.dp)
+                        )
                     }
 
                     else -> {
@@ -219,7 +285,7 @@ fun CompanyLogo(logoUrl: String?) {
             modifier = Modifier
                 .size(48.dp)
                 .clip(VacancyTheme.shapes.shape12dp),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Inside
         )
     }
 }
@@ -240,6 +306,24 @@ private fun FavoriteButton(
             contentDescription = stringResource(R.string.add_vacancy_to_favourite),
             tint = animatedTint,
             modifier = Modifier.scale(scale)
+        )
+    }
+}
+
+@Composable
+fun BulletsRow(
+    text: String
+) {
+    Row {
+        Text(
+            text = "•",
+            style = VacancyTheme.typography.regular16,
+            modifier = Modifier.padding(end = 8.dp)
+        )
+        Text(
+            text = text,
+            style = VacancyTheme.typography.regular16,
+            modifier = Modifier.padding(bottom = 4.dp)
         )
     }
 }

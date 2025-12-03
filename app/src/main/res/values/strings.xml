@@ -9,12 +9,12 @@
     <string name="enter_search_request">Введите запрос</string>
     <string name="no_connection">Нет интернета</string>
     <string name="not_found">Не удалось получить\nсписок вакансий</string>
-
+    <string name="key_skills">Ключевые навыки</string>
+    <string name="contacts">Контакты</string>
 
     <string name="main_title">Главная</string>
     <string name="favourites_title">Избранное</string>
     <string name="team_title">Команда</string>
-
 
     <string name="currency_rub">RUB</string>
     <string name="currency_usd">USD</string>
@@ -38,5 +38,6 @@
     <string name="server_error">Ошибка сервера</string>
 
     <string name="team_working_on_app">Над приложением работали</string>
+    <string name="vacancy_delete_or_not_found">Вакансия не найдена или\nудалена</string>
 
 </resources>
