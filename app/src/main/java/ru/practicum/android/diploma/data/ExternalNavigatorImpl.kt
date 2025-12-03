@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.data
 
 import android.app.Application
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -42,7 +43,7 @@ class ExternalNavigatorImpl(
 
         try {
             application.startActivity(intent)
-        } catch (e: android.content.ActivityNotFoundException) {
+        } catch (e: ActivityNotFoundException) {
             Toast.makeText(
                 application,
                 resourceProvider.getString(R.string.no_email_clients_found),
