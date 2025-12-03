@@ -191,7 +191,7 @@ fun SearchScreen(
                     CountVacancies(
                         screenState,
                         vacancies,
-                        textMessage = stringResource(R.string.found_count_vacancies, vacancies.size)
+                        textMessage = stringResource(R.string.found_count_vacancies, state.foundCount)
                     )
                 }
                 VacancyListItem(
@@ -214,7 +214,10 @@ fun SearchScreen(
             }
 
             is SearchScreenState.Error.ServerError -> {
-                // показать экран ошибки сервера
+                Placeholder(
+                    imageResId = R.drawable.placeholder_server_error,
+                    title = stringResource(R.string.server_error)
+                )
             }
 
             is SearchScreenState.Error.NotFound -> {

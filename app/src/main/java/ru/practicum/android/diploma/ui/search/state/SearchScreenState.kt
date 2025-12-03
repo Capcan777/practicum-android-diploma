@@ -10,7 +10,10 @@ data class VacancyUiModel(
 sealed interface SearchScreenState {
     data object Nothing : SearchScreenState
     data object Loading : SearchScreenState
-    data class Content(val vacancies: List<VacancyUiModel>) : SearchScreenState
+    data class Content(
+        val vacancies: List<VacancyUiModel>,
+        val foundCount: Int
+    ) : SearchScreenState
     sealed class Error : SearchScreenState {
         data object NoConnection : Error()
         data object NotFound : Error()
