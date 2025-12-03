@@ -1,8 +1,10 @@
 package ru.practicum.android.diploma.ui.search
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -94,7 +96,7 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .padding(top = 19.dp)
+            .padding(top = 16.dp)
             .background(VacancyTheme.colorScheme.background)
     ) {
         Row(
@@ -354,12 +356,17 @@ fun VacancyRow(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(logoUrl)
+                .crossfade(true)
                 .build(),
             imageLoader = imageLoader,
             contentDescription = null,
             placeholder = painterResource(id = R.drawable.placeholder_logo),
             modifier = Modifier
                 .size(48.dp)
+                .border(
+                    shape = VacancyTheme.shapes.shape12dp,
+                    border = BorderStroke(1.dp, VacancyTheme.colorScheme.secondaryContainer)
+                )
                 .clip(VacancyTheme.shapes.shape12dp),
             contentScale = ContentScale.Inside
         )

@@ -76,7 +76,8 @@ fun VacancyDetailsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Share,
-                            contentDescription = stringResource(R.string.share_vacancy)
+                            contentDescription = stringResource(R.string.share_vacancy),
+                            tint = VacancyTheme.colorScheme.inverseSurface
                         )
                     }
                     FavoriteButton(isFavourite = isFavourite) {
