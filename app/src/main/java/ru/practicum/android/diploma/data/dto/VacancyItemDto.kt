@@ -8,5 +8,6 @@ data class VacancyItemDto(
     val experience: ExperienceDto? = null,
     val employer: EmployerDto,
     val industry: FilterIndustryDto,
-    val area: FilterAreaDto
+    val area: FilterAreaDto,
+    val contacts: ContactsDto? = null
 )

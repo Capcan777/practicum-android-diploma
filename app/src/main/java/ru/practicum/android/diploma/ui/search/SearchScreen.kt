@@ -163,7 +163,7 @@ fun SearchScreen(
                         if (searchQuery.isNotEmpty()) {
                             searchQuery = ""
                             onClearSearchText()
-                            viewModel.clearCountVacancies()
+                            viewModel.onSearchTextChanged("")
                         }
                     }
                 )
