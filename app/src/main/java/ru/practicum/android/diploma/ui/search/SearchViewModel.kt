@@ -37,8 +37,8 @@ class SearchViewModel(
     val hasMorePages = paginationState.hasMorePages
 
     private val stateHandler = SearchStateHandler(
-        _screenState = _screenState,
-        _toastMessage = _toastMessage,
+        screenState = _screenState,
+        toastMessage = _toastMessage,
         paginationState = paginationState,
         resourceProvider = resourceProvider
     )
@@ -167,7 +167,6 @@ class SearchViewModel(
             }
         }
     }
-
 
     private fun createSearchRequest(query: String, page: Int): SearchRequest {
         return SearchRequest(

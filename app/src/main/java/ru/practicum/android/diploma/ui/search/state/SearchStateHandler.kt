@@ -8,8 +8,8 @@ import ru.practicum.android.diploma.ui.common.Event
 import ru.practicum.android.diploma.util.ResourceProvider
 
 class SearchStateHandler(
-    private val _screenState: MutableStateFlow<SearchScreenState>,
-    private val _toastMessage: MutableStateFlow<Event<String>?>,
+    private val screenState: MutableStateFlow<SearchScreenState>,
+    private val toastMessage: MutableStateFlow<Event<String>?>,
     private val paginationState: PaginationState,
     private val resourceProvider: ResourceProvider
 ) {
@@ -23,7 +23,7 @@ class SearchStateHandler(
         when {
             searchResult.vacancies.isEmpty() -> {
                 if (isFirstPage) {
-                    _screenState.value = SearchScreenState.Error.NotFound
+                    screenState.value = SearchScreenState.Error.NotFound
                 }
                 paginationState.setHasMorePages(false)
             }
@@ -38,7 +38,7 @@ class SearchStateHandler(
                     paginationState.updatePage(searchResult.currentPage)
                 }
 
-                _screenState.value = SearchScreenState.Content(
+                screenState.value = SearchScreenState.Content(
                     vacancies = currentVacancies.toList(),
                     foundCount = searchResult.found
                 )
@@ -54,15 +54,15 @@ class SearchStateHandler(
         if (isFirstPage) {
             when (error.type) {
                 DomainError.NoConnection -> {
-                    _screenState.value = SearchScreenState.Error.NoConnection
+                    screenState.value = SearchScreenState.Error.NoConnection
                 }
 
                 DomainError.NotFound -> {
-                    _screenState.value = SearchScreenState.Error.NotFound
+                    screenState.value = SearchScreenState.Error.NotFound
                 }
 
                 DomainError.OtherError -> {
-                    _screenState.value = SearchScreenState.Error.ServerError
+                    screenState.value = SearchScreenState.Error.ServerError
                 }
             }
         } else {
@@ -71,13 +71,13 @@ class SearchStateHandler(
                 DomainError.NotFound -> resourceProvider.getString(R.string.error_data_not_found)
                 DomainError.OtherError -> resourceProvider.getString(R.string.error_server_loading_data)
             }
-            _toastMessage.value = Event(errorMessage)
+            toastMessage.value = Event(errorMessage)
             paginationState.setLoading(false)
         }
     }
 
     fun handlePaginationError(message: String) {
-        _toastMessage.value = Event(message)
+        toastMessage.value = Event(message)
         paginationState.setLoading(false)
     }
 
