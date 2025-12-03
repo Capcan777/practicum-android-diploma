@@ -13,6 +13,11 @@ class RetrofitNetworkClient(
     private val api: VacancyApi,
     private val context: Context
 ) : NetworkClient {
+
+    companion object {
+        private const val TAG = "RetrofitNetworkClient"
+    }
+
     override suspend fun doRequest(dto: Any): Response {
         if (!isConnected()) {
             return Response().apply {
@@ -34,13 +39,13 @@ class RetrofitNetworkClient(
                         result = ResponseCodes.SUCCESS
                     }
                 } catch (e: IOException) {
-                    Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
+                    Log.e(TAG, "Network error: ${e.message}", e)
                     Response().apply {
                         result = ResponseCodes.ERROR_SERVER
                     }
                 } catch (e: HttpException) {
                     val code = e.code()
-                    Log.e("RetrofitNetworkClient", "HTTP error: ${e.message}", e)
+                    Log.e(TAG, "HTTP error: ${e.message}", e)
                     return Response().apply {
                         result = ResponseCodes.ERROR_SERVER
                     }
@@ -68,12 +73,12 @@ class RetrofitNetworkClient(
                 result = ResponseCodes.SUCCESS
             }
         } catch (e: IOException) {
-            Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
+            Log.e(TAG, "Network error: ${e.message}", e)
             Response().apply {
                 result = ResponseCodes.ERROR_SERVER
             }
         } catch (e: HttpException) {
-            Log.e("RetrofitNetworkClient", "HTTP error: ${e.message}", e)
+            Log.e(TAG, "HTTP error: ${e.message}", e)
             Response().apply {
                 result = ResponseCodes.ERROR_SERVER
             }
