@@ -5,4 +5,5 @@ import ru.practicum.android.diploma.domain.models.Vacancy
 interface ExternalNavigator {
     fun shareVacancy(vacancy: Vacancy)
     fun sendEmail(vacancy: Vacancy)
+    fun callPhone(telephoneNumber: String?)
 }

@@ -225,12 +225,16 @@ fun VacancyDetailsScreen(
                                     )
                                 }
                                 contacts.phones?.forEach { phone ->
-                                    if (phone.isNotBlank()) {
-                                        Text(
-                                            text = phone,
-                                            style = VacancyTheme.typography.regular16,
-                                            modifier = Modifier.padding(bottom = 4.dp)
-                                        )
+                                    phone.formatted?.let { phoneNumber ->
+                                        if (phoneNumber.isNotBlank()) {
+                                            Text(
+                                                text = phoneNumber,
+                                                style = VacancyTheme.typography.regular16,
+                                                modifier = Modifier
+                                                    .padding(bottom = 4.dp)
+                                                    .clickable(onClick = { externalNavigator.callPhone(phoneNumber) })
+                                            )
+                                        }
                                     }
                                 }
                                 contacts.email?.takeIf { it.isNotBlank() }?.let { email ->

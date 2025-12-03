@@ -18,6 +18,7 @@ import ru.practicum.android.diploma.domain.models.Employer
 import ru.practicum.android.diploma.domain.models.Employment
 import ru.practicum.android.diploma.domain.models.Experience
 import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.domain.models.Phone
 import ru.practicum.android.diploma.domain.models.SalaryRange
 import ru.practicum.android.diploma.domain.models.Schedule
 import ru.practicum.android.diploma.domain.models.SearchOutcome
@@ -80,10 +81,18 @@ class DomainMapper {
     }
 
     private fun mapContacts(dto: ContactsDto): Contacts {
+        val phones = dto.phone?.mapNotNull { phoneString ->
+            phoneString.takeIf { it.isNotBlank() }?.let {
+                Phone(
+                    comment = null,
+                    formatted = it
+                )
+            }
+        }
         return Contacts(
             name = dto.name,
             email = dto.email,
-            phones = dto.phone
+            phones = if (phones.isNullOrEmpty()) null else phones
         )
     }
 
@@ -93,6 +102,7 @@ class DomainMapper {
             name = dto.name
         )
     }
+
 
     private fun mapSchedule(dto: ScheduleDto): Schedule {
         return Schedule(

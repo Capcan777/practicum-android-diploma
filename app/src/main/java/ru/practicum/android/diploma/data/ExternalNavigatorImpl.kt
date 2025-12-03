@@ -40,16 +40,16 @@ class ExternalNavigatorImpl(
             putExtra(Intent.EXTRA_EMAIL, arrayOf(emailAddress))
             putExtra(Intent.EXTRA_SUBJECT, resourceProvider.getString(R.string.apply_for_vacancy, vacancy.title))
         }
+        application.startActivity(intent)
+    }
 
-        try {
-            application.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(
-                application,
-                resourceProvider.getString(R.string.no_email_clients_found),
-                Toast.LENGTH_SHORT
-            ).show()
+    override fun callPhone(telephoneNumber: String?) {
+        if (telephoneNumber.isNullOrBlank()) {
+            return
         }
+        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$telephoneNumber"))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        application.startActivity(intent)
     }
 
     fun getTextToShare(vacancy: Vacancy): String {
