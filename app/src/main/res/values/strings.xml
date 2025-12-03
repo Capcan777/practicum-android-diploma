@@ -39,5 +39,7 @@
 
     <string name="team_working_on_app">Над приложением работали</string>
     <string name="vacancy_delete_or_not_found">Вакансия не найдена или\nудалена</string>
+    <string name="apply_for_vacancy">Отклик на вакансию: %1$s</string>
+    <string name="no_email_clients_found">Почтовые клиенты не найдены</string>
 
 </resources>

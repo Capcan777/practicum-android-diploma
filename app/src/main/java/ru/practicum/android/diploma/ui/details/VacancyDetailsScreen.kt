@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +47,7 @@ import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
+import ru.practicum.android.diploma.domain.api.ExternalNavigator
 import ru.practicum.android.diploma.ui.common.AppBar
 import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.details.state.VacancyDetailsScreenState
@@ -63,6 +65,7 @@ fun VacancyDetailsScreen(
 ) {
     val screenState by viewModel.screenState.collectAsState()
     val isFavourite by viewModel.isFavourite.collectAsState()
+    val externalNavigator: ExternalNavigator = koinInject()
 
     Scaffold(
         topBar = {
@@ -229,6 +232,15 @@ fun VacancyDetailsScreen(
                                             modifier = Modifier.padding(bottom = 4.dp)
                                         )
                                     }
+                                }
+                                contacts.email?.takeIf { it.isNotBlank() }?.let { email ->
+                                    Text(
+                                        text = email,
+                                        style = VacancyTheme.typography.regular16,
+                                        modifier = Modifier
+                                            .padding(bottom = 4.dp)
+                                            .clickable(onClick = { externalNavigator.sendEmail(vacancy) }),
+                                    )
                                 }
                             }
                         }
