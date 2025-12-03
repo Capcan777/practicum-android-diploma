@@ -64,6 +64,10 @@ class RetrofitNetworkClient(
 
         return try {
             val vacancyResponse = api.getVacancyById(vacancyId = vacancyId)
+            Log.d(
+                "RetrofitNetworkClient",
+                "VacancyResponse: contacts=${vacancyResponse.contacts}, contacts.phone=${vacancyResponse.contacts?.phone}"
+            )
             vacancyResponse.apply {
                 result = ResponseCodes.SUCCESS
             }

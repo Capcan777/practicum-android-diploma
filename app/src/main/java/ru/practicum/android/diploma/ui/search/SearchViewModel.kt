@@ -254,10 +254,6 @@ class SearchViewModel(
         currentVacancies.clear()
     }
 
-    fun clearCountVacancies() {
-        _screenState.value = SearchScreenState.Nothing
-    }
-
     fun clearToastMessage() {
         _toastMessage.value = null
     }
