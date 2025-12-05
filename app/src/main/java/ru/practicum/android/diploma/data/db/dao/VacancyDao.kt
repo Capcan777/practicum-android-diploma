@@ -5,7 +5,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import retrofit2.http.GET
 import ru.practicum.android.diploma.data.db.entity.VacancyEntity
+import ru.practicum.android.diploma.data.dto.FilterIndustryDto
 
 @Dao
 interface VacancyDao {
@@ -23,4 +25,7 @@ interface VacancyDao {
 
     @Query("SELECT COUNT(*) FROM vacancies_table WHERE vacancyId = :vacancyId")
     suspend fun isVacancyExists(vacancyId: String): Int
+
+    @GET("industries")
+    suspend fun getIndustries(): List<FilterIndustryDto>
 }
