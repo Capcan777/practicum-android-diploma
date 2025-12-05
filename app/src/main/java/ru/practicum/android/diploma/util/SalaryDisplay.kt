@@ -7,8 +7,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.domain.models.SalaryRange
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
+import ru.practicum.android.diploma.domain.models.SalaryRange
 import java.util.Locale
 
 @Composable
