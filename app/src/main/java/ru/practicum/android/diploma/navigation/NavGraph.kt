@@ -33,7 +33,12 @@ fun NavGraph(navController: NavHostController) {
             }
         }
         composable(Routes.Favourites.route) { FavouritesVacanciesScreen(navController) }
-        composable(Routes.SettingsFilter.route) { FilterSettingsScreen(navController) }
+        composable(Routes.SettingsFilter.route) {
+            FilterSettingsScreen(
+                navController,
+                onBack = { navController.popBackStack() }
+            )
+        }
         composable(Routes.About.route) { AboutTeamScreen(navController) }
     }
 }
