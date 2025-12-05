@@ -13,11 +13,21 @@ import ru.practicum.android.diploma.ui.search.SearchScreen
 @Composable
 fun NavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.Search.route) {
-        composable(Routes.Search.route) { SearchScreen(navController) }
+        composable(Routes.Search.route) { backStackEntry ->
+            SearchScreen(
+                navController,
+                onClearSearchText = {}, // добавить функцию очистки поля поиска
+                viewModelStoreOwner = backStackEntry
+            )
+        }
         composable(Routes.VacancyDetails.route) { backStackEntry ->
             val vacancyId = backStackEntry.arguments?.getString("vacancyId")
             if (vacancyId != null) {
-                VacancyDetailsScreen(vacancyId, navController)
+                VacancyDetailsScreen(
+                    vacancyId = vacancyId,
+                    navController = navController,
+                    onBack = { navController.popBackStack() }
+                )
             } else {
                 // Обработать ошибку
             }
@@ -28,13 +38,16 @@ fun NavGraph(navController: NavHostController) {
     }
 }
 
-sealed class Routes(val route: String) {
-    object Search : Routes("search")
-    object VacancyDetails : Routes("vacancy_details/{vacancyId}") {
-        fun createRoute(vacancyId: String) = "vacancy_details/$vacancyId"
-    }
+data class Routes(val route: String) {
+    companion object {
+        const val VACANCY_DETAILS_BASE = "vacancy_details"
+        val Search = Routes("search")
+        val VacancyDetails = Routes("$VACANCY_DETAILS_BASE/{vacancyId}")
+        val Favourites = Routes("favourites")
+        val SettingsFilter = Routes("filter")
+        val About = Routes("about")
 
-    object Favourites : Routes("favourites")
-    object SettingsFilter : Routes("filter")
-    object About : Routes("about")
+        // Функция для создания route с параметрами
+        fun createVacancyDetailsRoute(vacancyId: String) = "vacancy_details/$vacancyId"
+    }
 }

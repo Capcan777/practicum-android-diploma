@@ -3,7 +3,7 @@ package ru.practicum.android.diploma.designsystem.theme
 import androidx.compose.ui.graphics.Color
 
 private const val BLUE_PRIMARY = 0xFF3772E7
-private const val WHITE_UNIVERSAL = 0xFFFFFFFF
+private const val WHITE_UNIVERSAL = 0xFDFDFDFF
 private const val BLACK_UNIVERSAL = 0xFF1A1B22
 private const val LIGHT_GRAY = 0xFFE6E8EB
 private const val GRAY_SECONDARY = 0xFFAEAFB4

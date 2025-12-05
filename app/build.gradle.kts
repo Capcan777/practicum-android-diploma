@@ -30,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -53,6 +53,7 @@ dependencies {
     // UI layer libraries
     implementation(libs.ui.material)
     implementation(libs.ui.constraintLayout)
+    implementation(libs.androidx.compose.foundation)
 
     // region Unit tests
     testImplementation(libs.unitTests.junit)
@@ -68,11 +69,11 @@ dependencies {
     implementation(libs.retrofit2.converter.gson)
 
     // Koin (DI)
+    implementation(platform(libs.koin.bom))
+    implementation("io.insert-koin:koin-core")
     implementation(libs.koin.android)
-
-    // Glide (Image Loading)
-    implementation(libs.glide)
-    ksp(libs.compiler) // KSP для Glide
+    implementation(libs.koin.compose)
+    implementation(libs.koin.androidx.compose)
 
     // Room (Database)
     ksp(libs.room.compiler.v261) // KSP для Room
@@ -87,12 +88,15 @@ dependencies {
     implementation(libs.navigation.ui.ktx)
 
     // Jetpack Compose
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.runtime.livedata)
-    implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.navigation.compose)
+
+    // Coil for image loading in Compose
+    implementation(platform(libs.coil.bom))
+    implementation(libs.bundles.coil)
+
 }
