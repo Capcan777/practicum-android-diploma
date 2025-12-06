@@ -126,7 +126,7 @@ fun SearchScreen(
 
             IconButton(
                 onClick = {
-                    // переход к экрану фильтрации, когда появится навигация
+                    navController.navigate(Routes.SettingsFilter.route)
                 }
             ) {
                 Icon(
