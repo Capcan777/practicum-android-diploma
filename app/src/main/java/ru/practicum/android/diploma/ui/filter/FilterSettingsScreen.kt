@@ -51,7 +51,6 @@ fun FilterSettingsScreen(
     var hideWithoutSalary by remember { mutableStateOf(false) }
     var selectedIndustry by remember { mutableStateOf("") }
 
-
     Scaffold(
         topBar = {
             AppBar(
