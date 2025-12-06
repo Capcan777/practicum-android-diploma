@@ -49,6 +49,8 @@ fun FilterSettingsScreen(
 ) {
     var salaryText by remember { mutableStateOf("") }
     var hideWithoutSalary by remember { mutableStateOf(false) }
+    var selectedIndustry by remember { mutableStateOf("") }
+
 
     Scaffold(
         topBar = {
@@ -159,26 +161,28 @@ fun FilterSettingsScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
 
-            ButtonApply(
-                onClick = { /* обработать нажатие на кнопку Применить */ },
-                textButton = stringResource(R.string.apply),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = VacancyTheme.colorScheme.primary,
-                    contentColor = VacancyTheme.colorScheme.onPrimary
-                ),
-                colorText = VacancyTheme.colorScheme.onPrimary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+            if (selectedIndustry.isNotEmpty() || salaryText.isNotEmpty() || hideWithoutSalary) {
+                ButtonApply(
+                    onClick = { /* обработать нажатие на кнопку Применить */ },
+                    textButton = stringResource(R.string.apply),
+                    color = ButtonDefaults.buttonColors(
+                        containerColor = VacancyTheme.colorScheme.primary,
+                        contentColor = VacancyTheme.colorScheme.onPrimary
+                    ),
+                    colorText = VacancyTheme.colorScheme.onPrimary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
 
-            ButtonApply(
-                onClick = { /* обработать нажатие на кнопку Сбросить */ },
-                textButton = stringResource(R.string.reset),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = VacancyTheme.colorScheme.error
-                ),
-                colorText = VacancyTheme.colorScheme.error
-            )
+                ButtonApply(
+                    onClick = { /* обработать нажатие на кнопку Сбросить */ },
+                    textButton = stringResource(R.string.reset),
+                    color = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = VacancyTheme.colorScheme.error
+                    ),
+                    colorText = VacancyTheme.colorScheme.error
+                )
+            }
         }
     }
 }
