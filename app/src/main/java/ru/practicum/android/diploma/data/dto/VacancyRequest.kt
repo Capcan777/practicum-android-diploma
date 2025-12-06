@@ -1,5 +1,5 @@
 package ru.practicum.android.diploma.data.dto
 
-data class VacancyRequest (
+data class VacancyRequest(
     val vacancyId: String
 )
