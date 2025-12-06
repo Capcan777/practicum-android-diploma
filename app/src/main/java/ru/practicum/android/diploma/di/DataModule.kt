@@ -11,6 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.data.db.AppDatabase
+import ru.practicum.android.diploma.data.network.IndustryApi
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.data.network.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.UserAgentInterceptor
@@ -75,8 +76,17 @@ val dataModule = module {
             .create(VacancyApi::class.java)
     }
 
+    single<IndustryApi> {
+        Retrofit.Builder()
+            .baseUrl(URL_VACANCY)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(get())
+            .build()
+            .create(IndustryApi::class.java)
+    }
+
     single<NetworkClient> {
-        RetrofitNetworkClient(get(), androidContext()) // Уберите androidContext(), если не нужен
+        RetrofitNetworkClient(get(), get(), androidContext()) // Уберите androidContext(), если не нужен
     }
 
     single { get<AppDatabase>().vacancyDao() }
