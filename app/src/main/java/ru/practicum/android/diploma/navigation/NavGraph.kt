@@ -46,12 +46,13 @@ fun NavGraph(navController: NavHostController) {
 data class Routes(val route: String) {
     companion object {
         const val VACANCY_DETAILS_BASE = "vacancy_details"
+        const val SETTINGS_FILTER_BASE = "filter"
+
         val Search = Routes("search")
         val VacancyDetails = Routes("$VACANCY_DETAILS_BASE/{vacancyId}")
         val Favourites = Routes("favourites")
-        val SettingsFilter = Routes("filter")
+        val SettingsFilter = Routes("$SETTINGS_FILTER_BASE/{filterId}")
         val About = Routes("about")
-
         // Функция для создания route с параметрами
         fun createVacancyDetailsRoute(vacancyId: String) = "vacancy_details/$vacancyId"
     }

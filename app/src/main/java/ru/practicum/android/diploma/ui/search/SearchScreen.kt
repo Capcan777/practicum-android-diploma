@@ -30,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -178,7 +180,6 @@ fun SearchScreen(
             )
         )
 
-        // Обработка Toast сообщений
         LaunchedEffect(toastMessage) {
             toastMessage?.getContentIfNotHandled()?.let { message ->
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -199,26 +200,36 @@ fun SearchScreen(
             }
 
             is SearchScreenState.Content -> {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 8.dp)
-                ) {
-                    CountVacancies(
-                        screenState,
-                        vacancies,
-                        textMessage = stringResource(R.string.found_count_vacancies, state.foundCount)
-                    )
-                }
-                VacancyListItem(
-                    vacancies = state.vacancies,
-                    onItemClick = { vacancyId ->
-                        navController.navigate(Routes.createVacancyDetailsRoute(vacancyId))
+                Scaffold(
+                    topBar = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 3.dp)
+                                .background(
+                                    color = Color.Transparent
+                                )
+                        ) {
+                            CountVacancies(
+                                screenState = screenState,
+                                vacancies = vacancies,
+                                textMessage = stringResource(R.string.found_count_vacancies, state.foundCount)
+                            )
+                        }
                     },
-                    lazyListState = lazyListState,
-                    isLoadingNextPage = isLoadingNextPage,
-                    hasMorePages = hasMorePages,
-                    onRetryClick = { viewModel.retryLastFailedPage() }
+                    content = { innerPadding ->
+                        VacancyListItem(
+                            vacancies = state.vacancies,
+                            onItemClick = { vacancyId ->
+                                navController.navigate(Routes.createVacancyDetailsRoute(vacancyId))
+                            },
+                            lazyListState = lazyListState,
+                            isLoadingNextPage = isLoadingNextPage,
+                            hasMorePages = hasMorePages,
+                            onRetryClick = { viewModel.retryLastFailedPage() },
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
                 )
             }
 
@@ -294,7 +305,8 @@ fun VacancyListItem(
     lazyListState: LazyListState,
     isLoadingNextPage: Boolean,
     hasMorePages: Boolean,
-    onRetryClick: () -> Unit
+    onRetryClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
         state = lazyListState,
