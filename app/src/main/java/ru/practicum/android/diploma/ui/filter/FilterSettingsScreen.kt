@@ -1,9 +1,11 @@
 package ru.practicum.android.diploma.ui.filter
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,13 +17,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,8 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.practicum.android.diploma.R
@@ -82,7 +90,7 @@ fun FilterSettingsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            TextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = salaryText,
                 onValueChange = {
@@ -94,6 +102,13 @@ fun FilterSettingsScreen(
                     Text(
                         text = stringResource(R.string.expected_salary),
                         style = VacancyTheme.typography.regular12,
+                    )
+                },
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.enter_amount),
+                        style = VacancyTheme.typography.regular16,
+                        color = VacancyTheme.colorScheme.secondary
                     )
                 },
                 trailingIcon = {
@@ -108,13 +123,6 @@ fun FilterSettingsScreen(
                             }
                         )
                     }
-                },
-                placeholder = {
-                    Text(
-                        text = stringResource(R.string.enter_amount),
-                        style = VacancyTheme.typography.regular16,
-                        color = VacancyTheme.colorScheme.secondary
-                    )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
@@ -142,18 +150,42 @@ fun FilterSettingsScreen(
                 Text(
                     text = stringResource(R.string.do_not_show_without_salary),
                     style = VacancyTheme.typography.regular16,
-                    color = VacancyTheme.colorScheme.onBackground
                 )
                 Checkbox(
                     checked = hideWithoutSalary,
                     onCheckedChange = { hideWithoutSalary = it },
-                    colors = CheckboxDefaults.colors(VacancyTheme.colorScheme.primary)
+                    colors = CheckboxDefaults.colors(
+                        VacancyTheme.colorScheme.primary,
+                        uncheckedColor = VacancyTheme.colorScheme.primary
+                    )
 
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
+
+            ButtonApply(
+                onClick = { /* обработать нажатие на кнопку Применить */ },
+                textButton = "Применить",
+                color = ButtonDefaults.buttonColors(
+                    containerColor = VacancyTheme.colorScheme.primary,
+                    contentColor = VacancyTheme.colorScheme.onPrimary
+                ),
+                colorText = VacancyTheme.colorScheme.onPrimary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ButtonApply(
+                onClick = { /* обработать нажатие на кнопку Сбросить */ },
+                textButton = stringResource(R.string.reset),
+                color = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = VacancyTheme.colorScheme.error
+                ),
+                colorText = VacancyTheme.colorScheme.error
+            )
         }
     }
-}
+    }
 
 @Composable
 private fun FilterRow(
@@ -180,4 +212,27 @@ private fun FilterRow(
             modifier = Modifier.size(24.dp)
         )
     }
+}
+
+@Composable
+private fun ButtonApply(
+    onClick: () -> Unit,
+    textButton: String,
+    color: ButtonColors,
+    colorText: Color
+) {
+    Button(
+        onClick = { onClick() },
+        modifier = Modifier.fillMaxWidth(),
+        shape = VacancyTheme.shapes.shape12dp,
+        colors = color,
+        content = {
+            Text(
+                text = textButton,
+                style = VacancyTheme.typography.regular16,
+                color = colorText
+            )
+        },
+        contentPadding = PaddingValues(vertical = 20.dp),
+    )
 }
