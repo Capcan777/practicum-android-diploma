@@ -3,14 +3,17 @@ package ru.practicum.android.diploma.data.network
 import android.content.Context
 import android.util.Log
 import retrofit2.HttpException
+import ru.practicum.android.diploma.data.dto.IndustriesRequest
 import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.SearchRequest
+import ru.practicum.android.diploma.data.dto.VacancyRequest
 import ru.practicum.android.diploma.util.InternetConnectionStatus
 import ru.practicum.android.diploma.util.ResponseCodes
 import java.io.IOException
 
 class RetrofitNetworkClient(
-    private val api: VacancyApi,
+    private val vacancyApi: VacancyApi,
+    private val industryApi: IndustryApi,
     private val context: Context
 ) : NetworkClient {
 
@@ -25,61 +28,49 @@ class RetrofitNetworkClient(
             }
         }
 
-        return when (dto) {
-            is SearchRequest -> {
-                try {
+        try {
+            when (dto) {
+                is SearchRequest -> {
                     val filters = createFilters(dto)
-                    val searchResponse = api.getVacancies(
+                    val resultResponse = vacancyApi.getVacancies(
                         filters = filters,
                         text = dto.text ?: "",
                         page = dto.page
                     )
 
-                    searchResponse.apply {
+                    return resultResponse.apply {
                         result = ResponseCodes.SUCCESS
                     }
-                } catch (e: IOException) {
-                    Log.e(TAG, "Network error: ${e.message}", e)
-                    Response().apply {
-                        result = ResponseCodes.ERROR_SERVER
+                }
+
+                is VacancyRequest -> {
+                    val resultResponse = vacancyApi.getVacancyById(vacancyId = dto.vacancyId)
+                    return resultResponse.apply {
+                        result = ResponseCodes.SUCCESS
                     }
-                } catch (e: HttpException) {
-                    val code = e.code()
-                    Log.e(TAG, "HTTP error: ${e.message}", e)
+                }
+
+                is IndustriesRequest -> {
+                    val resultResponse = industryApi.getFilterIndustries()
+                    return resultResponse.apply {
+                        result = ResponseCodes.SUCCESS
+                    }
+                }
+
+                else -> {
                     return Response().apply {
                         result = ResponseCodes.ERROR_SERVER
                     }
                 }
             }
-
-            else -> {
-                Response().apply {
-                    result = ResponseCodes.ERROR_SERVER
-                }
-            }
-        }
-    }
-
-    override suspend fun getVacancyById(vacancyId: String): Response {
-        if (!isConnected()) {
-            return Response().apply {
-                result = ResponseCodes.NO_CONNECTION
-            }
-        }
-
-        return try {
-            val vacancyResponse = api.getVacancyById(vacancyId = vacancyId)
-            vacancyResponse.apply {
-                result = ResponseCodes.SUCCESS
-            }
         } catch (e: IOException) {
             Log.e(TAG, "Network error: ${e.message}", e)
-            Response().apply {
+            return Response().apply {
                 result = ResponseCodes.ERROR_SERVER
             }
         } catch (e: HttpException) {
             Log.e(TAG, "HTTP error: ${e.message}", e)
-            Response().apply {
+            return Response().apply {
                 result = ResponseCodes.ERROR_SERVER
             }
         }

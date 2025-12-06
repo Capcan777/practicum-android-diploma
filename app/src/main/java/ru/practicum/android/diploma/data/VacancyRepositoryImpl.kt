@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.data.dto.SearchResponse
+import ru.practicum.android.diploma.data.dto.VacancyRequest
 import ru.practicum.android.diploma.data.dto.VacancyResponse
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.DomainMapper
@@ -63,7 +64,7 @@ class VacancyRepositoryImpl(
     }
 
     override suspend fun getVacancyById(vacancyId: String): Flow<VacancyOutcome> = flow {
-        val response = networkClient.getVacancyById(vacancyId)
+        val response = networkClient.doRequest(VacancyRequest(vacancyId))
         when (response) {
             is VacancyResponse -> emit(mapper.mapVacancyOutcome(response))
             else -> {

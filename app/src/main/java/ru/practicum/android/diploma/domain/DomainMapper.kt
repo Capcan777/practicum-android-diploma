@@ -7,6 +7,7 @@ import ru.practicum.android.diploma.data.dto.EmployerDto
 import ru.practicum.android.diploma.data.dto.EmploymentDto
 import ru.practicum.android.diploma.data.dto.ExperienceDto
 import ru.practicum.android.diploma.data.dto.FilterIndustryDto
+import ru.practicum.android.diploma.data.dto.IndustriesResponse
 import ru.practicum.android.diploma.data.dto.SalaryDto
 import ru.practicum.android.diploma.data.dto.ScheduleDto
 import ru.practicum.android.diploma.data.dto.SearchResponse
@@ -18,6 +19,7 @@ import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.domain.models.Employer
 import ru.practicum.android.diploma.domain.models.Employment
 import ru.practicum.android.diploma.domain.models.Experience
+import ru.practicum.android.diploma.domain.models.IndustriesOutcome
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.Phone
 import ru.practicum.android.diploma.domain.models.SalaryRange
@@ -155,6 +157,30 @@ class DomainMapper {
 
                 else -> {
                     VacancyOutcome.Error(DomainError.OtherError)
+                }
+            }
+        }
+    }
+
+    fun mapIndustriesOutcome(response: IndustriesResponse): IndustriesOutcome {
+        if (response.result == ResponseCodes.SUCCESS) {
+            return IndustriesOutcome.IndustriesResult(
+                industries = response.items.map { industriesDto ->
+                    mapIndustry(industriesDto)
+                }
+            )
+        } else {
+            return when (response.result) {
+                ResponseCodes.NO_CONNECTION -> {
+                    IndustriesOutcome.Error(DomainError.NoConnection)
+                }
+
+                ResponseCodes.ERROR_SERVER -> {
+                    IndustriesOutcome.Error(DomainError.OtherError)
+                }
+
+                else -> {
+                    IndustriesOutcome.Error(DomainError.OtherError)
                 }
             }
         }
