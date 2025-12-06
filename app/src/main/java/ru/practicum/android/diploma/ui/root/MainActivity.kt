@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         val currentRoute = currentBackStackEntry?.destination?.route
         Scaffold(
             bottomBar = {
-                if (currentRoute?.startsWith(Routes.VACANCY_DETAILS_BASE) != true) {
+                if (!currentRoute.startsWithAny(Routes.VACANCY_DETAILS_BASE, Routes.SETTINGS_FILTER_BASE)) {
                     BottomNavigationBar(navController = navController)
                 }
             }
@@ -48,5 +48,9 @@ class MainActivity : ComponentActivity() {
                 NavGraph(navController = navController)
             }
         }
+    }
+
+    private fun String?.startsWithAny(vararg prefixes: String): Boolean {
+        return this != null && prefixes.any { this.startsWith(it) }
     }
 }
