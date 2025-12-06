@@ -165,7 +165,7 @@ fun FilterSettingsScreen(
 
             ButtonApply(
                 onClick = { /* обработать нажатие на кнопку Применить */ },
-                textButton = "Применить",
+                textButton = stringResource(R.string.apply),
                 color = ButtonDefaults.buttonColors(
                     containerColor = VacancyTheme.colorScheme.primary,
                     contentColor = VacancyTheme.colorScheme.onPrimary
