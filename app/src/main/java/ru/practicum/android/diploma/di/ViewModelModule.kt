@@ -12,7 +12,11 @@ import ru.practicum.android.diploma.util.ResourceProvider
 val viewModelModule = module {
 
     viewModel {
-        SearchViewModel(get(), get())
+        SearchViewModel(
+            get(),
+            get(),
+            get()
+        )
     }
 
     viewModel { (vacancyId: String) ->

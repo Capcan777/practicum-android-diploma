@@ -1,39 +1,50 @@
 package ru.practicum.android.diploma.ui.filter
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import ru.practicum.android.diploma.data.FilterStorage
+import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.data.FilterParameters
+import ru.practicum.android.diploma.domain.FilterInteractor
 import ru.practicum.android.diploma.ui.filter.state.FilterSettingsState
 
 class FilterSettingsViewModel(
-    private val filterStorage: FilterStorage
+    private val filterInteractor: FilterInteractor
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(loadFilterState())
+    private val _uiState = MutableStateFlow(FilterSettingsState())
     val uiState = _uiState.asStateFlow()
 
-    private fun loadFilterState(): FilterSettingsState {
-        val parameters = filterStorage.getFilterParameters()
-        return FilterSettingsState(
-            salary = parameters.salary,
-            industry = parameters.industry,
-            placeOfWork = parameters.placeOfWork,
-            hideWithoutSalary = parameters.hideWithoutSalary
-        )
+    init {
+        loadFilterState()
+    }
+
+    private fun loadFilterState() {
+        viewModelScope.launch {
+            val parameters = filterInteractor.getFilterParameters()
+            _uiState.value = FilterSettingsState(
+                salary = parameters.salary,
+                industry = parameters.industry,
+                placeOfWork = parameters.placeOfWork,
+                hideWithoutSalary = parameters.hideWithoutSalary
+            )
+        }
     }
 
     private fun saveFilterState() {
-        val currentState = _uiState.value
-        filterStorage.saveFilterParameters(
-            ru.practicum.android.diploma.data.FilterParameters(
-                salary = currentState.salary,
-                industry = currentState.industry,
-                placeOfWork = currentState.placeOfWork,
-                hideWithoutSalary = currentState.hideWithoutSalary
+        viewModelScope.launch {
+            val currentState = _uiState.value
+            filterInteractor.saveFilterParameters(
+                FilterParameters(
+                    salary = currentState.salary,
+                    industry = currentState.industry,
+                    placeOfWork = currentState.placeOfWork,
+                    hideWithoutSalary = currentState.hideWithoutSalary
+                )
             )
-        )
+        }
     }
 
     fun onSalaryChanged(newSalary: String) {
@@ -61,7 +72,9 @@ class FilterSettingsViewModel(
 
     fun resetFilters() {
         _uiState.value = FilterSettingsState() // Просто создаем новое, пустое состояние
-        filterStorage.clearFilterParameters()
+        viewModelScope.launch {
+            filterInteractor.clearFilterParameters()
+        }
     }
 
     // Добавить методы для обновления industry и placeOfWork, когда экраны выбора будут готовы

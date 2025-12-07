@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class FilterStorage(context: Context) {
 
@@ -14,20 +16,20 @@ class FilterStorage(context: Context) {
 
     private val gson = Gson()
 
-    fun saveFilterParameters(parameters: FilterParameters) {
+    suspend fun saveFilterParameters(parameters: FilterParameters) = withContext(Dispatchers.IO) {
         val json = gson.toJson(parameters)
         sharedPreferences.edit {
             putString(KEY_FILTER_PARAMETERS, json)
         }
     }
 
-    fun getFilterParameters(): FilterParameters {
+    suspend fun getFilterParameters(): FilterParameters = withContext(Dispatchers.IO) {
         val json = sharedPreferences.getString(KEY_FILTER_PARAMETERS, null)
-        return if (json != null) {
+        if (json != null) {
             try {
                 gson.fromJson(json, FilterParameters::class.java)
             } catch (e: JsonSyntaxException) {
-                Log.e(JSON_PARSING, "Не удалось разобрать FilterParameters из JSON", e)
+                Log.e(JSON_PARSING, "Failed to parse FilterParameters from JSON", e)
                 FilterParameters()
             }
         } else {
@@ -35,7 +37,7 @@ class FilterStorage(context: Context) {
         }
     }
 
-    fun clearFilterParameters() {
+    suspend fun clearFilterParameters() = withContext(Dispatchers.IO) {
         sharedPreferences.edit {
             remove(KEY_FILTER_PARAMETERS)
         }
@@ -47,4 +49,3 @@ class FilterStorage(context: Context) {
         private const val JSON_PARSING = "JSON_PARSING"
     }
 }
-

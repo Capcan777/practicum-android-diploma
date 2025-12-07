@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.data.dto.SearchRequest
+import ru.practicum.android.diploma.domain.FilterInteractor
 import ru.practicum.android.diploma.domain.SearchInteractor
 import ru.practicum.android.diploma.domain.models.SearchOutcome
 import ru.practicum.android.diploma.ui.common.Event
@@ -20,6 +21,7 @@ import java.io.IOException
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
+    private val filterInteractor: FilterInteractor,
     private val resourceProvider: ResourceProvider
 ) : ViewModel() {
 
@@ -72,10 +74,10 @@ class SearchViewModel(
         if (query.isEmpty()) return
 
         resetPagination()
-        val request = createSearchRequest(query, 0)
 
         viewModelScope.launch {
             _screenState.value = SearchScreenState.Loading
+            val request = createSearchRequest(query, 0)
             try {
                 searchInteractor.searchVacancies(request).collect { searchOutcome ->
                     when (searchOutcome) {
@@ -108,7 +110,8 @@ class SearchViewModel(
 
         viewModelScope.launch {
             try {
-                searchInteractor.loadNextPage(_searchText.value, nextPage).collect { searchOutcome ->
+                val request = createSearchRequest(_searchText.value, nextPage)
+                searchInteractor.searchVacancies(request).collect { searchOutcome ->
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
                             stateHandler.handleSearchResult(searchOutcome, isFirstPage = false)
@@ -142,7 +145,8 @@ class SearchViewModel(
 
         viewModelScope.launch {
             try {
-                searchInteractor.loadNextPage(retryQuery, retryPage).collect { searchOutcome ->
+                val request = createSearchRequest(retryQuery, retryPage)
+                searchInteractor.searchVacancies(request).collect { searchOutcome ->
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
                             stateHandler.handleSearchResult(searchOutcome, isFirstPage = false)
@@ -168,13 +172,14 @@ class SearchViewModel(
         }
     }
 
-    private fun createSearchRequest(query: String, page: Int): SearchRequest {
+    private suspend fun createSearchRequest(query: String, page: Int): SearchRequest {
+        val filterParameters = filterInteractor.getFilterParameters()
         return SearchRequest(
-            industry = null,
+            industry = filterParameters.industry.takeIf { it.isNotEmpty() }?.toIntOrNull(),
             text = query,
-            salary = null,
+            salary = filterParameters.salary.takeIf { it.isNotEmpty() }?.toIntOrNull(),
             page = page,
-            onlyWithSalary = false
+            onlyWithSalary = filterParameters.hideWithoutSalary
         )
     }
 
