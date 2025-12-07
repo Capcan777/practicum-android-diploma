@@ -42,7 +42,6 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.ui.common.AppBar
 
-
 @Composable
 fun FilterSettingsScreen(
     navController: NavController,
