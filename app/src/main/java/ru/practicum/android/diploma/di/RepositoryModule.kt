@@ -19,24 +19,18 @@ val repositoryModule = module {
     single<VacancyRepository> {
         VacancyRepositoryImpl(get(), get())
     }
-    
     single<FavVacanciesRepository> {
         FavVacanciesRepositoryImpl(get(), get())
     }
-    
     single<FilterRepository> {
         FilterRepositoryImpl(get())
     }
-    
     single<IndustryRepository> {
         IndustryRepositoryImpl(get(), get())
     }
-    
     single<ExternalNavigator> {
         ExternalNavigatorImpl(androidApplication(), get())
     }
-    
     single { DomainMapper() }
-    
     single { FavVacanciesDbConvertor() }
 }
