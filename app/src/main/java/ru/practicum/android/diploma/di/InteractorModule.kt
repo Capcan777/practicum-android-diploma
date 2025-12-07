@@ -19,11 +19,11 @@ val interactorModule = module {
     single<SearchInteractor> {
         SearchInteractorImpl(get())
     }
-
+    
     single<FavVacanciesInteractor> {
         FavVacanciesInteractorImpl(get())
     }
-
+    
     single<FilterInteractor> {
         FilterInteractorImpl(get())
     }
@@ -31,11 +31,11 @@ val interactorModule = module {
     single<IndustriesInteractor> {
         IndustriesInteractorImpl(get())
     }
-
+    
     single<SharingInteractor> {
         SharingInteractorImpl(get())
     }
-
+    
     single<VacancyDetailsInteractor> {
         VacancyDetailsInteractorImpl(get(), get())
     }
