@@ -33,10 +33,11 @@ fun NavGraph(navController: NavHostController) {
             }
         }
         composable(Routes.Favourites.route) { FavouritesVacanciesScreen(navController) }
-        composable(Routes.SettingsFilter.route) {
+        composable(Routes.SettingsFilter.route) { backStackEntry ->
             FilterSettingsScreen(
                 navController,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                viewModelStoreOwner = backStackEntry
             )
         }
         composable(Routes.About.route) { AboutTeamScreen(navController) }
@@ -51,7 +52,7 @@ data class Routes(val route: String) {
         val Search = Routes("search")
         val VacancyDetails = Routes("$VACANCY_DETAILS_BASE/{vacancyId}")
         val Favourites = Routes("favourites")
-        val SettingsFilter = Routes("$SETTINGS_FILTER_BASE/{filterId}")
+        val SettingsFilter = Routes("SETTINGS_FILTER_BASE")
         val About = Routes("about")
         // Функция для создания route с параметрами
         fun createVacancyDetailsRoute(vacancyId: String) = "vacancy_details/$vacancyId"

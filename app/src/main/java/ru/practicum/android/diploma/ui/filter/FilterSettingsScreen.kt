@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,9 +28,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +40,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavController
+import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.ui.common.AppBar
@@ -45,11 +50,24 @@ import ru.practicum.android.diploma.ui.common.AppBar
 @Composable
 fun FilterSettingsScreen(
     navController: NavController,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModelStoreOwner: ViewModelStoreOwner? = null
 ) {
-    var salaryText by remember { mutableStateOf("") }
-    var hideWithoutSalary by remember { mutableStateOf(false) }
-    var selectedIndustry by remember { mutableStateOf("") }
+
+    val viewModel: FilterSettingsViewModel = if (viewModelStoreOwner != null) {
+        koinViewModel(viewModelStoreOwner = viewModelStoreOwner)
+    } else {
+        koinViewModel()
+    }
+    val uiState = viewModel.uiState.collectAsState()
+    var hideWithoutSalary by rememberSaveable {
+        mutableStateOf(uiState.value.hideWithoutSalary)
+    }
+
+    LaunchedEffect(uiState.value.hideWithoutSalary) {
+        hideWithoutSalary = uiState.value.hideWithoutSalary
+    }
+
 
     Scaffold(
         topBar = {
@@ -70,6 +88,7 @@ fun FilterSettingsScreen(
         ) {
             FilterRow(
                 text = stringResource(R.string.place_of_work),
+                selectedText = uiState.value.placeOfWork,
                 onClick = { } // без клика
             )
 
@@ -82,6 +101,7 @@ fun FilterSettingsScreen(
             ) {
                 FilterRow(
                     text = stringResource(R.string.industry),
+                    selectedText = uiState.value.industry,
                     onClick = { } // обработать клик на страницу отрасли
                 )
             }
@@ -90,12 +110,8 @@ fun FilterSettingsScreen(
 
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = salaryText,
-                onValueChange = {
-                    if (salaryText.all { it.isDigit() }) {
-                        salaryText = it
-                    }
-                },
+                value = uiState.value.salary,
+                onValueChange = { viewModel.onSalaryChanged(it) },
                 label = {
                     Text(
                         text = stringResource(R.string.expected_salary),
@@ -110,16 +126,17 @@ fun FilterSettingsScreen(
                     )
                 },
                 trailingIcon = {
-                    if (salaryText.isNotEmpty()) {
+                    if (uiState.value.salary.isNotEmpty()) {
                         Icon(
                             imageVector = Icons.Filled.Clear,
                             contentDescription = null,
                             tint = VacancyTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.clickable {
-                                salaryText = ""
+                                viewModel.clearSalary()
                                 // обработка нажатия на кнопку очистки
                             }
                         )
+
                     }
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -141,17 +158,27 @@ fun FilterSettingsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { hideWithoutSalary = !hideWithoutSalary },
+                    .padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(R.string.do_not_show_without_salary),
                     style = VacancyTheme.typography.regular16,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            val newValue = !hideWithoutSalary
+                            hideWithoutSalary = newValue
+                            viewModel.onCheckboxChanged(newValue)
+                        }
                 )
                 Checkbox(
                     checked = hideWithoutSalary,
-                    onCheckedChange = { hideWithoutSalary = it },
+                    onCheckedChange = { newValue ->
+                        hideWithoutSalary = newValue
+                        viewModel.onCheckboxChanged(newValue)
+                    },
                     colors = CheckboxDefaults.colors(
                         VacancyTheme.colorScheme.primary,
                         uncheckedColor = VacancyTheme.colorScheme.primary
@@ -160,21 +187,20 @@ fun FilterSettingsScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
 
-            if (selectedIndustry.isNotEmpty() || salaryText.isNotEmpty() || hideWithoutSalary) {
-                ButtonApply(
-                    onClick = { /* обработать нажатие на кнопку Применить */ },
-                    textButton = stringResource(R.string.apply),
-                    color = ButtonDefaults.buttonColors(
-                        containerColor = VacancyTheme.colorScheme.primary,
-                        contentColor = VacancyTheme.colorScheme.onPrimary
-                    ),
-                    colorText = VacancyTheme.colorScheme.onPrimary
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                ButtonApply(
-                    onClick = { /* обработать нажатие на кнопку Сбросить */ },
-                    textButton = stringResource(R.string.reset),
+                if (uiState.value.isFilterApplied) {
+                    ButtonApply(
+                        onClick = { /* реализовать переход на экран поиска с фильтрами: viewModel.applyFilters() */ },
+                        textButton = stringResource(R.string.apply),
+                        color = ButtonDefaults.buttonColors(
+                            containerColor = VacancyTheme.colorScheme.primary,
+                            contentColor = VacancyTheme.colorScheme.onPrimary
+                        ),
+                        colorText = VacancyTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ButtonApply(
+                        onClick = { viewModel.resetFilters() },
+                        textButton = stringResource(R.string.reset),
                     color = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
                         contentColor = VacancyTheme.colorScheme.error
@@ -189,21 +215,33 @@ fun FilterSettingsScreen(
 @Composable
 private fun FilterRow(
     text: String,
+    selectedText: String?,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .height(60.dp),
+            .heightIn(min = 60.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = text,
-            style = VacancyTheme.typography.regular16,
-            color = VacancyTheme.colorScheme.onBackground
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = text,
+                style = VacancyTheme.typography.regular16,
+                color = VacancyTheme.colorScheme.onBackground
+            )
+            // Показываем выбранное значение под основным текстом, если оно есть
+            if (!selectedText.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = selectedText,
+                    style = VacancyTheme.typography.regular16,
+                    color = VacancyTheme.colorScheme.onBackground
+                )
+            }
+        }
         Icon(
             imageVector = Icons.Filled.ChevronRight,
             contentDescription = null,
