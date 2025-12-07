@@ -42,6 +42,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.ui.common.AppBar
 
+
 @Composable
 fun FilterSettingsScreen(
     navController: NavController,
@@ -69,7 +70,7 @@ fun FilterSettingsScreen(
             onSalaryChanged = viewModel::onSalaryChanged,
             onClearSalary = viewModel::clearSalary,
             onCheckboxChanged = viewModel::onCheckboxChanged,
-            onApplyFilters = { /* обработка применения фильтров, например: viewModel.applyFilters() */ },
+            onApplyFilters = { /* обрабока нажатия для применения фильтров viewModel.applyFilters() */ },
             onResetFilters = viewModel::resetFilters,
             modifier = Modifier
                 .fillMaxSize()
