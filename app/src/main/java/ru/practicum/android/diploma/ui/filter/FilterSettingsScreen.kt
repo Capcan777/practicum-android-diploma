@@ -48,7 +48,6 @@ fun FilterSettingsScreen(
     onBack: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner? = null
 ) {
-
     val viewModel: FilterSettingsViewModel = if (viewModelStoreOwner != null) {
         koinViewModel(viewModelStoreOwner = viewModelStoreOwner)
     } else {
