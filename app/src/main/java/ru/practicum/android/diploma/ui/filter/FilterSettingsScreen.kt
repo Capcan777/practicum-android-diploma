@@ -53,7 +53,6 @@ fun FilterSettingsScreen(
     onBack: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner? = null
 ) {
-
     val viewModel: FilterSettingsViewModel = if (viewModelStoreOwner != null) {
         koinViewModel(viewModelStoreOwner = viewModelStoreOwner)
     } else {
@@ -187,20 +186,20 @@ fun FilterSettingsScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
 
-                if (uiState.value.isFilterApplied) {
-                    ButtonApply(
-                        onClick = { /* реализовать переход на экран поиска с фильтрами: viewModel.applyFilters() */ },
-                        textButton = stringResource(R.string.apply),
-                        color = ButtonDefaults.buttonColors(
-                            containerColor = VacancyTheme.colorScheme.primary,
-                            contentColor = VacancyTheme.colorScheme.onPrimary
-                        ),
-                        colorText = VacancyTheme.colorScheme.onPrimary
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ButtonApply(
-                        onClick = { viewModel.resetFilters() },
-                        textButton = stringResource(R.string.reset),
+            if (uiState.value.isFilterApplied) {
+                ButtonApply(
+                    onClick = { /* реализовать переход на экран поиска с фильтрами: viewModel.applyFilters() */ },
+                    textButton = stringResource(R.string.apply),
+                    color = ButtonDefaults.buttonColors(
+                        containerColor = VacancyTheme.colorScheme.primary,
+                        contentColor = VacancyTheme.colorScheme.onPrimary
+                    ),
+                    colorText = VacancyTheme.colorScheme.onPrimary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ButtonApply(
+                    onClick = { viewModel.resetFilters() },
+                    textButton = stringResource(R.string.reset),
                     color = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
                         contentColor = VacancyTheme.colorScheme.error
