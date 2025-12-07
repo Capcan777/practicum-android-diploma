@@ -18,23 +18,18 @@ val interactorModule = module {
     single<SearchInteractor> {
         SearchInteractorImpl(get())
     }
-    
     single<FavVacanciesInteractor> {
         FavVacanciesInteractorImpl(get())
     }
-    
     single<FilterInteractor> {
         FilterInteractorImpl(get())
     }
-    
     single<IndustriesInteractor> {
         IndustriesInteractorImpl(get())
     }
-    
     single<SharingInteractor> {
         SharingInteractorImpl(get())
     }
-    
     single<VacancyDetailsInteractor> {
         VacancyDetailsInteractorImpl(get(), get())
     }
