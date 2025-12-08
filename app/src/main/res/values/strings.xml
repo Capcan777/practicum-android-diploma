@@ -54,4 +54,10 @@
     <string name="reset">Сбросить</string>
     <string name="apply">Применить</string>
 
+    <string name="team_member_evgeny">Евгений Шульц</string>
+    <string name="team_member_yumey">Юмей Балина</string>
+    <string name="team_member_ilya">Илья Другов</string>
+    <string name="role_team_lead">Тимлид</string>
+    <string name="role_developer">Разработчик</string>
+
 </resources>

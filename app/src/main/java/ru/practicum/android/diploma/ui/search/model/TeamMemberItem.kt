@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
@@ -47,7 +48,7 @@ fun TeamMemberItem(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = member.name,
+                text = "${stringResource(member.name)} ${stringResource(member.role)}",
                 style = VacancyTheme.typography.medium16,
                 color = VacancyTheme.colorScheme.inverseSurface,
                 maxLines = 1,
@@ -55,12 +56,6 @@ fun TeamMemberItem(
             )
 
             Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = member.role,
-                style = VacancyTheme.typography.regular12,
-                color = VacancyTheme.colorScheme.inverseSurface.copy(alpha = 0.6f)
-            )
         }
     }
 }
