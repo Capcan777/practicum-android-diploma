@@ -25,9 +25,9 @@ fun AboutTeamScreen(
     navController: NavController
 ) {
     val teamMembersUI = listOf(
-        TeamMemberUI("Тест 1", "Тестирование"),
-        TeamMemberUI("Тест 2", "Оценка"),
-        TeamMemberUI("Тест 3", "Дизайн"),
+        TeamMemberUI(R.string.team_member_evgeny, R.string.role_team_lead),
+        TeamMemberUI(R.string.team_member_yumey, R.string.role_developer),
+        TeamMemberUI(R.string.team_member_ilya, R.string.role_developer),
     )
     Column(
         modifier = Modifier
