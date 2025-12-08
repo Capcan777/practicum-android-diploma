@@ -69,7 +69,10 @@ fun FilterSettingsScreen(
             onSalaryChanged = viewModel::onSalaryChanged,
             onClearSalary = viewModel::clearSalary,
             onCheckboxChanged = viewModel::onCheckboxChanged,
-            onApplyFilters = { /* обрабока нажатия для применения фильтров viewModel.applyFilters() */ },
+            onApplyFilters = {
+                viewModel.applyFilters()
+                navController.popBackStack()
+            },
             onResetFilters = viewModel::resetFilters,
             modifier = Modifier
                 .fillMaxSize()

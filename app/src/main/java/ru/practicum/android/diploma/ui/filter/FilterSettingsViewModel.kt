@@ -24,50 +24,34 @@ class FilterSettingsViewModel(
     private fun loadFilterState() {
         viewModelScope.launch {
             val parameters = filterInteractor.getFilterParameters()
-            _uiState.value = FilterSettingsState(
-                salary = parameters.salary,
-                industry = parameters.industry,
-                placeOfWork = parameters.placeOfWork,
-                hideWithoutSalary = parameters.hideWithoutSalary
-            )
+            _uiState.value = parameters.toFilterSettingsState()
         }
     }
 
     private fun saveFilterState() {
         viewModelScope.launch {
-            val currentState = _uiState.value
-            filterInteractor.saveFilterParameters(
-                FilterParameters(
-                    salary = currentState.salary,
-                    industry = currentState.industry,
-                    placeOfWork = currentState.placeOfWork,
-                    hideWithoutSalary = currentState.hideWithoutSalary
-                )
-            )
+            filterInteractor.saveFilterParameters(_uiState.value.toFilterParameters())
+        }
+    }
+
+    private fun updateState(update: (FilterSettingsState) -> FilterSettingsState) {
+        _uiState.update { currentState ->
+            update(currentState).also { saveFilterState() }
         }
     }
 
     fun onSalaryChanged(newSalary: String) {
         if (newSalary.all { it.isDigit() }) {
-            _uiState.update { currentState ->
-                currentState.copy(salary = newSalary)
-            }
-            saveFilterState()
+            updateState { it.copy(salary = newSalary) }
         }
     }
 
     fun onCheckboxChanged(isChecked: Boolean) {
-        _uiState.update { currentState ->
-            currentState.copy(hideWithoutSalary = isChecked)
-        }
-        saveFilterState()
+        updateState { it.copy(hideWithoutSalary = isChecked) }
     }
 
     fun clearSalary() {
-        _uiState.update { currentState ->
-            currentState.copy(salary = "")
-        }
-        saveFilterState()
+        updateState { it.copy(salary = "") }
     }
 
     fun resetFilters() {
@@ -79,16 +63,34 @@ class FilterSettingsViewModel(
 
     // Добавить методы для обновления industry и placeOfWork, когда экраны выбора будут готовы
     fun onIndustryChanged(newIndustry: String) {
-        _uiState.update { currentState ->
-            currentState.copy(industry = newIndustry)
-        }
-        saveFilterState()
+        updateState { it.copy(industry = newIndustry) }
     }
 
     fun onPlaceOfWorkChanged(newPlaceOfWork: String) {
-        _uiState.update { currentState ->
-            currentState.copy(placeOfWork = newPlaceOfWork)
+        updateState { it.copy(placeOfWork = newPlaceOfWork) }
+    }
+
+    fun applyFilters() {
+        viewModelScope.launch {
+            filterInteractor.saveFilterParameters(_uiState.value.toFilterParameters())
         }
-        saveFilterState()
+    }
+
+    private fun FilterSettingsState.toFilterParameters(): FilterParameters {
+        return FilterParameters(
+            salary = this.salary,
+            industry = this.industry,
+            placeOfWork = this.placeOfWork,
+            hideWithoutSalary = this.hideWithoutSalary
+        )
+    }
+
+    private fun FilterParameters.toFilterSettingsState(): FilterSettingsState {
+        return FilterSettingsState(
+            salary = this.salary,
+            industry = this.industry,
+            placeOfWork = this.placeOfWork,
+            hideWithoutSalary = this.hideWithoutSalary
+        )
     }
 }
