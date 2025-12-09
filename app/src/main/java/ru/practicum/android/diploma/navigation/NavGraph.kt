@@ -4,11 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import org.koin.compose.viewmodel.koinViewModel
 import ru.practicum.android.diploma.ui.about.AboutTeamScreen
 import ru.practicum.android.diploma.ui.details.VacancyDetailsScreen
 import ru.practicum.android.diploma.ui.favourites.FavouritesVacanciesScreen
 import ru.practicum.android.diploma.ui.filter.FilterSettingsScreen
+import ru.practicum.android.diploma.ui.filter.FilterSettingsViewModel
+import ru.practicum.android.diploma.ui.industry.IndustrySelectionScreen
 import ru.practicum.android.diploma.ui.search.SearchScreen
+import ru.practicum.android.diploma.ui.search.SearchViewModel
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -34,9 +38,35 @@ fun NavGraph(navController: NavHostController) {
         }
         composable(Routes.Favourites.route) { FavouritesVacanciesScreen(navController) }
         composable(Routes.SettingsFilter.route) { backStackEntry ->
+            // Получаем ViewModel поиска из предыдущего экрана для перезапуска поиска
+            val previousEntry = navController.previousBackStackEntry
+            val searchViewModel: SearchViewModel? = previousEntry?.let {
+                koinViewModel<SearchViewModel>(viewModelStoreOwner = it)
+            }
+
             FilterSettingsScreen(
                 navController,
+                onBack = {
+                    // Перезапускаем поиск с текущим запросом, если он был активен
+                    searchViewModel?.refreshSearchWithCurrentQuery()
+                    navController.popBackStack()
+                },
+                viewModelStoreOwner = backStackEntry
+            )
+        }
+        composable(Routes.IndustrySelection.route) { backStackEntry ->
+            // Получаем ViewModel фильтров из предыдущего экрана
+            val previousEntry = navController.previousBackStackEntry
+            val filterViewModel: FilterSettingsViewModel? = previousEntry?.let {
+                koinViewModel<FilterSettingsViewModel>(viewModelStoreOwner = it)
+            }
+
+            IndustrySelectionScreen(
+                navController = navController,
                 onBack = { navController.popBackStack() },
+                onIndustrySelected = { industry ->
+                    filterViewModel?.onIndustryChanged(industry.name)
+                },
                 viewModelStoreOwner = backStackEntry
             )
         }
@@ -48,11 +78,13 @@ data class Routes(val route: String) {
     companion object {
         const val VACANCY_DETAILS_BASE = "vacancy_details"
         const val SETTINGS_FILTER_BASE = "filter"
+        const val INDUSTRY_SELECTION_BASE = "industry_selection"
 
         val Search = Routes("search")
         val VacancyDetails = Routes("$VACANCY_DETAILS_BASE/{vacancyId}")
         val Favourites = Routes("favourites")
         val SettingsFilter = Routes("SETTINGS_FILTER_BASE")
+        val IndustrySelection = Routes("industry_selection")
         val About = Routes("about")
         // Функция для создания route с параметрами
         fun createVacancyDetailsRoute(vacancyId: String) = "vacancy_details/$vacancyId"

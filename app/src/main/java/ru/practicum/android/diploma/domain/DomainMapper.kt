@@ -162,12 +162,24 @@ class DomainMapper {
         }
     }
 
+
     fun mapIndustriesOutcome(response: IndustriesResponse): IndustriesOutcome {
         if (response.result == ResponseCodes.SUCCESS) {
-            return IndustriesOutcome.IndustriesResult(
-                industries = response.items.map { industriesDto ->
-                    mapIndustry(industriesDto)
+            // Собираем все отрасли: родительские и дочерние из массива industries
+            val allIndustries = mutableListOf<Industry>()
+
+            response.items.forEach { parentIndustry ->
+                // Добавляем родительскую отрасль
+                allIndustries.add(mapIndustry(parentIndustry))
+
+                // Добавляем все дочерние отрасли из массива industries
+                parentIndustry.industries?.forEach { childIndustry ->
+                    allIndustries.add(mapIndustry(childIndustry))
                 }
+            }
+
+            return IndustriesOutcome.IndustriesResult(
+                industries = allIndustries
             )
         } else {
             return when (response.result) {

@@ -70,6 +70,21 @@ class FilterSettingsViewModel(
         saveFilterState()
     }
 
+    fun onIndustryClick(navigateTo: () -> Unit) {
+        if (uiState.value.industry.isNotEmpty()) {
+            clearIndustry()
+        } else {
+            navigateTo() // Выполняем навигацию, переданную из UI
+        }
+    }
+
+    private fun clearIndustry() {
+        _uiState.update { currentState ->
+            currentState.copy(industry = "")
+        }
+        saveFilterState()
+    }
+
     fun resetFilters() {
         _uiState.value = FilterSettingsState() // Просто создаем новое, пустое состояние
         viewModelScope.launch {
@@ -89,6 +104,12 @@ class FilterSettingsViewModel(
         _uiState.update { currentState ->
             currentState.copy(placeOfWork = newPlaceOfWork)
         }
+        saveFilterState()
+    }
+
+    fun applyFilters() {
+        // Фильтры уже сохраняются автоматически при изменении,
+        // но явно сохраняем текущее состояние для гарантии
         saveFilterState()
     }
 }
