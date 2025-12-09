@@ -94,9 +94,8 @@ class SearchViewModel(
         if (query.isEmpty()) return
 
         resetPagination()
-
+        _screenState.value = SearchScreenState.Loading
         viewModelScope.launch {
-            _screenState.value = SearchScreenState.Loading
             val request = createSearchRequest(query, 0)
             try {
                 searchInteractor.searchVacancies(request).collect { searchOutcome ->
@@ -210,6 +209,15 @@ class SearchViewModel(
 
     fun clearToastMessage() {
         _toastMessage.value = null
+    }
+
+    fun refreshSearchWithCurrentQuery() {
+        val currentQuery = _searchText.value
+        if (currentQuery.isNotEmpty()) {
+            // Отменяем текущий debounce и сразу запускаем поиск
+            debounceHandler.cancel()
+            searchVacancies(currentQuery)
+        }
     }
 
     companion object {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import retrofit2.HttpException
 import ru.practicum.android.diploma.data.dto.IndustriesRequest
+import ru.practicum.android.diploma.data.dto.IndustriesResponse
 import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.data.dto.VacancyRequest
@@ -16,7 +17,6 @@ class RetrofitNetworkClient(
     private val industryApi: IndustryApi,
     private val context: Context
 ) : NetworkClient {
-
     companion object {
         private const val TAG = "RetrofitNetworkClient"
     }
@@ -51,8 +51,8 @@ class RetrofitNetworkClient(
                 }
 
                 is IndustriesRequest -> {
-                    val resultResponse = industryApi.getFilterIndustries()
-                    return resultResponse.apply {
+                    val apiResponse = industryApi.getFilterIndustries()
+                    return IndustriesResponse(items = apiResponse).apply {
                         result = ResponseCodes.SUCCESS
                     }
                 }

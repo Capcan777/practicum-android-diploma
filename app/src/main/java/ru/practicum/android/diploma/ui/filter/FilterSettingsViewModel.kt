@@ -54,6 +54,21 @@ class FilterSettingsViewModel(
         updateState { it.copy(salary = "") }
     }
 
+    fun onIndustryClick(navigateTo: () -> Unit) {
+        if (uiState.value.industry.isNotEmpty()) {
+            clearIndustry()
+        } else {
+            navigateTo() // Выполняем навигацию, переданную из UI
+        }
+    }
+
+    private fun clearIndustry() {
+        _uiState.update { currentState ->
+            currentState.copy(industry = "")
+        }
+        saveFilterState()
+    }
+
     fun resetFilters() {
         _uiState.value = FilterSettingsState() // Просто создаем новое, пустое состояние
         viewModelScope.launch {
@@ -61,7 +76,6 @@ class FilterSettingsViewModel(
         }
     }
 
-    // Добавить методы для обновления industry и placeOfWork, когда экраны выбора будут готовы
     fun onIndustryChanged(newIndustry: String) {
         updateState { it.copy(industry = newIndustry) }
     }
@@ -94,4 +108,5 @@ class FilterSettingsViewModel(
             hideWithoutSalary = this.hideWithoutSalary
         )
     }
+
 }

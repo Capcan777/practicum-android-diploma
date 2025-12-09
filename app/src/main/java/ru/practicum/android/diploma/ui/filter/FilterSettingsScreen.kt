@@ -23,10 +23,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -40,6 +40,7 @@ import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
+import ru.practicum.android.diploma.navigation.Routes
 import ru.practicum.android.diploma.ui.common.AppBar
 
 @Composable
@@ -66,12 +67,18 @@ fun FilterSettingsScreen(
     ) { innerPadding ->
         FilterSettingsContent(
             uiState = uiState.value,
+            navController = navController,
             onSalaryChanged = viewModel::onSalaryChanged,
             onClearSalary = viewModel::clearSalary,
+            onIndustryClick = {
+                viewModel.onIndustryClick {
+                    navController.navigate(Routes.IndustrySelection.route)
+                }
+            },
             onCheckboxChanged = viewModel::onCheckboxChanged,
             onApplyFilters = {
                 viewModel.applyFilters()
-                navController.popBackStack()
+                onBack()
             },
             onResetFilters = viewModel::resetFilters,
             modifier = Modifier
@@ -87,7 +94,9 @@ fun FilterSettingsScreen(
 @Composable
 private fun FilterSettingsContent(
     uiState: ru.practicum.android.diploma.ui.filter.state.FilterSettingsState,
+    navController: NavController,
     onSalaryChanged: (String) -> Unit,
+    onIndustryClick: () -> Unit,
     onClearSalary: () -> Unit,
     onCheckboxChanged: (Boolean) -> Unit,
     onApplyFilters: () -> Unit,
@@ -103,17 +112,11 @@ private fun FilterSettingsContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-        ) {
-            FilterRow(
-                text = stringResource(R.string.industry),
-                selectedText = uiState.industry,
-                onClick = { } // обработать клик на страницу отрасли
-            )
-        }
+        FilterRow(
+            text = stringResource(R.string.industry),
+            selectedText = uiState.industry,
+            onClick = onIndustryClick
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -161,7 +164,7 @@ private fun SalaryTextField(
             Text(
                 text = stringResource(R.string.enter_amount),
                 style = VacancyTheme.typography.regular16,
-                color = VacancyTheme.colorScheme.secondary
+                color = VacancyTheme.colorScheme.onBackground
             )
         },
         trailingIcon = {
@@ -177,13 +180,18 @@ private fun SalaryTextField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
         shape = VacancyTheme.shapes.shape10dp,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = VacancyTheme.colorScheme.tertiaryContainer,
-            unfocusedBorderColor = VacancyTheme.colorScheme.tertiaryContainer,
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
             cursorColor = VacancyTheme.colorScheme.primary,
-            focusedContainerColor = VacancyTheme.colorScheme.tertiaryContainer,
-            unfocusedContainerColor = VacancyTheme.colorScheme.tertiaryContainer,
-            unfocusedLabelColor = VacancyTheme.colorScheme.inverseSurface,
+            focusedContainerColor = VacancyTheme.colorScheme.secondaryContainer,
+            unfocusedContainerColor = VacancyTheme.colorScheme.secondaryContainer,
+            unfocusedLabelColor = if (salary.isEmpty()) {
+                VacancyTheme.colorScheme.onBackground
+            } else {
+                VacancyTheme.colorScheme.onPrimaryContainer
+            },
             focusedLabelColor = VacancyTheme.colorScheme.primary,
         )
     )
@@ -204,6 +212,7 @@ private fun HideWithoutSalaryCheckbox(
         Text(
             text = stringResource(R.string.do_not_show_without_salary),
             style = VacancyTheme.typography.regular16,
+            color = VacancyTheme.colorScheme.inverseSurface,
             modifier = Modifier
                 .weight(1f)
                 .clickable { onCheckedChange(!isChecked) }
@@ -232,7 +241,7 @@ private fun FilterActionButtons(
                 containerColor = VacancyTheme.colorScheme.primary,
                 contentColor = VacancyTheme.colorScheme.onPrimary
             ),
-            colorText = VacancyTheme.colorScheme.onPrimary
+            colorText = VacancyTheme.colorScheme.outlineVariant
         )
         Spacer(modifier = Modifier.height(8.dp))
         ButtonApply(
@@ -256,16 +265,26 @@ private fun FilterRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
             .heightIn(min = 60.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+        ) {
             Text(
                 text = text,
-                style = VacancyTheme.typography.regular16,
-                color = VacancyTheme.colorScheme.onBackground
+                style = if (selectedText.isNullOrBlank()) {
+                    VacancyTheme.typography.regular16
+                } else {
+                    VacancyTheme.typography.regular12
+                },
+                color = if (selectedText.isNullOrBlank()) {
+                    VacancyTheme.colorScheme.onBackground
+                } else {
+                    VacancyTheme.colorScheme.inverseSurface
+                }
             )
             // Показываем выбранное значение под основным текстом, если оно есть
             if (!selectedText.isNullOrBlank()) {
@@ -273,15 +292,17 @@ private fun FilterRow(
                 Text(
                     text = selectedText,
                     style = VacancyTheme.typography.regular16,
-                    color = VacancyTheme.colorScheme.onBackground
+                    color = VacancyTheme.colorScheme.inverseSurface
                 )
             }
         }
         Icon(
-            imageVector = Icons.Filled.ChevronRight,
+            imageVector = if (selectedText.isNullOrBlank()) Icons.Filled.ChevronRight else Icons.Filled.Clear,
             contentDescription = null,
             tint = VacancyTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier
+                .size(24.dp)
+                .clickable(onClick = onClick)
         )
     }
 }

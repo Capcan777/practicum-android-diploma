@@ -164,10 +164,18 @@ class DomainMapper {
 
     fun mapIndustriesOutcome(response: IndustriesResponse): IndustriesOutcome {
         if (response.result == ResponseCodes.SUCCESS) {
-            return IndustriesOutcome.IndustriesResult(
-                industries = response.items.map { industriesDto ->
-                    mapIndustry(industriesDto)
+            val allIndustries = mutableListOf<Industry>()
+
+            response.items.forEach { parentIndustry ->
+                allIndustries.add(mapIndustry(parentIndustry))
+
+                parentIndustry.industries?.forEach { childIndustry ->
+                    allIndustries.add(mapIndustry(childIndustry))
                 }
+            }
+
+            return IndustriesOutcome.IndustriesResult(
+                industries = allIndustries
             )
         } else {
             return when (response.result) {

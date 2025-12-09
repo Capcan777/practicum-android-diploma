@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 
 class AboutTeamFragment : Fragment() {
@@ -21,8 +20,7 @@ class AboutTeamFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 VacancyTheme(isDarkTheme = false) {
-                    val navController = findNavController()
-                    AboutTeamScreen(navController)
+                    AboutTeamScreen()
                 }
             }
         }
