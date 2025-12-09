@@ -72,7 +72,7 @@ fun FilterSettingsScreen(
             onClearSalary = viewModel::clearSalary,
             onIndustryClick = {
                 viewModel.onIndustryClick {
-                    navController.navigate(Routes.IndustrySelection.route) // Передаем действие навигации
+                    navController.navigate(Routes.IndustrySelection.route)
                 }
             },
             onCheckboxChanged = viewModel::onCheckboxChanged,

@@ -41,7 +41,6 @@ import ru.practicum.android.diploma.ui.industry.state.IndustrySelectionState
 
 @Composable
 fun IndustrySelectionScreen(
-    navController: NavController,
     onBack: () -> Unit,
     onIndustrySelected: (Industry) -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner? = null

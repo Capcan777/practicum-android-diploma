@@ -112,7 +112,8 @@ fun VacancyDetailsScreen(
                     Text(
                         text = vacancy.title,
                         style = VacancyTheme.typography.bold32,
-                        modifier = Modifier.padding(bottom = 4.dp)
+                        modifier = Modifier.padding(bottom = 4.dp),
+                        color = VacancyTheme.colorScheme.inverseSurface
                     )
 
                     SalaryDisplay(
@@ -122,7 +123,7 @@ fun VacancyDetailsScreen(
                     )
 
                     Surface(
-                        color = VacancyTheme.colorScheme.secondaryContainer,
+                        color = VacancyTheme.colorScheme.outlineVariant,
                         shape = VacancyTheme.shapes.shape10dp,
                         tonalElevation = 0.dp,
                         modifier = Modifier
@@ -163,29 +164,34 @@ fun VacancyDetailsScreen(
                     if (vacancy.experience?.name != null) {
                         Text(
                             text = stringResource(R.string.required_experience),
-                            style = VacancyTheme.typography.medium16
+                            style = VacancyTheme.typography.medium16,
+                            color = VacancyTheme.colorScheme.inverseSurface
                         )
                         Text(
                             text = vacancy.experience.name,
                             style = VacancyTheme.typography.regular16,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier.padding(bottom = 8.dp),
+                            color = VacancyTheme.colorScheme.inverseSurface
                         )
                     }
                     Text(
                         text = "${vacancy.employment?.name}. ${vacancy.schedule?.name}",
-                        style = VacancyTheme.typography.regular16
+                        style = VacancyTheme.typography.regular16,
+                        color = VacancyTheme.colorScheme.inverseSurface
                     )
                     Spacer(modifier = Modifier.padding(top = 32.dp))
 
                     Text(
                         text = stringResource(R.string.vacancy_desc),
                         style = VacancyTheme.typography.medium22,
+                        color = VacancyTheme.colorScheme.inverseSurface
                     )
 
                     Text(
                         text = vacancy.description,
                         style = VacancyTheme.typography.regular16,
-                        modifier = Modifier.padding(top = 16.dp)
+                        modifier = Modifier.padding(top = 16.dp),
+                        color = VacancyTheme.colorScheme.inverseSurface
                     )
                     if (vacancy.skills.isNotEmpty()) {
                         Spacer(modifier = Modifier.padding(top = 24.dp))
@@ -193,6 +199,7 @@ fun VacancyDetailsScreen(
                         Text(
                             text = stringResource(R.string.key_skills),
                             style = VacancyTheme.typography.medium22,
+                            color = VacancyTheme.colorScheme.inverseSurface
                         )
                         Spacer(modifier = Modifier.padding(top = 16.dp))
 
@@ -213,6 +220,7 @@ fun VacancyDetailsScreen(
                             Text(
                                 text = stringResource(R.string.contacts),
                                 style = VacancyTheme.typography.medium22,
+                                color = VacancyTheme.colorScheme.inverseSurface
                             )
                             Spacer(modifier = Modifier.padding(top = 16.dp))
 
@@ -221,7 +229,8 @@ fun VacancyDetailsScreen(
                                     Text(
                                         text = name,
                                         style = VacancyTheme.typography.regular16,
-                                        modifier = Modifier.padding(bottom = 4.dp)
+                                        modifier = Modifier.padding(bottom = 4.dp),
+                                        color = VacancyTheme.colorScheme.inverseSurface
                                     )
                                 }
                                 contacts.phones?.forEach { phone ->
@@ -229,6 +238,7 @@ fun VacancyDetailsScreen(
                                         if (phoneNumber.isNotBlank()) {
                                             Text(
                                                 text = phoneNumber,
+                                                color = VacancyTheme.colorScheme.inverseSurface,
                                                 style = VacancyTheme.typography.regular16,
                                                 modifier = Modifier
                                                     .padding(bottom = 4.dp)
@@ -240,6 +250,7 @@ fun VacancyDetailsScreen(
                                 contacts.email?.takeIf { it.isNotBlank() }?.let { email ->
                                     Text(
                                         text = email,
+                                        color = VacancyTheme.colorScheme.inverseSurface,
                                         style = VacancyTheme.typography.regular16,
                                         modifier = Modifier
                                             .padding(bottom = 4.dp)
@@ -281,7 +292,6 @@ fun VacancyDetailsScreen(
 
 @Composable
 fun CompanyLogo(logoUrl: String?) {
-    // временная заглушка для предпросмотра
     if (LocalInspectionMode.current) {
         Image(
             painter = painterResource(id = R.drawable.placeholder_logo),
@@ -334,12 +344,14 @@ fun BulletsRow(
         Text(
             text = "•",
             style = VacancyTheme.typography.regular16,
-            modifier = Modifier.padding(end = 8.dp)
+            modifier = Modifier.padding(end = 8.dp),
+            color = VacancyTheme.colorScheme.inverseSurface
         )
         Text(
             text = text,
             style = VacancyTheme.typography.regular16,
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 4.dp),
+            color = VacancyTheme.colorScheme.inverseSurface
         )
     }
 }
