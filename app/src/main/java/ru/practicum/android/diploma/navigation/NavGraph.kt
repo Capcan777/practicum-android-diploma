@@ -86,6 +86,6 @@ data class Routes(val route: String) {
         val IndustrySelection = Routes(INDUSTRY_SELECTION_BASE)
         val About = Routes(ABOUT_BASE)
 
-        fun createVacancyDetailsRoute(vacancyId: String) = "vacancy_details/$vacancyId"
+        fun createVacancyDetailsRoute(vacancyId: String) = "$VACANCY_DETAILS_BASE/$vacancyId"
     }
 }
