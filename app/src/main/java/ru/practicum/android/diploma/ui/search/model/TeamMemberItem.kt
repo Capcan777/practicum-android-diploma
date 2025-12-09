@@ -23,27 +23,6 @@ fun TeamMemberItem(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Возможность сделать иконки
-        // if (member.iconResId != null) {
-        //     Image(
-        //         painter = painterResource(id = member.iconResId),
-        //         contentDescription = null,
-        //         modifier = Modifier
-        //             .size(40.dp)
-        //             .padding(end = 12.dp)
-        //     )
-        // } else {
-        //     // Заглушка для иконки
-        //     Spacer(modifier = Modifier
-        //         .size(40.dp)
-        //         .padding(end = 12.dp)
-        //         .background(
-        //             color = VacancyTheme.colorScheme.primary.copy(alpha = 0.1f),
-        //             shape = CircleShape
-        //         )
-        //     )
-        // }
-
         Column(
             modifier = Modifier.weight(1f)
         ) {
