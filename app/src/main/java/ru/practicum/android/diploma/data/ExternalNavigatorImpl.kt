@@ -5,11 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.api.ExternalNavigator
-import ru.practicum.android.diploma.domain.models.SalaryRange
 import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.util.ResourceProvider
-
-private const val DESCRIPTION_PREVIEW_LENGTH = 200
 
 class ExternalNavigatorImpl(
     private val application: Application,
@@ -50,42 +47,5 @@ class ExternalNavigatorImpl(
         application.startActivity(intent)
     }
 
-    fun getTextToShare(vacancy: Vacancy): String {
-        val strBuilder = StringBuilder()
-        strBuilder.append(vacancy.title)
-        vacancy.company.name.let {
-            strBuilder.append(" — ").append(it)
-        }
-        vacancy.location?.let {
-            strBuilder.append("\n").append(it)
-        }
-        vacancy.salary?.let {
-            strBuilder.append("\n")
-                .append(
-                    resourceProvider.getString(R.string.salary_for_sharing)
-                )
-                .append(salaryRangeToStr(it))
-        }
-        strBuilder.append("\n\n")
-        strBuilder.append(vacancy.description.take(DESCRIPTION_PREVIEW_LENGTH))
-        strBuilder.append("...")
-        vacancy.url?.let { strBuilder.append("\n\n").append(it) }
-        return strBuilder.toString()
-    }
-
-    private fun salaryRangeToStr(salary: SalaryRange): String {
-        val curr = salary.currency?.let { " $it" } ?: ""
-        return when {
-            salary.from != null && salary.to != null ->
-                if (salary.from == salary.to) {
-                    "$salary.from$curr"
-                } else {
-                    "$salary.from — $salary.to$curr"
-                }
-
-            salary.from != null -> "от $salary.from$curr"
-            salary.to != null -> "до $salary.to$curr"
-            else -> resourceProvider.getString(R.string.salary_not_specified)
-        }
-    }
+    fun getTextToShare(vacancy: Vacancy): String = vacancy.url ?: ""
 }
