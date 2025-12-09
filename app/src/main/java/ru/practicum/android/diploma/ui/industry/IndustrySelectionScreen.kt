@@ -37,7 +37,6 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.common.AppBar
-import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.industry.state.IndustrySelectionState
 
 @Composable
@@ -119,7 +118,7 @@ private fun IndustrySelectionContent(
                 )
             }
             uiState.filteredIndustries.isEmpty() -> {
-
+                // не показываем
             }
             else -> {
                 LazyColumn {

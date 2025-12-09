@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.industry
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,6 +52,7 @@ class IndustrySelectionViewModel(
                     }
                 }
             } catch (e: IOException) {
+                Log.e("IndustryViewModel", "Failed to load industries due to network error", e)
                 _uiState.update { state ->
                     state.copy(
                         isLoading = false,

@@ -162,7 +162,6 @@ class DomainMapper {
         }
     }
 
-
     fun mapIndustriesOutcome(response: IndustriesResponse): IndustriesOutcome {
         if (response.result == ResponseCodes.SUCCESS) {
             val allIndustries = mutableListOf<Industry>()
