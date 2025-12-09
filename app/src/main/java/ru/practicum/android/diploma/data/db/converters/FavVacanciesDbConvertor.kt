@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.data.db.converters
 
-import android.util.Log
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.data.db.entity.VacancyEntity
 import ru.practicum.android.diploma.domain.models.Employer
@@ -59,7 +58,6 @@ class FavVacanciesDbConvertor {
 
         return SalaryRange(from = from, to = to, currency = currency)
     }
-
 
     fun fromSalaryRange(resourceProvider: ResourceProvider, salary: SalaryRange?): String {
         if (salary == null) return ""
