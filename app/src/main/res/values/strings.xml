@@ -21,9 +21,17 @@
     <string name="currency_aud">AUD</string>
     <string name="currency_eur">EUR</string>
     <string name="currency_hkd">HKD</string>
+    <string name="currency_gbp">GBP</string>
+    <string name="currency_sek">SEK</string>
     <string name="currency_rub_sym">₽</string>
     <string name="currency_usd_sym">$</string>
     <string name="currency_eur_sym">€</string>
+    <string name="currency_gbp_sym">£</string>
+    <string name="currency_sek_sym">kr</string>
+
+    <string name="salary_range">от %1$s до %2$s</string>
+    <string name="salary_from">от %1$s</string>
+    <string name="salary_to">до %1$s</string>
     <string name="salary_not_specified">Зарплата не указана</string>
     <string name="found_count_vacancies">Найдено %1$d вакансий</string>
     <string name="empty_search_vacancies">Таких вакансий нет</string>
@@ -55,5 +63,11 @@
     <string name="apply">Применить</string>
     <string name="select_industry">Выбор отрасли</string>
     <string name="enter_industry">Введите отрасль</string>
+
+    <string name="team_member_evgeny">Евгений Шульц</string>
+    <string name="team_member_yumey">Юмей Балина</string>
+    <string name="team_member_ilya">Илья Другов</string>
+    <string name="role_team_lead">Тимлид</string>
+    <string name="role_developer">Разработчик</string>
 
 </resources>

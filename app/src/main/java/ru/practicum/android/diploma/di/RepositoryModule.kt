@@ -20,7 +20,7 @@ val repositoryModule = module {
         VacancyRepositoryImpl(get(), get())
     }
     single<FavVacanciesRepository> {
-        FavVacanciesRepositoryImpl(get(), get())
+        FavVacanciesRepositoryImpl(get(), get(), get())
     }
     single<FilterRepository> {
         FilterRepositoryImpl(get())

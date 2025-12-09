@@ -3,10 +3,12 @@ package ru.practicum.android.diploma.ui.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.data.FilterParameters
 import ru.practicum.android.diploma.data.dto.SearchRequest
 import ru.practicum.android.diploma.domain.FilterInteractor
 import ru.practicum.android.diploma.domain.SearchInteractor
@@ -51,6 +53,24 @@ class SearchViewModel(
         true
     ) { query ->
         searchVacancies(query)
+    }
+
+    private val _filterParameters = MutableStateFlow(FilterParameters())
+    val filterParameters: StateFlow<FilterParameters> = _filterParameters.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            filterInteractor.filterUpdates.collect { params ->
+                _filterParameters.value = params
+                val query = _searchText.value
+                if (query.isNotEmpty()) {
+                    searchVacancies(query)
+                } else {
+                    resetPagination()
+                    _screenState.value = SearchScreenState.Nothing
+                }
+            }
+        }
     }
 
     fun clearSearchText() {

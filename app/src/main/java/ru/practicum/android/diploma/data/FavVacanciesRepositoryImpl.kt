@@ -7,10 +7,12 @@ import ru.practicum.android.diploma.data.db.dao.VacancyDao
 import ru.practicum.android.diploma.data.db.entity.VacancyEntity
 import ru.practicum.android.diploma.domain.api.FavVacanciesRepository
 import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.util.ResourceProvider
 
 class FavVacanciesRepositoryImpl(
     private val vacancyDao: VacancyDao,
-    private val favVacanciesDbConvertor: FavVacanciesDbConvertor
+    private val favVacanciesDbConvertor: FavVacanciesDbConvertor,
+    private val resourceProvider: ResourceProvider
 ) : FavVacanciesRepository {
     override suspend fun addFavVacancy(vacancy: Vacancy) {
         val entity = convertFromVacancy(vacancy)
@@ -35,7 +37,7 @@ class FavVacanciesRepositoryImpl(
     }
 
     private fun convertFromVacancy(vacancy: Vacancy): VacancyEntity {
-        return favVacanciesDbConvertor.map(vacancy)
+        return favVacanciesDbConvertor.map(vacancy, resourceProvider)
     }
 
     private fun convertFromFavVacanciesEntity(vacancies: List<VacancyEntity>): List<Vacancy> {
