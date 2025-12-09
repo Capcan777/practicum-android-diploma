@@ -6,7 +6,7 @@ import ru.practicum.android.diploma.data.dto.IndustriesResponse
 
 interface IndustryApi {
 
-    @GET("vacancies")
+    @GET("industries")
     suspend fun getFilterIndustries(
         @Header("Content-Type") contentType: String = "application/json"
     ): IndustriesResponse

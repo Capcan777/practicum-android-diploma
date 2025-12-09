@@ -52,7 +52,7 @@ data class Routes(val route: String) {
         val Search = Routes("search")
         val VacancyDetails = Routes("$VACANCY_DETAILS_BASE/{vacancyId}")
         val Favourites = Routes("favourites")
-        val SettingsFilter = Routes("SETTINGS_FILTER_BASE")
+        val SettingsFilter = Routes(SETTINGS_FILTER_BASE)
         val About = Routes("about")
         // Функция для создания route с параметрами
         fun createVacancyDetailsRoute(vacancyId: String) = "vacancy_details/$vacancyId"

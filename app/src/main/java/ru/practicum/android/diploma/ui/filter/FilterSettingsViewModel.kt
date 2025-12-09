@@ -72,7 +72,8 @@ class FilterSettingsViewModel(
 
     fun applyFilters() {
         viewModelScope.launch {
-            filterInteractor.saveFilterParameters(_uiState.value.toFilterParameters())
+            val params = _uiState.value.toFilterParameters()
+            filterInteractor.saveFilterParameters(params)
         }
     }
 
