@@ -144,7 +144,7 @@ fun VacancyDetailsScreen(
                                     .padding(start = 8.dp)
                             ) {
                                 Text(
-                                    text = vacancy.industry.name,
+                                    text = vacancy.company.name,
                                     style = VacancyTheme.typography.medium22,
                                     color = VacancyTheme.colorScheme.onPrimaryContainer
                                 )
