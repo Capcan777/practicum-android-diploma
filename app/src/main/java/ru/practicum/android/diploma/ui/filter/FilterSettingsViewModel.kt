@@ -76,7 +76,6 @@ class FilterSettingsViewModel(
         }
     }
 
-    // Добавить методы для обновления industry и placeOfWork, когда экраны выбора будут готовы
     fun onIndustryChanged(newIndustry: String) {
         updateState { it.copy(industry = newIndustry) }
     }
@@ -110,9 +109,4 @@ class FilterSettingsViewModel(
         )
     }
 
-    fun applyFilters() {
-        // Фильтры уже сохраняются автоматически при изменении,
-        // но явно сохраняем текущее состояние для гарантии
-        saveFilterState()
-    }
 }

@@ -8,9 +8,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.IndustriesInteractor
+import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.domain.models.IndustriesOutcome
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.industry.state.IndustrySelectionState
+import java.io.IOException
 
 class IndustrySelectionViewModel(
     private val industriesInteractor: IndustriesInteractor
@@ -48,11 +50,11 @@ class IndustrySelectionViewModel(
                         }
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: IOException) {
                 _uiState.update { state ->
                     state.copy(
                         isLoading = false,
-                        error = ru.practicum.android.diploma.domain.models.DomainError.OtherError
+                        error = DomainError.OtherError
                     )
                 }
             }

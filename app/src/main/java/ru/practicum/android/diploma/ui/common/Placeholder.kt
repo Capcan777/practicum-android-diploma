@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.common
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +27,7 @@ fun Placeholder(
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
             painter = painterResource(id = imageResId),
@@ -43,15 +44,7 @@ fun Placeholder(
             textAlign = TextAlign.Center,
             style = VacancyTheme.typography.medium22,
             text = title,
+            color = VacancyTheme.colorScheme.onSecondaryContainer
         )
-    }
-
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun PlaceholderPreview() {
-    VacancyTheme(isDarkTheme = false) {
-        Placeholder(imageResId = R.drawable.placeholder_error_riecive, title = "No connection", modifier = Modifier)
     }
 }

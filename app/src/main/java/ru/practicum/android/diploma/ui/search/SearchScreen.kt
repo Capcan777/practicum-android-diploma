@@ -310,7 +310,9 @@ fun VacancyListItem(
 ) {
     LazyColumn(
         state = lazyListState,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(VacancyTheme.colorScheme.background),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(vacancies) { uiVacancy ->
@@ -332,39 +334,6 @@ fun VacancyListItem(
                 }
             }
         }
-        // В макете нет примера этой кнопки, поэтому пока убрал из ui
-        /*else if (hasMorePages) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Не удалось загрузить данные",
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        style = VacancyTheme.typography.regular12,
-                        color = VacancyTheme.colorScheme.onSurfaceVariant
-                    )
-                    Button(onClick = onRetryClick) {
-                        Text("Повторить")
-                    }
-                }
-            }
-        } else if (vacancies.isNotEmpty()) {
-            item {
-                Text(
-                    text = "Это все вакансии",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center,
-                    style = VacancyTheme.typography.regular12,
-                    color = VacancyTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }*/
     }
 }
 
@@ -449,7 +418,7 @@ fun CountVacancies(
         ) {
             Text(
                 text = textMessage,
-                color = VacancyTheme.colorScheme.onPrimary,
+                color = VacancyTheme.colorScheme.outlineVariant,
                 style = VacancyTheme.typography.regular16,
             )
         }

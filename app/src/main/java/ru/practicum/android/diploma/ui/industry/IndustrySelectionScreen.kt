@@ -37,6 +37,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.common.AppBar
+import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.industry.state.IndustrySelectionState
 
 @Composable
@@ -118,11 +119,7 @@ private fun IndustrySelectionContent(
                 )
             }
             uiState.filteredIndustries.isEmpty() -> {
-                Text(
-                    text = stringResource(R.string.empty_search_vacancies),
-                    style = VacancyTheme.typography.regular16,
-                    color = VacancyTheme.colorScheme.onBackground
-                )
+
             }
             else -> {
                 LazyColumn {
@@ -153,7 +150,7 @@ private fun SearchTextField(
             Text(
                 text = stringResource(R.string.enter_industry),
                 style = VacancyTheme.typography.regular16,
-                color = VacancyTheme.colorScheme.secondary
+                color = VacancyTheme.colorScheme.onBackground
             )
         },
         trailingIcon = {

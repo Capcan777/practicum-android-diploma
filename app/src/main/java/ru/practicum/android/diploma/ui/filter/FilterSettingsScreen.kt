@@ -187,7 +187,11 @@ private fun SalaryTextField(
             cursorColor = VacancyTheme.colorScheme.primary,
             focusedContainerColor = VacancyTheme.colorScheme.secondaryContainer,
             unfocusedContainerColor = VacancyTheme.colorScheme.secondaryContainer,
-            unfocusedLabelColor = VacancyTheme.colorScheme.onBackground,
+            unfocusedLabelColor = if (salary.isEmpty()) {
+                VacancyTheme.colorScheme.onBackground
+            } else {
+                VacancyTheme.colorScheme.onPrimaryContainer
+            },
             focusedLabelColor = VacancyTheme.colorScheme.primary,
         )
     )
@@ -237,7 +241,7 @@ private fun FilterActionButtons(
                 containerColor = VacancyTheme.colorScheme.primary,
                 contentColor = VacancyTheme.colorScheme.onPrimary
             ),
-            colorText = VacancyTheme.colorScheme.onPrimary
+            colorText = VacancyTheme.colorScheme.outlineVariant
         )
         Spacer(modifier = Modifier.height(8.dp))
         ButtonApply(
