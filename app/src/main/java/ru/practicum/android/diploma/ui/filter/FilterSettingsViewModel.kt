@@ -21,7 +21,7 @@ class FilterSettingsViewModel(
         loadFilterState()
     }
 
-    private fun loadFilterState() {
+    fun loadFilterState() {
         viewModelScope.launch {
             val parameters = filterInteractor.getFilterParameters()
             _uiState.value = parameters.toFilterSettingsState()
@@ -36,8 +36,9 @@ class FilterSettingsViewModel(
 
     private fun updateState(update: (FilterSettingsState) -> FilterSettingsState) {
         _uiState.update { currentState ->
-            update(currentState).also { saveFilterState() }
+            update(currentState)
         }
+        saveFilterState()
     }
 
     fun onSalaryChanged(newSalary: String) {
