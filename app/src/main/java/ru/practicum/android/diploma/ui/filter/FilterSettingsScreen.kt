@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.filter
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -59,6 +60,11 @@ fun FilterSettingsScreen(
     }
     val uiState by viewModel.uiState.collectAsState()
 
+    BackHandler(onBack = {
+        viewModel.onBackPressed()
+        onBack()
+    })
+
     LaunchedEffect(Unit) {
         viewModel.loadFilterState()
     }
@@ -67,7 +73,10 @@ fun FilterSettingsScreen(
         topBar = {
             AppBar(
                 title = stringResource(R.string.filter_settings),
-                onBack = onBack,
+                onBack = {
+                    viewModel.onBackPressed()
+                    onBack()
+                },
                 actions = null
             )
         }
@@ -79,6 +88,7 @@ fun FilterSettingsScreen(
             onClearSalary = viewModel::clearSalary,
             onIndustryClick = {
                 viewModel.onIndustryClick {
+                    viewModel.onBackPressed()
                     navController.navigate(Routes.IndustrySelection.route)
                 }
             },
