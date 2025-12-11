@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
@@ -37,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -90,6 +92,16 @@ fun SearchScreen(
     val hasMorePages by viewModel.hasMorePages.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState()
 
+    val filterParameters by viewModel.filterParameters.collectAsState()
+
+    val areFiltersApplied =
+        remember(filterParameters) {
+            filterParameters.salary.isNotEmpty() ||
+                filterParameters.industry.isNotEmpty() ||
+                filterParameters.placeOfWork.isNotEmpty() ||
+                filterParameters.hideWithoutSalary
+        }
+
     val lazyListState = rememberLazyListState()
     val context = LocalContext.current
 
@@ -129,13 +141,26 @@ fun SearchScreen(
             IconButton(
                 onClick = {
                     navController.navigate(Routes.SettingsFilter.route)
-                }
+                },
+                modifier = Modifier.padding(0.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.FilterList,
-                    contentDescription = null,
-                    tint = VacancyTheme.colorScheme.inverseSurface
-                )
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (areFiltersApplied) VacancyTheme.colorScheme.primary else Color.Transparent)
+                        .padding(2.dp)
+
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.FilterList,
+                        contentDescription = null,
+                        tint = if (areFiltersApplied) {
+                            VacancyTheme.colorScheme.onPrimary
+                        } else {
+                            VacancyTheme.colorScheme.inverseSurface
+                        }
+                    )
+                }
             }
         }
 
