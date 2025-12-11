@@ -154,10 +154,11 @@ fun SearchScreen(
                     Icon(
                         imageVector = Icons.Filled.FilterList,
                         contentDescription = null,
-                        tint = if (areFiltersApplied)
+                        tint = if (areFiltersApplied) {
                             VacancyTheme.colorScheme.onPrimary
-                        else
+                        } else {
                             VacancyTheme.colorScheme.inverseSurface
+                        }
                     )
                 }
             }
