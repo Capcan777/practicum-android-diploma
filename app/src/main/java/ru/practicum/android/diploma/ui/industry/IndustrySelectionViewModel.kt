@@ -32,42 +32,45 @@ class IndustrySelectionViewModel(
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val outcome = industriesInteractor.getFilterIndustries().first()
-                when (outcome) {
-                    is IndustriesOutcome.IndustriesResult -> {
-                        val saved = runCatching { filterInteractor.getFilterParameters() }.getOrNull()
-                        val selected = saved?.industry
-
-                        _uiState.update { state ->
-                            val industries = outcome.industries
-                            val selectedIndustry = industries.find { it.name == selected }
-                            state.copy(
-                                industries = industries,
-                                filteredIndustries = industries,
-                                isLoading = false,
-                                error = null,
-                                selectedIndustry = selectedIndustry
-                            )
-                        }
-                    }
-
-                    is IndustriesOutcome.Error -> {
-                        _uiState.update { state ->
-                            state.copy(
-                                isLoading = false,
-                                error = outcome.type
-                            )
-                        }
-                    }
-                }
+                handleIndustriesOutcome(outcome)
             } catch (e: IOException) {
-                Log.e("IndustryViewModel", "Failed to load industries due to network error", e)
-                _uiState.update { state ->
-                    state.copy(
-                        isLoading = false,
-                        error = DomainError.OtherError
-                    )
-                }
+                Log.e("IndustryViewModel", "Failed to load industries", e)
+                updateStateWithError(DomainError.OtherError)
             }
+        }
+    }
+
+    private suspend fun handleIndustriesOutcome(outcome: IndustriesOutcome) {
+        when (outcome) {
+            is IndustriesOutcome.IndustriesResult -> handleIndustriesResult(outcome)
+            is IndustriesOutcome.Error -> updateStateWithError(outcome.type)
+        }
+    }
+
+    private suspend fun handleIndustriesResult(result: IndustriesOutcome.IndustriesResult) {
+        val savedIndustry = runCatching { filterInteractor.getFilterParameters() }
+            .getOrNull()
+            ?.industry
+
+        val selectedIndustry = result.industries.find { it.name == savedIndustry }
+
+        _uiState.update { state ->
+            state.copy(
+                industries = result.industries,
+                filteredIndustries = result.industries,
+                isLoading = false,
+                error = null,
+                selectedIndustry = selectedIndustry
+            )
+        }
+    }
+
+    private fun updateStateWithError(errorType: DomainError) {
+        _uiState.update { state ->
+            state.copy(
+                isLoading = false,
+                error = errorType
+            )
         }
     }
 
