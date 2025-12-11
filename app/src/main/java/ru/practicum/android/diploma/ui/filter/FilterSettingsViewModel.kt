@@ -55,7 +55,7 @@ class FilterSettingsViewModel(
     }
 
     fun onIndustryClick(navigateTo: () -> Unit) {
-            navigateTo()
+        navigateTo()
     }
 
     fun clearIndustry() {
