@@ -17,7 +17,6 @@ class FilterSettingsViewModel(
     private val _uiState = MutableStateFlow(FilterSettingsState())
     val uiState = _uiState.asStateFlow()
 
-    // Добавляем флаг для отслеживания изменений
     private var hasUnsavedChanges = false
 
     init {
@@ -34,7 +33,7 @@ class FilterSettingsViewModel(
     private fun saveFilterState() {
         viewModelScope.launch {
             filterInteractor.saveFilterParameters(_uiState.value.toFilterParameters())
-            hasUnsavedChanges = false // Сбрасываем флаг после сохранения
+            hasUnsavedChanges = false
         }
     }
 
@@ -42,7 +41,7 @@ class FilterSettingsViewModel(
         _uiState.update { currentState ->
             update(currentState)
         }
-        hasUnsavedChanges = true // Отмечаем, что есть несохраненные изменения
+        hasUnsavedChanges = true
     }
 
     fun onSalaryChanged(newSalary: String) {
@@ -79,12 +78,10 @@ class FilterSettingsViewModel(
         updateState { it.copy(industry = newIndustry) }
     }
 
-    // Обновляем метод applyFilters
     fun applyFilters() {
-        saveFilterState() // Просто сохраняем текущее состояние
+        saveFilterState()
     }
 
-    // Новый метод для сохранения при выходе
     fun onBackPressed() {
         if (hasUnsavedChanges) {
             saveFilterState()
