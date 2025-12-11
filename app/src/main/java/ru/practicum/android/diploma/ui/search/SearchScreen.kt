@@ -205,7 +205,7 @@ fun SearchScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 3.dp)
+                                .padding(top = 4.dp)
                                 .background(
                                     color = Color.Transparent
                                 )

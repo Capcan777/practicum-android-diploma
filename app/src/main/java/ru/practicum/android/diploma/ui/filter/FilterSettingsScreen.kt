@@ -29,6 +29,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,7 +55,7 @@ fun FilterSettingsScreen(
     } else {
         koinViewModel()
     }
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -66,7 +67,7 @@ fun FilterSettingsScreen(
         }
     ) { innerPadding ->
         FilterSettingsContent(
-            uiState = uiState.value,
+            uiState = uiState,
             navController = navController,
             onSalaryChanged = viewModel::onSalaryChanged,
             onClearSalary = viewModel::clearSalary,
@@ -104,14 +105,6 @@ private fun FilterSettingsContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        FilterRow(
-            text = stringResource(R.string.place_of_work),
-            selectedText = uiState.placeOfWork,
-            onClick = { } // без клика
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         FilterRow(
             text = stringResource(R.string.industry),
             selectedText = uiState.industry,

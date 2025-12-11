@@ -80,10 +80,6 @@ class FilterSettingsViewModel(
         updateState { it.copy(industry = newIndustry) }
     }
 
-    fun onPlaceOfWorkChanged(newPlaceOfWork: String) {
-        updateState { it.copy(placeOfWork = newPlaceOfWork) }
-    }
-
     fun applyFilters() {
         viewModelScope.launch {
             val params = _uiState.value.toFilterParameters()
@@ -95,7 +91,6 @@ class FilterSettingsViewModel(
         return FilterParameters(
             salary = this.salary,
             industry = this.industry,
-            placeOfWork = this.placeOfWork,
             hideWithoutSalary = this.hideWithoutSalary
         )
     }
@@ -104,7 +99,6 @@ class FilterSettingsViewModel(
         return FilterSettingsState(
             salary = this.salary,
             industry = this.industry,
-            placeOfWork = this.placeOfWork,
             hideWithoutSalary = this.hideWithoutSalary
         )
     }
