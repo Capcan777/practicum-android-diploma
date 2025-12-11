@@ -58,8 +58,15 @@ class SearchViewModel(
     private val _filterParameters = MutableStateFlow(FilterParameters())
     val filterParameters: StateFlow<FilterParameters> = _filterParameters.asStateFlow()
 
+    private val _areFiltersApplied = MutableStateFlow(false)
+    val areFiltersApplied: StateFlow<Boolean> = _areFiltersApplied.asStateFlow()
+
     init {
         viewModelScope.launch {
+            val savedFilters = filterInteractor.getFilterParameters()
+            _filterParameters.value = savedFilters
+            checkIfFiltersApplied(savedFilters)
+
             filterInteractor.filterUpdates.collect { params ->
                 _filterParameters.value = params
                 val query = _searchText.value
@@ -218,6 +225,13 @@ class SearchViewModel(
             debounceHandler.cancel()
             searchVacancies(currentQuery)
         }
+    }
+
+    private fun checkIfFiltersApplied(params: FilterParameters) {
+        _areFiltersApplied.value = params.salary.isNotEmpty() ||
+            params.industry.isNotEmpty() ||
+            params.placeOfWork.isNotEmpty() ||
+            params.hideWithoutSalary
     }
 
     companion object {
