@@ -38,10 +38,9 @@ fun NavGraph(navController: NavHostController) {
         }
         composable(Routes.Favourites.route) { FavouritesVacanciesScreen(navController) }
         composable(Routes.SettingsFilter.route) { backStackEntry ->
-            val previousEntry = navController.previousBackStackEntry
-            val searchViewModel: SearchViewModel? = previousEntry?.let {
-                koinViewModel<SearchViewModel>(viewModelStoreOwner = it)
-            }
+            val searchEntry = runCatching { navController.getBackStackEntry(Routes.Search.route) }.getOrNull()
+            val searchViewModel: SearchViewModel? =
+                searchEntry?.let { koinViewModel<SearchViewModel>(viewModelStoreOwner = it) }
 
             FilterSettingsScreen(
                 navController,
@@ -49,12 +48,12 @@ fun NavGraph(navController: NavHostController) {
                     searchViewModel?.refreshSearchWithCurrentQuery()
                     navController.popBackStack()
                 },
-                viewModelStoreOwner = backStackEntry
+                viewModelStoreOwner = searchEntry ?: backStackEntry
             )
         }
         composable(Routes.IndustrySelection.route) { backStackEntry ->
-            val previousEntry = navController.previousBackStackEntry
-            val filterViewModel: FilterSettingsViewModel? = previousEntry?.let {
+            val searchEntry = runCatching { navController.getBackStackEntry(Routes.Search.route) }.getOrNull()
+            val filterViewModel: FilterSettingsViewModel? = searchEntry?.let {
                 koinViewModel<FilterSettingsViewModel>(viewModelStoreOwner = it)
             }
 
@@ -62,6 +61,8 @@ fun NavGraph(navController: NavHostController) {
                 onBack = { navController.popBackStack() },
                 onIndustrySelected = { industry ->
                     filterViewModel?.onIndustryChanged(industry.name)
+                    filterViewModel?.applyFilters()
+                    navController.popBackStack()
                 },
                 viewModelStoreOwner = backStackEntry
             )
