@@ -59,13 +59,14 @@ fun FilterSettingsScreen(
         koinViewModel()
     }
     val uiState by viewModel.uiState.collectAsState()
+    val currentBackStackEntry = navController.currentBackStackEntry
 
     BackHandler(onBack = {
         viewModel.onBackPressed()
         onBack()
     })
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(currentBackStackEntry?.id) {
         viewModel.loadFilterState()
     }
 

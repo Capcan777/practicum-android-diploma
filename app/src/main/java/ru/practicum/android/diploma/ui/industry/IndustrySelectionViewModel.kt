@@ -91,7 +91,7 @@ class IndustrySelectionViewModel(
     }
 
     fun onIndustrySelected(industry: Industry) {
-        _uiState.update { it.copy(selectedIndustry = industry) }
+        _uiState.update { it.copy(selectedIndustry = industry, isUserSelected = true) }
     }
 
     fun clearSearch() {
@@ -100,6 +100,20 @@ class IndustrySelectionViewModel(
                 searchQuery = "",
                 filteredIndustries = currentState.industries
             )
+        }
+    }
+
+    fun saveSelectedIndustry(onSaved: () -> Unit) {
+        val selectedIndustry = _uiState.value.selectedIndustry ?: return
+        viewModelScope.launch {
+            val currentParameters = runCatching {
+                filterInteractor.getFilterParameters()
+            }.getOrNull() ?: ru.practicum.android.diploma.data.FilterParameters()
+
+            filterInteractor.saveFilterParameters(
+                currentParameters.copy(industry = selectedIndustry.name)
+            )
+            onSaved()
         }
     }
 }

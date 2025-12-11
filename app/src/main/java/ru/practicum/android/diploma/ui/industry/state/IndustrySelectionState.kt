@@ -8,6 +8,7 @@ data class IndustrySelectionState(
     val filteredIndustries: List<Industry> = emptyList(),
     val searchQuery: String = "",
     val selectedIndustry: Industry? = null,
+    val isUserSelected: Boolean = false,
     val isLoading: Boolean = false,
     val error: DomainError? = null
 )
