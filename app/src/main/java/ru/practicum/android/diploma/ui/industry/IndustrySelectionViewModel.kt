@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.domain.FilterInteractor
 import ru.practicum.android.diploma.domain.IndustriesInteractor
 import ru.practicum.android.diploma.domain.models.DomainError
 import ru.practicum.android.diploma.domain.models.IndustriesOutcome
@@ -16,7 +17,8 @@ import ru.practicum.android.diploma.ui.industry.state.IndustrySelectionState
 import java.io.IOException
 
 class IndustrySelectionViewModel(
-    private val industriesInteractor: IndustriesInteractor
+    private val industriesInteractor: IndustriesInteractor,
+    private val filterInteractor: FilterInteractor
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(IndustrySelectionState())
     val uiState = _uiState.asStateFlow()
@@ -32,12 +34,18 @@ class IndustrySelectionViewModel(
                 val outcome = industriesInteractor.getFilterIndustries().first()
                 when (outcome) {
                     is IndustriesOutcome.IndustriesResult -> {
+                        val saved = runCatching { filterInteractor.getFilterParameters() }.getOrNull()
+                        val selected = saved?.industry
+
                         _uiState.update { state ->
+                            val industries = outcome.industries
+                            val selectedIndustry = industries.find { it.name == selected }
                             state.copy(
-                                industries = outcome.industries,
-                                filteredIndustries = outcome.industries,
+                                industries = industries,
+                                filteredIndustries = industries,
                                 isLoading = false,
-                                error = null
+                                error = null,
+                                selectedIndustry = selectedIndustry
                             )
                         }
                     }
