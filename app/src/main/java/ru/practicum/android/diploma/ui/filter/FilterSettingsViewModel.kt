@@ -17,6 +17,8 @@ class FilterSettingsViewModel(
     private val _uiState = MutableStateFlow(FilterSettingsState())
     val uiState = _uiState.asStateFlow()
 
+    private var hasUnsavedChanges = false
+
     init {
         loadFilterState()
     }
@@ -31,6 +33,7 @@ class FilterSettingsViewModel(
     private fun saveFilterState() {
         viewModelScope.launch {
             filterInteractor.saveFilterParameters(_uiState.value.toFilterParameters())
+            hasUnsavedChanges = false
         }
     }
 
@@ -38,7 +41,7 @@ class FilterSettingsViewModel(
         _uiState.update { currentState ->
             update(currentState)
         }
-        saveFilterState()
+        hasUnsavedChanges = true
     }
 
     fun onSalaryChanged(newSalary: String) {
@@ -60,14 +63,12 @@ class FilterSettingsViewModel(
     }
 
     fun clearIndustry() {
-        _uiState.update { currentState ->
-            currentState.copy(industry = "")
-        }
-        saveFilterState()
+        updateState { it.copy(industry = "") }
     }
 
     fun resetFilters() {
-        _uiState.value = FilterSettingsState() // Просто создаем новое, пустое состояние
+        _uiState.value = FilterSettingsState()
+        hasUnsavedChanges = true
         viewModelScope.launch {
             filterInteractor.clearFilterParameters()
         }
@@ -78,9 +79,12 @@ class FilterSettingsViewModel(
     }
 
     fun applyFilters() {
-        viewModelScope.launch {
-            val params = _uiState.value.toFilterParameters()
-            filterInteractor.saveFilterParameters(params)
+        saveFilterState()
+    }
+
+    fun onBackPressed() {
+        if (hasUnsavedChanges) {
+            saveFilterState()
         }
     }
 
@@ -99,5 +103,4 @@ class FilterSettingsViewModel(
             hideWithoutSalary = this.hideWithoutSalary
         )
     }
-
 }
