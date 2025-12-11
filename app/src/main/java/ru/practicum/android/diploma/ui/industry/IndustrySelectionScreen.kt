@@ -36,6 +36,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.common.AppBar
+import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.industry.state.IndustrySelectionState
 
 @Composable
@@ -116,7 +117,11 @@ private fun IndustrySelectionContent(
                 )
             }
             uiState.filteredIndustries.isEmpty() -> {
-                // не показываем
+                Placeholder(
+                    imageResId = R.drawable.placeholder_error_recieve_industries,
+                    title = stringResource(R.string.no_industries_found),
+                    modifier = Modifier.fillMaxSize().padding(top = 122.dp)
+                )
             }
             else -> {
                 LazyColumn {
