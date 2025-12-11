@@ -43,6 +43,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.navigation.Routes
 import ru.practicum.android.diploma.ui.common.AppBar
+import ru.practicum.android.diploma.ui.filter.state.FilterSettingsState
 
 @Composable
 fun FilterSettingsScreen(
@@ -87,17 +88,21 @@ fun FilterSettingsScreen(
                 .background(VacancyTheme.colorScheme.background)
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
-                .padding(top = 16.dp)
+                .padding(top = 16.dp),
+            onClickClear = {
+                viewModel.clearIndustry()
+            }
         )
     }
 }
 
 @Composable
 private fun FilterSettingsContent(
-    uiState: ru.practicum.android.diploma.ui.filter.state.FilterSettingsState,
+    uiState: FilterSettingsState,
     navController: NavController,
     onSalaryChanged: (String) -> Unit,
     onIndustryClick: () -> Unit,
+    onClickClear: () -> Unit,
     onClearSalary: () -> Unit,
     onCheckboxChanged: (Boolean) -> Unit,
     onApplyFilters: () -> Unit,
@@ -108,7 +113,8 @@ private fun FilterSettingsContent(
         FilterRow(
             text = stringResource(R.string.industry),
             selectedText = uiState.industry,
-            onClick = onIndustryClick
+            onClick = onIndustryClick,
+            onClickClear = onClickClear
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -253,7 +259,8 @@ private fun FilterActionButtons(
 private fun FilterRow(
     text: String,
     selectedText: String?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onClickClear: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -265,6 +272,7 @@ private fun FilterRow(
         Column(
             modifier = Modifier
                 .weight(1f)
+                .clickable(onClick = onClick)
         ) {
             Text(
                 text = text,
@@ -295,7 +303,7 @@ private fun FilterRow(
             tint = VacancyTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .size(24.dp)
-                .clickable(onClick = onClick)
+                .clickable(onClick = onClickClear)
         )
     }
 }

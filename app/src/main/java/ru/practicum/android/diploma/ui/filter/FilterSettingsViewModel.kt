@@ -55,14 +55,10 @@ class FilterSettingsViewModel(
     }
 
     fun onIndustryClick(navigateTo: () -> Unit) {
-        if (uiState.value.industry.isNotEmpty()) {
-            clearIndustry()
-        } else {
-            navigateTo() // Выполняем навигацию, переданную из UI
-        }
+            navigateTo()
     }
 
-    private fun clearIndustry() {
+    fun clearIndustry() {
         _uiState.update { currentState ->
             currentState.copy(industry = "")
         }
