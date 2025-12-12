@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -66,10 +69,11 @@ fun IndustrySelectionScreen(
             searchQuery = uiState.searchQuery,
             onSearchTextChanged = viewModel::onSearchTextChanged,
             onClearSearch = viewModel::clearSearch,
-            onIndustrySelected = { industry ->
-                viewModel.onIndustrySelected(industry)
-                onIndustrySelected(industry)
-                onBack()
+            onIndustrySelected = viewModel::onIndustrySelected,
+            onSelectButtonClick = {
+                viewModel.saveSelectedIndustry {
+                    onBack()
+                }
             },
             modifier = Modifier
                 .fillMaxSize()
@@ -88,6 +92,7 @@ private fun IndustrySelectionContent(
     onSearchTextChanged: (String) -> Unit,
     onClearSearch: () -> Unit,
     onIndustrySelected: (Industry) -> Unit,
+    onSelectButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -133,6 +138,28 @@ private fun IndustrySelectionContent(
                         )
                     }
                 }
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        if (uiState.selectedIndustry != null && uiState.isUserSelected) {
+            Button(
+                onClick = onSelectButtonClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                shape = VacancyTheme.shapes.shape12dp,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = VacancyTheme.colorScheme.primary,
+                    contentColor = VacancyTheme.colorScheme.onPrimary
+                ),
+                contentPadding = PaddingValues(vertical = 20.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.select),
+                    style = VacancyTheme.typography.medium16
+                )
             }
         }
     }

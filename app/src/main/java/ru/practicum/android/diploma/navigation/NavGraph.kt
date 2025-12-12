@@ -59,11 +59,7 @@ fun NavGraph(navController: NavHostController) {
 
             IndustrySelectionScreen(
                 onBack = { navController.popBackStack() },
-                onIndustrySelected = { industry ->
-                    filterViewModel?.onIndustryChanged(industry.name)
-                    filterViewModel?.applyFilters()
-                    navController.popBackStack()
-                },
+                onIndustrySelected = { },
                 viewModelStoreOwner = backStackEntry
             )
         }
