@@ -278,6 +278,8 @@ private fun FilterRow(
     onClick: () -> Unit,
     onClickClear: () -> Unit
 ) {
+    val isTextSelected = !selectedText.isNullOrBlank()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -285,53 +287,81 @@ private fun FilterRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .clickable(onClick = onClick)
-        ) {
-            Text(
-                text = text,
-                style = if (selectedText.isNullOrBlank()) {
-                    VacancyTheme.typography.regular16
-                } else {
-                    VacancyTheme.typography.regular12
-                },
-                color = if (selectedText.isNullOrBlank()) {
-                    VacancyTheme.colorScheme.onBackground
-                } else {
-                    VacancyTheme.colorScheme.inverseSurface
-                }
-            )
-            // Показываем выбранное значение под основным текстом, если оно есть
-            if (!selectedText.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = selectedText,
-                    style = VacancyTheme.typography.regular16,
-                    color = VacancyTheme.colorScheme.inverseSurface
-                )
-            }
-        }
-        Icon(
-            imageVector = if (selectedText.isNullOrBlank()) {
-                Icons.Filled.ChevronRight
-            } else {
-                Icons.Filled.Clear
-            },
-            contentDescription = null,
-            tint = VacancyTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable(
-                    onClick = if (selectedText.isNullOrBlank()) {
-                        onClick
-                    } else {
-                        onClickClear
-                    }
-                )
+        FilterRowContent(
+            text = text,
+            selectedText = selectedText,
+            isTextSelected = isTextSelected,
+            onClick = onClick,
+            modifier = Modifier.weight(1f)
+        )
+        FilterRowIcon(
+            isTextSelected = isTextSelected,
+            onClick = onClick,
+            onClickClear = onClickClear
         )
     }
+}
+
+@Composable
+private fun FilterRowContent(
+    text: String,
+    selectedText: String?,
+    isTextSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            text = text,
+            style = if (isTextSelected) {
+                VacancyTheme.typography.regular12
+            } else {
+                VacancyTheme.typography.regular16
+            },
+            color = if (isTextSelected) {
+                VacancyTheme.colorScheme.inverseSurface
+            } else {
+                VacancyTheme.colorScheme.onBackground
+            }
+        )
+        if (isTextSelected) {
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = selectedText ?: "",
+                style = VacancyTheme.typography.regular16,
+                color = VacancyTheme.colorScheme.inverseSurface
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterRowIcon(
+    isTextSelected: Boolean,
+    onClick: () -> Unit,
+    onClickClear: () -> Unit
+) {
+    Icon(
+        imageVector = if (isTextSelected) {
+            Icons.Filled.Clear
+        } else {
+            Icons.Filled.ChevronRight
+        },
+        contentDescription = null,
+        tint = VacancyTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier
+            .size(24.dp)
+            .clickable(
+                onClick = if (isTextSelected) {
+                    onClickClear
+                } else {
+                    onClick
+                }
+            )
+    )
 }
 
 @Composable
