@@ -319,7 +319,7 @@ private fun FilterRow(
             tint = VacancyTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .size(24.dp)
-                .clickable(onClick = onClickClear)
+                .clickable(onClick = if (selectedText.isNullOrBlank()) onClick else onClickClear)
         )
     }
 }
