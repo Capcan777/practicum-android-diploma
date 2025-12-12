@@ -115,10 +115,10 @@ private fun IndustrySelectionContent(
                 }
             }
             uiState.error != null -> {
-                Text(
-                    text = stringResource(R.string.error_failed_to_load_data),
-                    style = VacancyTheme.typography.regular16,
-                    color = VacancyTheme.colorScheme.error
+                Placeholder(
+                    imageResId = R.drawable.placeholder_no_connection,
+                    title = stringResource(R.string.error_no_internet_connection),
+                    modifier = Modifier.fillMaxSize().padding(top = 122.dp)
                 )
             }
             uiState.filteredIndustries.isEmpty() -> {
