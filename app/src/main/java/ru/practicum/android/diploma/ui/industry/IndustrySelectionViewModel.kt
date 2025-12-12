@@ -91,14 +91,23 @@ class IndustrySelectionViewModel(
     }
 
     fun onIndustrySelected(industry: Industry) {
-        _uiState.update { it.copy(selectedIndustry = industry, isUserSelected = true) }
+        _uiState.update { currentState ->
+            currentState.copy(
+                selectedIndustry = industry,
+                isUserSelected = true,
+                searchQuery = industry.name,
+                filteredIndustries = currentState.industries.filter { it.name.contains(industry.name, ignoreCase = true) }
+            )
+        }
     }
 
     fun clearSearch() {
         _uiState.update { currentState ->
             currentState.copy(
                 searchQuery = "",
-                filteredIndustries = currentState.industries
+                filteredIndustries = currentState.industries,
+                selectedIndustry = null,
+                isUserSelected = false
             )
         }
     }
