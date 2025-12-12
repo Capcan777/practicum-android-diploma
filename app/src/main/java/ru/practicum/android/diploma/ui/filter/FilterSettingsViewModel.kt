@@ -74,9 +74,6 @@ class FilterSettingsViewModel(
         }
     }
 
-    fun onIndustryChanged(newIndustry: String) {
-        updateState { it.copy(industry = newIndustry) }
-    }
 
     fun applyFilters() {
         saveFilterState()
