@@ -314,12 +314,22 @@ private fun FilterRow(
             }
         }
         Icon(
-            imageVector = if (selectedText.isNullOrBlank()) Icons.Filled.ChevronRight else Icons.Filled.Clear,
+            imageVector = if (selectedText.isNullOrBlank()) {
+                Icons.Filled.ChevronRight
+            } else {
+                Icons.Filled.Clear
+            },
             contentDescription = null,
             tint = VacancyTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .size(24.dp)
-                .clickable(onClick = if (selectedText.isNullOrBlank()) onClick else onClickClear)
+                .clickable(
+                    onClick = if (selectedText.isNullOrBlank()) {
+                        onClick
+                    } else {
+                        onClickClear
+                    }
+                )
         )
     }
 }
