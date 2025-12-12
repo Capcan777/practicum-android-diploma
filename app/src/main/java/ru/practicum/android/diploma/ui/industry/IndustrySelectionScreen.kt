@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -36,6 +39,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.common.AppBar
+import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.industry.state.IndustrySelectionState
 
 @Composable
@@ -65,10 +69,11 @@ fun IndustrySelectionScreen(
             searchQuery = uiState.searchQuery,
             onSearchTextChanged = viewModel::onSearchTextChanged,
             onClearSearch = viewModel::clearSearch,
-            onIndustrySelected = { industry ->
-                viewModel.onIndustrySelected(industry)
-                onIndustrySelected(industry)
-                onBack()
+            onIndustrySelected = viewModel::onIndustrySelected,
+            onSelectButtonClick = {
+                viewModel.saveSelectedIndustry {
+                    onBack()
+                }
             },
             modifier = Modifier
                 .fillMaxSize()
@@ -87,6 +92,7 @@ private fun IndustrySelectionContent(
     onSearchTextChanged: (String) -> Unit,
     onClearSearch: () -> Unit,
     onIndustrySelected: (Industry) -> Unit,
+    onSelectButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -109,14 +115,18 @@ private fun IndustrySelectionContent(
                 }
             }
             uiState.error != null -> {
-                Text(
-                    text = stringResource(R.string.error_failed_to_load_data),
-                    style = VacancyTheme.typography.regular16,
-                    color = VacancyTheme.colorScheme.error
+                Placeholder(
+                    imageResId = R.drawable.placeholder_no_connection,
+                    title = stringResource(R.string.error_no_internet_connection),
+                    modifier = Modifier.fillMaxSize().padding(top = 122.dp)
                 )
             }
             uiState.filteredIndustries.isEmpty() -> {
-                // не показываем
+                Placeholder(
+                    imageResId = R.drawable.placeholder_error_recieve_industries,
+                    title = stringResource(R.string.no_industries_found),
+                    modifier = Modifier.fillMaxSize().padding(top = 122.dp)
+                )
             }
             else -> {
                 LazyColumn {
@@ -128,6 +138,28 @@ private fun IndustrySelectionContent(
                         )
                     }
                 }
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        if (uiState.selectedIndustry != null && uiState.isUserSelected) {
+            Button(
+                onClick = onSelectButtonClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                shape = VacancyTheme.shapes.shape12dp,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = VacancyTheme.colorScheme.primary,
+                    contentColor = VacancyTheme.colorScheme.onPrimary
+                ),
+                contentPadding = PaddingValues(vertical = 20.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.select),
+                    style = VacancyTheme.typography.medium16
+                )
             }
         }
     }

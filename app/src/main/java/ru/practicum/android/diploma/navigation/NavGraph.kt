@@ -4,15 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import org.koin.compose.viewmodel.koinViewModel
 import ru.practicum.android.diploma.ui.about.AboutTeamScreen
 import ru.practicum.android.diploma.ui.details.VacancyDetailsScreen
 import ru.practicum.android.diploma.ui.favourites.FavouritesVacanciesScreen
 import ru.practicum.android.diploma.ui.filter.FilterSettingsScreen
-import ru.practicum.android.diploma.ui.filter.FilterSettingsViewModel
 import ru.practicum.android.diploma.ui.industry.IndustrySelectionScreen
 import ru.practicum.android.diploma.ui.search.SearchScreen
-import ru.practicum.android.diploma.ui.search.SearchViewModel
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -38,31 +35,21 @@ fun NavGraph(navController: NavHostController) {
         }
         composable(Routes.Favourites.route) { FavouritesVacanciesScreen(navController) }
         composable(Routes.SettingsFilter.route) { backStackEntry ->
-            val previousEntry = navController.previousBackStackEntry
-            val searchViewModel: SearchViewModel? = previousEntry?.let {
-                koinViewModel<SearchViewModel>(viewModelStoreOwner = it)
-            }
+            val searchEntry = runCatching { navController.getBackStackEntry(Routes.Search.route) }.getOrNull()
 
             FilterSettingsScreen(
                 navController,
                 onBack = {
-                    searchViewModel?.refreshSearchWithCurrentQuery()
                     navController.popBackStack()
                 },
-                viewModelStoreOwner = backStackEntry
+                viewModelStoreOwner = searchEntry ?: backStackEntry
             )
         }
         composable(Routes.IndustrySelection.route) { backStackEntry ->
-            val previousEntry = navController.previousBackStackEntry
-            val filterViewModel: FilterSettingsViewModel? = previousEntry?.let {
-                koinViewModel<FilterSettingsViewModel>(viewModelStoreOwner = it)
-            }
 
             IndustrySelectionScreen(
                 onBack = { navController.popBackStack() },
-                onIndustrySelected = { industry ->
-                    filterViewModel?.onIndustryChanged(industry.name)
-                },
+                onIndustrySelected = { },
                 viewModelStoreOwner = backStackEntry
             )
         }

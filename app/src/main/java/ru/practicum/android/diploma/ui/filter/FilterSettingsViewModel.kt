@@ -17,11 +17,13 @@ class FilterSettingsViewModel(
     private val _uiState = MutableStateFlow(FilterSettingsState())
     val uiState = _uiState.asStateFlow()
 
+    private var hasUnsavedChanges = false
+
     init {
         loadFilterState()
     }
 
-    private fun loadFilterState() {
+    fun loadFilterState() {
         viewModelScope.launch {
             val parameters = filterInteractor.getFilterParameters()
             _uiState.value = parameters.toFilterSettingsState()
@@ -31,13 +33,15 @@ class FilterSettingsViewModel(
     private fun saveFilterState() {
         viewModelScope.launch {
             filterInteractor.saveFilterParameters(_uiState.value.toFilterParameters())
+            hasUnsavedChanges = false
         }
     }
 
     private fun updateState(update: (FilterSettingsState) -> FilterSettingsState) {
         _uiState.update { currentState ->
-            update(currentState).also { saveFilterState() }
+            update(currentState)
         }
+        hasUnsavedChanges = true
     }
 
     fun onSalaryChanged(newSalary: String) {
@@ -55,39 +59,28 @@ class FilterSettingsViewModel(
     }
 
     fun onIndustryClick(navigateTo: () -> Unit) {
-        if (uiState.value.industry.isNotEmpty()) {
-            clearIndustry()
-        } else {
-            navigateTo() // Выполняем навигацию, переданную из UI
-        }
+        navigateTo()
     }
 
-    private fun clearIndustry() {
-        _uiState.update { currentState ->
-            currentState.copy(industry = "")
-        }
-        saveFilterState()
+    fun clearIndustry() {
+        updateState { it.copy(industry = "") }
     }
 
     fun resetFilters() {
-        _uiState.value = FilterSettingsState() // Просто создаем новое, пустое состояние
+        _uiState.value = FilterSettingsState()
+        hasUnsavedChanges = true
         viewModelScope.launch {
             filterInteractor.clearFilterParameters()
         }
     }
 
-    fun onIndustryChanged(newIndustry: String) {
-        updateState { it.copy(industry = newIndustry) }
-    }
-
-    fun onPlaceOfWorkChanged(newPlaceOfWork: String) {
-        updateState { it.copy(placeOfWork = newPlaceOfWork) }
-    }
-
     fun applyFilters() {
-        viewModelScope.launch {
-            val params = _uiState.value.toFilterParameters()
-            filterInteractor.saveFilterParameters(params)
+        saveFilterState()
+    }
+
+    fun onBackPressed() {
+        if (hasUnsavedChanges) {
+            saveFilterState()
         }
     }
 
@@ -95,7 +88,6 @@ class FilterSettingsViewModel(
         return FilterParameters(
             salary = this.salary,
             industry = this.industry,
-            placeOfWork = this.placeOfWork,
             hideWithoutSalary = this.hideWithoutSalary
         )
     }
@@ -104,9 +96,7 @@ class FilterSettingsViewModel(
         return FilterSettingsState(
             salary = this.salary,
             industry = this.industry,
-            placeOfWork = this.placeOfWork,
             hideWithoutSalary = this.hideWithoutSalary
         )
     }
-
 }

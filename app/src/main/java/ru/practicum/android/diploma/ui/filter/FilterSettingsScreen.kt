@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.filter
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +29,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +45,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.navigation.Routes
 import ru.practicum.android.diploma.ui.common.AppBar
+import ru.practicum.android.diploma.ui.filter.state.FilterSettingsState
 
 @Composable
 fun FilterSettingsScreen(
@@ -54,24 +58,38 @@ fun FilterSettingsScreen(
     } else {
         koinViewModel()
     }
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val currentBackStackEntry = navController.currentBackStackEntry
+
+    BackHandler(onBack = {
+        viewModel.onBackPressed()
+        onBack()
+    })
+
+    LaunchedEffect(currentBackStackEntry?.id) {
+        viewModel.loadFilterState()
+    }
 
     Scaffold(
         topBar = {
             AppBar(
                 title = stringResource(R.string.filter_settings),
-                onBack = onBack,
+                onBack = {
+                    viewModel.onBackPressed()
+                    onBack()
+                },
                 actions = null
             )
         }
     ) { innerPadding ->
         FilterSettingsContent(
-            uiState = uiState.value,
+            uiState = uiState,
             navController = navController,
             onSalaryChanged = viewModel::onSalaryChanged,
             onClearSalary = viewModel::clearSalary,
             onIndustryClick = {
                 viewModel.onIndustryClick {
+                    viewModel.onBackPressed()
                     navController.navigate(Routes.IndustrySelection.route)
                 }
             },
@@ -86,17 +104,21 @@ fun FilterSettingsScreen(
                 .background(VacancyTheme.colorScheme.background)
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
-                .padding(top = 16.dp)
+                .padding(top = 16.dp),
+            onClickClear = {
+                viewModel.clearIndustry()
+            }
         )
     }
 }
 
 @Composable
 private fun FilterSettingsContent(
-    uiState: ru.practicum.android.diploma.ui.filter.state.FilterSettingsState,
+    uiState: FilterSettingsState,
     navController: NavController,
     onSalaryChanged: (String) -> Unit,
     onIndustryClick: () -> Unit,
+    onClickClear: () -> Unit,
     onClearSalary: () -> Unit,
     onCheckboxChanged: (Boolean) -> Unit,
     onApplyFilters: () -> Unit,
@@ -105,17 +127,10 @@ private fun FilterSettingsContent(
 ) {
     Column(modifier = modifier) {
         FilterRow(
-            text = stringResource(R.string.place_of_work),
-            selectedText = uiState.placeOfWork,
-            onClick = { } // без клика
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        FilterRow(
             text = stringResource(R.string.industry),
             selectedText = uiState.industry,
-            onClick = onIndustryClick
+            onClick = onIndustryClick,
+            onClickClear = onClickClear
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -260,8 +275,11 @@ private fun FilterActionButtons(
 private fun FilterRow(
     text: String,
     selectedText: String?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onClickClear: () -> Unit
 ) {
+    val isTextSelected = !selectedText.isNullOrBlank()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -269,42 +287,81 @@ private fun FilterRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            Text(
-                text = text,
-                style = if (selectedText.isNullOrBlank()) {
-                    VacancyTheme.typography.regular16
-                } else {
-                    VacancyTheme.typography.regular12
-                },
-                color = if (selectedText.isNullOrBlank()) {
-                    VacancyTheme.colorScheme.onBackground
-                } else {
-                    VacancyTheme.colorScheme.inverseSurface
-                }
-            )
-            // Показываем выбранное значение под основным текстом, если оно есть
-            if (!selectedText.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = selectedText,
-                    style = VacancyTheme.typography.regular16,
-                    color = VacancyTheme.colorScheme.inverseSurface
-                )
-            }
-        }
-        Icon(
-            imageVector = if (selectedText.isNullOrBlank()) Icons.Filled.ChevronRight else Icons.Filled.Clear,
-            contentDescription = null,
-            tint = VacancyTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable(onClick = onClick)
+        FilterRowContent(
+            text = text,
+            selectedText = selectedText,
+            isTextSelected = isTextSelected,
+            onClick = onClick,
+            modifier = Modifier.weight(1f)
+        )
+        FilterRowIcon(
+            isTextSelected = isTextSelected,
+            onClick = onClick,
+            onClickClear = onClickClear
         )
     }
+}
+
+@Composable
+private fun FilterRowContent(
+    text: String,
+    selectedText: String?,
+    isTextSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            text = text,
+            style = if (isTextSelected) {
+                VacancyTheme.typography.regular12
+            } else {
+                VacancyTheme.typography.regular16
+            },
+            color = if (isTextSelected) {
+                VacancyTheme.colorScheme.inverseSurface
+            } else {
+                VacancyTheme.colorScheme.onBackground
+            }
+        )
+        if (isTextSelected) {
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = selectedText ?: "",
+                style = VacancyTheme.typography.regular16,
+                color = VacancyTheme.colorScheme.inverseSurface
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterRowIcon(
+    isTextSelected: Boolean,
+    onClick: () -> Unit,
+    onClickClear: () -> Unit
+) {
+    Icon(
+        imageVector = if (isTextSelected) {
+            Icons.Filled.Clear
+        } else {
+            Icons.Filled.ChevronRight
+        },
+        contentDescription = null,
+        tint = VacancyTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier
+            .size(24.dp)
+            .clickable(
+                onClick = if (isTextSelected) {
+                    onClickClear
+                } else {
+                    onClick
+                }
+            )
+    )
 }
 
 @Composable

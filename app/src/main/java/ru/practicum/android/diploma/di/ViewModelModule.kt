@@ -33,7 +33,7 @@ val viewModelModule = module {
         FilterSettingsViewModel(get())
     }
     viewModel {
-        IndustrySelectionViewModel(get())
+        IndustrySelectionViewModel(get(), get())
     }
     single { ResourceProvider(androidContext()) }
 }

@@ -63,6 +63,8 @@
     <string name="apply">Применить</string>
     <string name="select_industry">Выбор отрасли</string>
     <string name="enter_industry">Введите отрасль</string>
+    <string name="no_industries_found">Не удалось получить\nсписок отраслей</string>
+    <string name="select">Выбрать</string>
 
     <string name="team_member_evgeny">Евгений Шульц</string>
     <string name="team_member_yumey">Юмей Балина</string>
