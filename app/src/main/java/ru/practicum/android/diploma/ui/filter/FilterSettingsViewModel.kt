@@ -74,7 +74,6 @@ class FilterSettingsViewModel(
         }
     }
 
-
     fun applyFilters() {
         saveFilterState()
     }
