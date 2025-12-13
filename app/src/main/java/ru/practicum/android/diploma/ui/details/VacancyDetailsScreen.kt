@@ -358,7 +358,9 @@ private fun FavoriteButton(
             imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
             contentDescription = stringResource(R.string.add_vacancy_to_favourite),
             tint = animatedTint,
-            modifier = Modifier.scale(scale).padding(end = 8.dp)
+            modifier = Modifier
+                .scale(scale)
+                .padding(end = 8.dp)
         )
     }
 }
