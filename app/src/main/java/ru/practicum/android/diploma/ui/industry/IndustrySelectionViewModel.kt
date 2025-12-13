@@ -96,12 +96,6 @@ class IndustrySelectionViewModel(
                 selectedIndustry = industry,
                 isUserSelected = true,
                 searchQuery = industry.name,
-                filteredIndustries = currentState.industries.filter {
-                    it.name.contains(
-                        industry.name,
-                        ignoreCase = true
-                    )
-                }
             )
         }
     }

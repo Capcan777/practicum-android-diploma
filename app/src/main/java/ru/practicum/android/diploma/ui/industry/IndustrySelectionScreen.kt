@@ -114,22 +114,29 @@ private fun IndustrySelectionContent(
                     CircularProgressIndicator()
                 }
             }
+
             uiState.error != null -> {
                 Placeholder(
                     imageResId = R.drawable.placeholder_no_connection,
                     title = stringResource(R.string.error_no_internet_connection),
-                    modifier = Modifier.fillMaxSize().padding(top = 122.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 122.dp)
                 )
             }
+
             uiState.filteredIndustries.isEmpty() -> {
                 Placeholder(
                     imageResId = R.drawable.placeholder_error_recieve_industries,
                     title = stringResource(R.string.no_industries_found),
-                    modifier = Modifier.fillMaxSize().padding(top = 122.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 122.dp)
                 )
             }
+
             else -> {
-                LazyColumn {
+                LazyColumn(Modifier.weight(1f)) {
                     items(uiState.filteredIndustries) { industry ->
                         IndustryItem(
                             industry = industry,
@@ -137,11 +144,12 @@ private fun IndustrySelectionContent(
                             onSelect = { onIndustrySelected(industry) }
                         )
                     }
+
                 }
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier)
 
         if (uiState.selectedIndustry != null && uiState.isUserSelected) {
             Button(
