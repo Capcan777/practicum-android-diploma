@@ -79,8 +79,8 @@ fun IndustrySelectionScreen(
                 .fillMaxSize()
                 .background(VacancyTheme.colorScheme.background)
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp)
+                .padding(start = 16.dp)
+                .padding(top = 8.dp)
         )
     }
 }
@@ -102,7 +102,7 @@ private fun IndustrySelectionContent(
             onClear = onClearSearch
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         when {
             uiState.isLoading -> {
@@ -181,7 +181,9 @@ private fun SearchTextField(
     onClear: () -> Unit
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 16.dp),
         value = query,
         onValueChange = onQueryChanged,
         placeholder = {
@@ -196,11 +198,13 @@ private fun SearchTextField(
                 imageVector = if (query.isEmpty()) Icons.Filled.Search else Icons.Filled.Clear,
                 contentDescription = null,
                 tint = VacancyTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.clickable {
-                    if (query.isNotEmpty()) {
-                        onClear()
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .clickable {
+                        if (query.isNotEmpty()) {
+                            onClear()
+                        }
                     }
-                }
             )
         },
         singleLine = true,
@@ -227,7 +231,8 @@ private fun IndustryItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onSelect)
-            .padding(vertical = 12.dp),
+            .padding(vertical = 12.dp)
+            .padding(end = 2.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

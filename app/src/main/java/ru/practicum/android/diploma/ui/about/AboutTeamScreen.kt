@@ -31,17 +31,16 @@ fun AboutTeamScreen() {
             .fillMaxSize()
             .background(VacancyTheme.colorScheme.background)
             .padding(horizontal = 16.dp)
-            .padding(top = 8.dp)
     ) {
         Text(
             text = stringResource(R.string.team),
             style = VacancyTheme.typography.medium22,
             color = VacancyTheme.colorScheme.inverseSurface,
             modifier = Modifier
-                .padding(top = 12.dp)
+                .padding(top = 19.dp)
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Text(
             text = stringResource(R.string.team_working_on_app),
