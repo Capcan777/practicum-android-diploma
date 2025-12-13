@@ -2,10 +2,14 @@ package ru.practicum.android.diploma.data.db.converters
 
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.data.db.entity.VacancyEntity
+import ru.practicum.android.diploma.domain.models.Contacts
 import ru.practicum.android.diploma.domain.models.Employer
+import ru.practicum.android.diploma.domain.models.Employment
 import ru.practicum.android.diploma.domain.models.Experience
 import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.domain.models.Phone
 import ru.practicum.android.diploma.domain.models.SalaryRange
+import ru.practicum.android.diploma.domain.models.Schedule
 import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.util.ResourceProvider
 import java.util.Locale
@@ -16,6 +20,11 @@ private const val EMPLOYER_MIN_PARTS = 2
 class FavVacanciesDbConvertor {
 
     fun map(vacancyEntity: VacancyEntity): Vacancy {
+        val phones = if (vacancyEntity.contactPhone.isNotBlank()) {
+            listOf(Phone(comment = null, formatted = vacancyEntity.contactPhone))
+        } else {
+            null
+        }
         return Vacancy(
             id = vacancyEntity.vacancyId,
             title = vacancyEntity.title,
@@ -24,7 +33,15 @@ class FavVacanciesDbConvertor {
             experience = parseExperienceString(vacancyEntity.experience),
             company = parseEmployerString(vacancyEntity.company),
             location = vacancyEntity.location.takeIf { it.isNotBlank() },
-            industry = parseIndustryString(vacancyEntity.industry)
+            industry = parseIndustryString(vacancyEntity.industry),
+            schedule = scheduleToString(vacancyEntity.schedule),
+            employment = employmentToString(vacancyEntity.employment),
+            contacts = Contacts(
+                name = vacancyEntity.contactName.takeIf { it.isNotBlank() },
+                email = vacancyEntity.contactEmail.takeIf { it.isNotBlank() },
+                phones = phones
+            ),
+            skills = parseSkillsString(vacancyEntity.skills)
         )
     }
 
@@ -37,7 +54,13 @@ class FavVacanciesDbConvertor {
             experience = experienceToString(vacancy.experience),
             company = employerToString(vacancy.company),
             location = vacancy.location ?: "",
-            industry = industryToString(vacancy.industry)
+            industry = industryToString(vacancy.industry),
+            schedule = vacancy.schedule?.name ?: "",
+            employment = vacancy.employment?.name ?: "",
+            contactName = vacancy.contacts?.name ?: "",
+            contactEmail = vacancy.contacts?.email ?: "",
+            contactPhone = contactsPhone(vacancy.contacts?.phones),
+            skills = skillsToString(vacancy.skills)
         )
     }
 
@@ -68,10 +91,13 @@ class FavVacanciesDbConvertor {
         val base = when {
             from != null && to != null ->
                 resourceProvider.getString(R.string.salary_range, from, to)
+
             from != null ->
                 resourceProvider.getString(R.string.salary_from, from)
+
             to != null ->
                 resourceProvider.getString(R.string.salary_to, to)
+
             else -> ""
         }
 
@@ -94,6 +120,22 @@ class FavVacanciesDbConvertor {
         }
     }
 
+    fun scheduleToString(schedule: String): Schedule {
+        return if (schedule.isBlank()) {
+            Schedule(id = "", name = "")
+        } else {
+            Schedule(id = "", name = schedule)
+        }
+    }
+
+    fun employmentToString(employment: String): Employment {
+        return if (employment.isBlank()) {
+            Employment(id = "", name = "")
+        } else {
+            Employment(id = "", name = employment)
+        }
+    }
+
     fun experienceToString(exp: Experience?): String {
         if (exp == null) return ""
         return if (!exp.id.isNullOrBlank() && !exp.name.isNullOrBlank()) {
@@ -112,11 +154,13 @@ class FavVacanciesDbConvertor {
                 name = parts[1],
                 logoUrl = parts[2]
             )
+
             parts.size == EMPLOYER_MIN_PARTS -> Employer(
                 id = parts[0],
                 name = parts[1],
                 logoUrl = ""
             )
+
             else -> Employer(
                 id = "",
                 name = s,
@@ -142,6 +186,20 @@ class FavVacanciesDbConvertor {
 
     fun industryToString(ind: Industry): String {
         return if (ind.id != 0) "${ind.id}|${ind.name}" else ind.name
+    }
+
+    fun contactsPhone(phones: List<Phone>?): String {
+        return phones?.firstOrNull()?.formatted ?: ""
+    }
+
+    fun parseSkillsString(skills: String?): List<String> {
+        if (skills.isNullOrBlank()) return emptyList()
+        return skills.split("|").map { it.trim() }.filter { it.isNotBlank() }
+    }
+
+    fun skillsToString(skills: List<String>?): String {
+        if (skills.isNullOrEmpty()) return ""
+        return skills.joinToString("|")
     }
 
 }

@@ -39,7 +39,10 @@ class DomainMapper {
             experience = mapExperience(dto.experience),
             company = mapEmployer(dto.employer),
             location = dto.area.name,
-            industry = mapIndustry(dto.industry)
+            industry = mapIndustry(dto.industry),
+            schedule = dto.schedule?.let { mapSchedule(it) },
+            employment = dto.employmentDto?.let { mapEmployment(it) },
+            skills = dto.skills
         )
     }
 
