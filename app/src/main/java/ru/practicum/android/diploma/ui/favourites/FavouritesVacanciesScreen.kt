@@ -39,7 +39,6 @@ import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.favourites.state.FavouritesScreenState
 import ru.practicum.android.diploma.util.SalaryDisplay
 
-
 @Composable
 fun FavouritesVacanciesScreen(
     navController: NavController,
