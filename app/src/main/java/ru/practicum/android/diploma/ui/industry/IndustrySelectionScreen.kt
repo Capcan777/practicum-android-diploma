@@ -166,7 +166,8 @@ private fun IndustrySelectionContent(
             ) {
                 Text(
                     text = stringResource(R.string.select),
-                    style = VacancyTheme.typography.medium16
+                    style = VacancyTheme.typography.medium16,
+                    color = VacancyTheme.colorScheme.outlineVariant
                 )
             }
         }
