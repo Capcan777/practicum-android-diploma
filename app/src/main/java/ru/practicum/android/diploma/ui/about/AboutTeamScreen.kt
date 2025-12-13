@@ -30,7 +30,8 @@ fun AboutTeamScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(VacancyTheme.colorScheme.background)
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
+            .padding(top = 8.dp)
     ) {
         Text(
             text = stringResource(R.string.team),
@@ -46,8 +47,9 @@ fun AboutTeamScreen() {
             text = stringResource(R.string.team_working_on_app),
             style = VacancyTheme.typography.bold32,
             color = VacancyTheme.colorScheme.inverseSurface,
-            modifier = Modifier.padding(bottom = 24.dp)
         )
+        Spacer(modifier = Modifier.height(32.dp))
+
 
         LazyColumn(
             modifier = Modifier

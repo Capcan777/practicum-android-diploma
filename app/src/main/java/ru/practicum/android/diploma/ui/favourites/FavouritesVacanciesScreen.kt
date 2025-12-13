@@ -57,7 +57,6 @@ fun FavouritesVacanciesScreen(
             color = VacancyTheme.colorScheme.inverseSurface,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
                 .padding(horizontal = 16.dp, vertical = 19.dp)
         )
 
@@ -140,8 +139,7 @@ fun FavouritesVacanciesScreen(
                                     )
                                     SalaryDisplay(
                                         vacancy.salary,
-                                        textStyle = VacancyTheme.typography.regular16,
-                                        textColor = VacancyTheme.colorScheme.onPrimaryContainer,
+                                        textStyle = VacancyTheme.typography.medium16,
                                     )
                                 }
                             }

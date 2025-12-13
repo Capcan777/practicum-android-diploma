@@ -95,7 +95,14 @@ fun VacancyDetailsScreen(
 
         when (screenState) {
             is VacancyDetailsScreenState.Loading -> {
-                CircularProgressIndicator()
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = VacancyTheme.colorScheme.background)
+                        .padding(16.dp)
+                ) {
+                    CircularProgressIndicator()
+                }
             }
 
             is VacancyDetailsScreenState.Content -> {
@@ -119,7 +126,6 @@ fun VacancyDetailsScreen(
                     SalaryDisplay(
                         salaryRange = vacancy.salary,
                         textStyle = VacancyTheme.typography.medium22,
-                        textColor = VacancyTheme.colorScheme.onPrimaryContainer,
                     )
 
                     Surface(
@@ -266,23 +272,44 @@ fun VacancyDetailsScreen(
             is VacancyDetailsScreenState.Error -> {
                 when (screenState) {
                     is VacancyDetailsScreenState.Error.ServerError -> {
-                        Placeholder(
-                            imageResId = R.drawable.placeholder_vacancy_server_error,
-                            title = stringResource(R.string.server_error),
-                            modifier = Modifier.padding(top = 207.dp)
-                        )
+                        Column(
+                            modifier = Modifier
+                                .background(color = VacancyTheme.colorScheme.background)
+                                .fillMaxSize()
+                        ) {
+                            Placeholder(
+                                imageResId = R.drawable.placeholder_vacancy_server_error,
+                                title = stringResource(R.string.server_error),
+                                modifier = Modifier
+                                    .padding(top = 207.dp)
+                                    .fillMaxSize()
+                            )
+                        }
                     }
 
                     is VacancyDetailsScreenState.Error.NotFound -> {
-                        Placeholder(
-                            imageResId = R.drawable.placeholder_vacancy_delete_or_not_found,
-                            title = stringResource(R.string.vacancy_delete_or_not_found),
-                            modifier = Modifier.padding(187.dp)
-                        )
+                        Column(
+                            modifier = Modifier
+                                .background(color = VacancyTheme.colorScheme.background)
+                                .fillMaxSize()
+                        ) {
+                            Placeholder(
+                                imageResId = R.drawable.placeholder_vacancy_delete_or_not_found,
+                                title = stringResource(R.string.vacancy_delete_or_not_found),
+                                modifier = Modifier.padding(top = 250.dp)
+                            )
+                        }
+
                     }
 
                     else -> {
-                        // добавить плейсхолдер
+                        Column(
+                            modifier = Modifier
+                                .background(color = VacancyTheme.colorScheme.background)
+                                .fillMaxSize()
+                        ) {
+                            // добавить плейсхолдер
+                        }
                     }
                 }
             }
@@ -331,7 +358,9 @@ private fun FavoriteButton(
             imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
             contentDescription = stringResource(R.string.add_vacancy_to_favourite),
             tint = animatedTint,
-            modifier = Modifier.scale(scale)
+            modifier = Modifier
+                .scale(scale)
+                .padding(end = 8.dp)
         )
     }
 }
