@@ -84,12 +84,10 @@ fun FilterSettingsScreen(
     ) { innerPadding ->
         FilterSettingsContent(
             uiState = uiState,
-            navController = navController,
             onSalaryChanged = viewModel::onSalaryChanged,
             onClearSalary = viewModel::clearSalary,
             onIndustryClick = {
                 viewModel.onIndustryClick {
-                    viewModel.onBackPressed()
                     navController.navigate(Routes.IndustrySelection.route)
                 }
             },
@@ -115,7 +113,6 @@ fun FilterSettingsScreen(
 @Composable
 private fun FilterSettingsContent(
     uiState: FilterSettingsState,
-    navController: NavController,
     onSalaryChanged: (String) -> Unit,
     onIndustryClick: () -> Unit,
     onClickClear: () -> Unit,

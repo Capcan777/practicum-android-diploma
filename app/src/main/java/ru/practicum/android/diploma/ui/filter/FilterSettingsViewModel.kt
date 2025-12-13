@@ -27,6 +27,7 @@ class FilterSettingsViewModel(
         viewModelScope.launch {
             val parameters = filterInteractor.getFilterParameters()
             _uiState.value = parameters.toFilterSettingsState()
+            hasUnsavedChanges = false
         }
     }
 
@@ -80,7 +81,8 @@ class FilterSettingsViewModel(
 
     fun onBackPressed() {
         if (hasUnsavedChanges) {
-            saveFilterState()
+            loadFilterState()
+            hasUnsavedChanges = false
         }
     }
 
