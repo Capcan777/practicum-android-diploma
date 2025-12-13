@@ -124,7 +124,7 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .padding(top = 16.dp)
+            .padding(top = 8.dp)
             .background(VacancyTheme.colorScheme.background)
     ) {
         Row(
@@ -415,7 +415,6 @@ fun VacancyRow(
             SalaryDisplay(
                 salaryRange = vacancyUiModel.vacancy.salary,
                 textStyle = VacancyTheme.typography.regular16,
-                textColor = VacancyTheme.colorScheme.inverseSurface
             )
         }
     }

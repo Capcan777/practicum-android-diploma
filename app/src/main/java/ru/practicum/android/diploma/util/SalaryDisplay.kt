@@ -4,7 +4,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -18,7 +17,6 @@ fun SalaryDisplay(
     salaryRange: SalaryRange?,
     modifier: Modifier = Modifier,
     textStyle: TextStyle,
-    textColor: Color
 ) {
     val context = LocalContext.current
     val resourceProvider = remember { ResourceProvider(context) }
@@ -27,7 +25,7 @@ fun SalaryDisplay(
         Text(
             text = stringResource(R.string.salary_not_specified),
             style = VacancyTheme.typography.regular16,
-            color = VacancyTheme.colorScheme.onPrimaryContainer
+            color = VacancyTheme.colorScheme.inverseSurface
         )
         return
     }
@@ -52,7 +50,7 @@ fun SalaryDisplay(
     Text(
         text = displaySalary,
         style = textStyle,
-        color = textColor,
+        color = VacancyTheme.colorScheme.inverseSurface,
         modifier = modifier
     )
 }
