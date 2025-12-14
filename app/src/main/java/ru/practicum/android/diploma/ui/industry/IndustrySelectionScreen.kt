@@ -156,7 +156,7 @@ private fun IndustrySelectionContent(
                 onClick = onSelectButtonClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = 24.dp, end = 16.dp),
                 shape = VacancyTheme.shapes.shape12dp,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = VacancyTheme.colorScheme.primary,
