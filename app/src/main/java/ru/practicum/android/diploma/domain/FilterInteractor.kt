@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.domain
 
-import android.R
 import kotlinx.coroutines.flow.SharedFlow
 import ru.practicum.android.diploma.data.FilterParameters
 
