@@ -281,7 +281,6 @@ fun VacancyDetailsScreen(
                                 imageResId = R.drawable.placeholder_vacancy_server_error,
                                 title = stringResource(R.string.server_error),
                                 modifier = Modifier
-                                    .padding(top = 207.dp)
                                     .fillMaxSize()
                             )
                         }

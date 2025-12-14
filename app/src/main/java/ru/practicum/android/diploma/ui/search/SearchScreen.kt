@@ -123,8 +123,7 @@ fun SearchScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp)
+            .padding(horizontal = 8.dp)
             .background(VacancyTheme.colorScheme.background)
     ) {
         Row(
@@ -133,6 +132,9 @@ fun SearchScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .padding(vertical = 19.dp),
                 text = stringResource(R.string.vacancies_search),
                 style = VacancyTheme.typography.medium22,
                 color = VacancyTheme.colorScheme.inverseSurface
@@ -141,8 +143,7 @@ fun SearchScreen(
             IconButton(
                 onClick = {
                     navController.navigate(Routes.SettingsFilter.route)
-                },
-                modifier = Modifier.padding(0.dp)
+                }
             ) {
                 Box(
                     modifier = Modifier
@@ -164,10 +165,12 @@ fun SearchScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
             value = searchQuery,
             onValueChange = { newValue ->
                 searchQuery = newValue
@@ -186,13 +189,15 @@ fun SearchScreen(
                     imageVector = if (searchQuery.isEmpty()) Icons.Filled.Search else Icons.Filled.Clear,
                     contentDescription = null,
                     tint = VacancyTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.clickable {
-                        if (searchQuery.isNotEmpty()) {
-                            searchQuery = ""
-                            onClearSearchText()
-                            viewModel.onSearchTextChanged("")
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .clickable {
+                            if (searchQuery.isNotEmpty()) {
+                                searchQuery = ""
+                                onClearSearchText()
+                                viewModel.onSearchTextChanged("")
+                            }
                         }
-                    }
                 )
             },
             shape = VacancyTheme.shapes.shape10dp,
@@ -308,7 +313,8 @@ fun SearchScreen(
 fun SearchPlaceholder() {
     Box(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(horizontal = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         Image(
@@ -338,7 +344,6 @@ fun VacancyListItem(
         modifier = Modifier
             .fillMaxSize()
             .background(VacancyTheme.colorScheme.background),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(vacancies) { uiVacancy ->
             VacancyRow(
@@ -372,6 +377,7 @@ fun VacancyRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 9.dp)
+            .padding(horizontal = 8.dp)
             .clickable { onClick() },
         verticalAlignment = Alignment.Top
     ) {
@@ -429,7 +435,7 @@ fun CountVacancies(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 3.dp),
+            .padding(top = 6.dp),
         contentAlignment = Alignment.Center
     ) {
         Box(
