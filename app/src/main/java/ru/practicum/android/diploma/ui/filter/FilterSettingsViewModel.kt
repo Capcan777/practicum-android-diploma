@@ -38,6 +38,16 @@ class FilterSettingsViewModel(
         }
     }
 
+    private fun saveAndApplyFilterState() {
+        viewModelScope.launch {
+            filterInteractor.saveFilterParameters(
+                _uiState.value.toFilterParameters(),
+                true
+            )
+            hasUnsavedChanges = false
+        }
+    }
+
     private fun updateState(update: (FilterSettingsState) -> FilterSettingsState) {
         _uiState.update { currentState ->
             update(currentState)
@@ -59,6 +69,7 @@ class FilterSettingsViewModel(
 
     fun clearSalary() {
         updateState { it.copy(salary = "") }
+        saveFilterState()
     }
 
     fun onIndustryClick(navigateTo: () -> Unit) {
@@ -78,7 +89,7 @@ class FilterSettingsViewModel(
     }
 
     fun applyFilters() {
-        saveFilterState()
+        saveAndApplyFilterState()
     }
 
     fun onBackPressed() {

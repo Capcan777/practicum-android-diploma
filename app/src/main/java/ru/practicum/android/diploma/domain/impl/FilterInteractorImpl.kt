@@ -14,9 +14,11 @@ class FilterInteractorImpl(
     private val _filterUpdates = MutableSharedFlow<FilterParameters>(replay = 1)
     override val filterUpdates: SharedFlow<FilterParameters> = _filterUpdates.asSharedFlow()
 
-    override suspend fun saveFilterParameters(parameters: FilterParameters) {
+    override suspend fun saveFilterParameters(parameters: FilterParameters, apply: Boolean) {
         filterRepository.saveFilterParameters(parameters)
-        _filterUpdates.emit(parameters)
+        if (apply) {
+            _filterUpdates.emit(parameters)
+        }
     }
 
     override suspend fun getFilterParameters(): FilterParameters {
