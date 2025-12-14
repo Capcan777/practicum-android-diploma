@@ -137,7 +137,9 @@ private fun IndustrySelectionContent(
 
             else -> {
                 LazyColumn(Modifier.weight(1f)) {
-                    items(uiState.filteredIndustries) { industry ->
+                    val sortedIndustries = uiState.filteredIndustries.sortedBy { it.name }
+
+                    items(sortedIndustries) { industry ->
                         IndustryItem(
                             industry = industry,
                             isSelected = uiState.selectedIndustry?.id == industry.id,

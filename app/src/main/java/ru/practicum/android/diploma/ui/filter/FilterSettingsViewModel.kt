@@ -49,10 +49,12 @@ class FilterSettingsViewModel(
         if (newSalary.all { it.isDigit() }) {
             updateState { it.copy(salary = newSalary) }
         }
+        saveFilterState()
     }
 
     fun onCheckboxChanged(isChecked: Boolean) {
         updateState { it.copy(hideWithoutSalary = isChecked) }
+        saveFilterState()
     }
 
     fun clearSalary() {
