@@ -3,11 +3,14 @@ package ru.practicum.android.diploma.ui.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.data.FilterParameters
 import ru.practicum.android.diploma.data.dto.SearchRequest
+import ru.practicum.android.diploma.domain.FilterInteractor
 import ru.practicum.android.diploma.domain.SearchInteractor
 import ru.practicum.android.diploma.domain.models.SearchOutcome
 import ru.practicum.android.diploma.ui.common.Event
@@ -20,6 +23,7 @@ import java.io.IOException
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
+    private val filterInteractor: FilterInteractor,
     private val resourceProvider: ResourceProvider
 ) : ViewModel() {
 
@@ -51,6 +55,31 @@ class SearchViewModel(
         searchVacancies(query)
     }
 
+    private val _filterParameters = MutableStateFlow(FilterParameters())
+    val filterParameters: StateFlow<FilterParameters> = _filterParameters.asStateFlow()
+
+    private val _areFiltersApplied = MutableStateFlow(false)
+    val areFiltersApplied: StateFlow<Boolean> = _areFiltersApplied.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val savedFilters = filterInteractor.getFilterParameters()
+            _filterParameters.value = savedFilters
+            checkIfFiltersApplied(savedFilters)
+
+            filterInteractor.filterUpdates.collect { params ->
+                _filterParameters.value = params
+                val query = _searchText.value
+                if (query.isNotEmpty()) {
+                    searchVacancies(query)
+                } else {
+                    resetPagination()
+                    _screenState.value = SearchScreenState.Nothing
+                }
+            }
+        }
+    }
+
     fun clearSearchText() {
         _searchText.value = ""
         debounceHandler.cancel()
@@ -72,10 +101,9 @@ class SearchViewModel(
         if (query.isEmpty()) return
 
         resetPagination()
-        val request = createSearchRequest(query, 0)
-
+        _screenState.value = SearchScreenState.Loading
         viewModelScope.launch {
-            _screenState.value = SearchScreenState.Loading
+            val request = createSearchRequest(query, 0)
             try {
                 searchInteractor.searchVacancies(request).collect { searchOutcome ->
                     when (searchOutcome) {
@@ -108,7 +136,8 @@ class SearchViewModel(
 
         viewModelScope.launch {
             try {
-                searchInteractor.loadNextPage(_searchText.value, nextPage).collect { searchOutcome ->
+                val request = createSearchRequest(_searchText.value, nextPage)
+                searchInteractor.searchVacancies(request).collect { searchOutcome ->
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
                             stateHandler.handleSearchResult(searchOutcome, isFirstPage = false)
@@ -142,7 +171,8 @@ class SearchViewModel(
 
         viewModelScope.launch {
             try {
-                searchInteractor.loadNextPage(retryQuery, retryPage).collect { searchOutcome ->
+                val request = createSearchRequest(retryQuery, retryPage)
+                searchInteractor.searchVacancies(request).collect { searchOutcome ->
                     when (searchOutcome) {
                         is SearchOutcome.SearchResult -> {
                             stateHandler.handleSearchResult(searchOutcome, isFirstPage = false)
@@ -168,13 +198,14 @@ class SearchViewModel(
         }
     }
 
-    private fun createSearchRequest(query: String, page: Int): SearchRequest {
+    private suspend fun createSearchRequest(query: String, page: Int): SearchRequest {
+        val filterParameters = filterInteractor.getFilterParameters()
         return SearchRequest(
-            industry = null,
+            industry = filterParameters.industry.takeIf { it.isNotEmpty() }?.toIntOrNull(),
             text = query,
-            salary = null,
+            salary = filterParameters.salary.takeIf { it.isNotEmpty() }?.toIntOrNull(),
             page = page,
-            onlyWithSalary = false
+            onlyWithSalary = filterParameters.hideWithoutSalary
         )
     }
 
@@ -185,6 +216,22 @@ class SearchViewModel(
 
     fun clearToastMessage() {
         _toastMessage.value = null
+    }
+
+    fun refreshSearchWithCurrentQuery() {
+        val currentQuery = _searchText.value
+        if (currentQuery.isNotEmpty()) {
+            // Отменяем текущий debounce и сразу запускаем поиск
+            debounceHandler.cancel()
+            searchVacancies(currentQuery)
+        }
+    }
+
+    private fun checkIfFiltersApplied(params: FilterParameters) {
+        _areFiltersApplied.value = params.salary.isNotEmpty() ||
+            params.industry.isNotEmpty() ||
+            params.placeOfWork.isNotEmpty() ||
+            params.hideWithoutSalary
     }
 
     companion object {

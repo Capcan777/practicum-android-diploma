@@ -13,9 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 
 @Composable
@@ -26,7 +24,7 @@ fun Placeholder(
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
             painter = painterResource(id = imageResId),
@@ -43,15 +41,7 @@ fun Placeholder(
             textAlign = TextAlign.Center,
             style = VacancyTheme.typography.medium22,
             text = title,
+            color = VacancyTheme.colorScheme.onSecondaryContainer
         )
-    }
-
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun PlaceholderPreview() {
-    VacancyTheme(isDarkTheme = false) {
-        Placeholder(imageResId = R.drawable.placeholder_error_riecive, title = "No connection", modifier = Modifier)
     }
 }

@@ -22,7 +22,7 @@ class FilterSettingsFragment : Fragment() {
             setContent {
                 VacancyTheme(isDarkTheme = false) {
                     val navController = findNavController()
-                    FilterSettingsScreen(navController)
+                    FilterSettingsScreen(navController, onBack = { navController.navigateUp() })
                 }
             }
         }

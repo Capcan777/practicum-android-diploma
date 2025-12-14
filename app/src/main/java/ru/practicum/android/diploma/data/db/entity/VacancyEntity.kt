@@ -14,5 +14,11 @@ data class VacancyEntity(
     val experience: String,
     val company: String,
     val location: String,
-    val industry: String
+    val industry: String,
+    val employment: String,
+    val schedule: String,
+    val contactName: String,
+    val contactEmail: String,
+    val contactPhone: String,
+    val skills: String
 )

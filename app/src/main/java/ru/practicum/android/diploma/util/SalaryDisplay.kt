@@ -2,8 +2,9 @@ package ru.practicum.android.diploma.util
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import ru.practicum.android.diploma.R
@@ -16,59 +17,68 @@ fun SalaryDisplay(
     salaryRange: SalaryRange?,
     modifier: Modifier = Modifier,
     textStyle: TextStyle,
-    textColor: Color
 ) {
+    val context = LocalContext.current
+    val resourceProvider = remember { ResourceProvider(context) }
+
     if (salaryRange == null) {
         Text(
             text = stringResource(R.string.salary_not_specified),
             style = VacancyTheme.typography.regular16,
-            color = VacancyTheme.colorScheme.onPrimaryContainer
+            color = VacancyTheme.colorScheme.inverseSurface
         )
         return
     }
 
-    val currencySymbol = formatCurrency(salaryRange.currency)
+    val symbol = formatCurrency(resourceProvider, salaryRange.currency)
+    val salaryFrom = salaryRange.from?.let { "${formatWithSpaces(it)}${if (symbol.isNotBlank()) " $symbol" else ""}" }
+    val salaryTo = salaryRange.to?.let { "${formatWithSpaces(it)}${if (symbol.isNotBlank()) " $symbol" else ""}" }
 
     val displaySalary = when {
-        salaryRange.from != null && salaryRange.to != null ->
-            "от ${formatWithSpaces(salaryRange.from)} до ${formatWithSpaces(salaryRange.to)} $currencySymbol"
+        salaryFrom != null && salaryTo != null ->
+            resourceProvider.getString(R.string.salary_range, salaryFrom, salaryTo)
 
-        salaryRange.from != null ->
-            "от ${formatWithSpaces(salaryRange.from)} $currencySymbol"
+        salaryFrom != null ->
+            resourceProvider.getString(R.string.salary_from, salaryFrom)
 
-        salaryRange.to != null ->
-            "до ${formatWithSpaces(salaryRange.to)} $currencySymbol"
+        salaryTo != null ->
+            resourceProvider.getString(R.string.salary_to, salaryTo)
 
-        else -> stringResource(R.string.salary_not_specified)
+        else ->
+            resourceProvider.getString(R.string.salary_not_specified)
     }
     Text(
         text = displaySalary,
         style = textStyle,
-        color = textColor,
+        color = VacancyTheme.colorScheme.inverseSurface,
         modifier = modifier
     )
 }
 
-@Composable
-fun formatCurrency(currency: String?): String {
+fun formatCurrency(resourceProvider: ResourceProvider, currency: String?): String {
     return when (currency) {
-        stringResource(R.string.currency_rub) ->
-            stringResource(R.string.currency_rub_sym)
+        resourceProvider.getString(R.string.currency_rub) ->
+            resourceProvider.getString(R.string.currency_rub_sym)
 
-        stringResource(R.string.currency_usd),
-        stringResource(R.string.currency_aud),
-        stringResource(R.string.currency_hkd) ->
-            stringResource(R.string.currency_usd_sym)
+        resourceProvider.getString(R.string.currency_usd),
+        resourceProvider.getString(R.string.currency_aud),
+        resourceProvider.getString(R.string.currency_hkd) ->
+            resourceProvider.getString(R.string.currency_usd_sym)
 
-        stringResource(R.string.currency_eur) ->
-            stringResource(R.string.currency_eur_sym)
+        resourceProvider.getString(R.string.currency_eur) ->
+            resourceProvider.getString(R.string.currency_eur_sym)
 
-        null -> stringResource(R.string.salary_not_specified)
+        resourceProvider.getString(R.string.currency_gbp) ->
+            resourceProvider.getString(R.string.currency_gbp_sym)
+
+        resourceProvider.getString(R.string.currency_sek) ->
+            resourceProvider.getString(R.string.currency_sek_sym)
+
+        null -> ""
         else -> currency
     }
 }
 
-@Composable
 fun formatWithSpaces(value: Int?): String {
     return value?.let {
         String.format(Locale.forLanguageTag("ru-RU"), "%,d", it).replace(",", " ")

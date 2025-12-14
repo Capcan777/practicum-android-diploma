@@ -14,26 +14,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.designsystem.theme.VacancyTheme
 import ru.practicum.android.diploma.ui.search.model.TeamMemberItem
 import ru.practicum.android.diploma.ui.search.model.TeamMemberUI
 
 @Composable
-fun AboutTeamScreen(
-    navController: NavController
-) {
+fun AboutTeamScreen() {
     val teamMembersUI = listOf(
-        TeamMemberUI("Тест 1", "Тестирование"),
-        TeamMemberUI("Тест 2", "Оценка"),
-        TeamMemberUI("Тест 3", "Дизайн"),
+        TeamMemberUI(R.string.team_member_evgeny, R.string.role_team_lead),
+        TeamMemberUI(R.string.team_member_yumey, R.string.role_developer),
+        TeamMemberUI(R.string.team_member_ilya, R.string.role_developer),
     )
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(VacancyTheme.colorScheme.background)
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         Text(
             text = stringResource(R.string.team),
@@ -43,14 +40,15 @@ fun AboutTeamScreen(
                 .padding(top = 19.dp)
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Text(
             text = stringResource(R.string.team_working_on_app),
             style = VacancyTheme.typography.bold32,
             color = VacancyTheme.colorScheme.inverseSurface,
-            modifier = Modifier.padding(bottom = 24.dp)
         )
+        Spacer(modifier = Modifier.height(32.dp))
+
 
         LazyColumn(
             modifier = Modifier
@@ -63,4 +61,3 @@ fun AboutTeamScreen(
         }
     }
 }
-

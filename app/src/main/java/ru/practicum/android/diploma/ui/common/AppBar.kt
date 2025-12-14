@@ -40,10 +40,9 @@ fun AppBar(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .height(56.dp)
+                .height(64.dp)
                 .fillMaxWidth()
-                .padding(top = 19.dp)
-                .padding(start = 4.dp, end = 8.dp)
+                .padding(vertical = 19.dp)
         ) {
             IconButton(onClick = onBack) {
                 Icon(
@@ -56,7 +55,7 @@ fun AppBar(
                 text = title,
                 style = VacancyTheme.typography.medium22,
                 color = VacancyTheme.colorScheme.inverseSurface,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 4.dp)
             )
 
             Spacer(modifier = Modifier.weight(1f))

@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
@@ -30,17 +31,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -88,6 +92,16 @@ fun SearchScreen(
     val hasMorePages by viewModel.hasMorePages.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState()
 
+    val filterParameters by viewModel.filterParameters.collectAsState()
+
+    val areFiltersApplied =
+        remember(filterParameters) {
+            filterParameters.salary.isNotEmpty() ||
+                filterParameters.industry.isNotEmpty() ||
+                filterParameters.placeOfWork.isNotEmpty() ||
+                filterParameters.hideWithoutSalary
+        }
+
     val lazyListState = rememberLazyListState()
     val context = LocalContext.current
 
@@ -109,8 +123,7 @@ fun SearchScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp)
+            .padding(horizontal = 8.dp)
             .background(VacancyTheme.colorScheme.background)
     ) {
         Row(
@@ -119,6 +132,9 @@ fun SearchScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .padding(vertical = 19.dp),
                 text = stringResource(R.string.vacancies_search),
                 style = VacancyTheme.typography.medium22,
                 color = VacancyTheme.colorScheme.inverseSurface
@@ -126,21 +142,35 @@ fun SearchScreen(
 
             IconButton(
                 onClick = {
-                    // переход к экрану фильтрации, когда появится навигация
+                    navController.navigate(Routes.SettingsFilter.route)
                 }
             ) {
-                Icon(
-                    imageVector = Icons.Filled.FilterList,
-                    contentDescription = null,
-                    tint = VacancyTheme.colorScheme.inverseSurface
-                )
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (areFiltersApplied) VacancyTheme.colorScheme.primary else Color.Transparent)
+                        .padding(2.dp)
+
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.FilterList,
+                        contentDescription = null,
+                        tint = if (areFiltersApplied) {
+                            VacancyTheme.colorScheme.onPrimary
+                        } else {
+                            VacancyTheme.colorScheme.inverseSurface
+                        }
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
             value = searchQuery,
             onValueChange = { newValue ->
                 searchQuery = newValue
@@ -159,13 +189,15 @@ fun SearchScreen(
                     imageVector = if (searchQuery.isEmpty()) Icons.Filled.Search else Icons.Filled.Clear,
                     contentDescription = null,
                     tint = VacancyTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.clickable {
-                        if (searchQuery.isNotEmpty()) {
-                            searchQuery = ""
-                            onClearSearchText()
-                            viewModel.onSearchTextChanged("")
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .clickable {
+                            if (searchQuery.isNotEmpty()) {
+                                searchQuery = ""
+                                onClearSearchText()
+                                viewModel.onSearchTextChanged("")
+                            }
                         }
-                    }
                 )
             },
             shape = VacancyTheme.shapes.shape10dp,
@@ -178,7 +210,6 @@ fun SearchScreen(
             )
         )
 
-        // Обработка Toast сообщений
         LaunchedEffect(toastMessage) {
             toastMessage?.getContentIfNotHandled()?.let { message ->
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -199,26 +230,36 @@ fun SearchScreen(
             }
 
             is SearchScreenState.Content -> {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 8.dp)
-                ) {
-                    CountVacancies(
-                        screenState,
-                        vacancies,
-                        textMessage = stringResource(R.string.found_count_vacancies, state.foundCount)
-                    )
-                }
-                VacancyListItem(
-                    vacancies = state.vacancies,
-                    onItemClick = { vacancyId ->
-                        navController.navigate(Routes.createVacancyDetailsRoute(vacancyId))
+                Scaffold(
+                    topBar = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp)
+                                .background(
+                                    color = Color.Transparent
+                                )
+                        ) {
+                            CountVacancies(
+                                screenState = screenState,
+                                vacancies = vacancies,
+                                textMessage = stringResource(R.string.found_count_vacancies, state.foundCount)
+                            )
+                        }
                     },
-                    lazyListState = lazyListState,
-                    isLoadingNextPage = isLoadingNextPage,
-                    hasMorePages = hasMorePages,
-                    onRetryClick = { viewModel.retryLastFailedPage() }
+                    content = { innerPadding ->
+                        VacancyListItem(
+                            vacancies = state.vacancies,
+                            onItemClick = { vacancyId ->
+                                navController.navigate(Routes.createVacancyDetailsRoute(vacancyId))
+                            },
+                            lazyListState = lazyListState,
+                            isLoadingNextPage = isLoadingNextPage,
+                            hasMorePages = hasMorePages,
+                            onRetryClick = { viewModel.retryLastFailedPage() },
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
                 )
             }
 
@@ -272,7 +313,8 @@ fun SearchScreen(
 fun SearchPlaceholder() {
     Box(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(horizontal = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         Image(
@@ -294,12 +336,14 @@ fun VacancyListItem(
     lazyListState: LazyListState,
     isLoadingNextPage: Boolean,
     hasMorePages: Boolean,
-    onRetryClick: () -> Unit
+    onRetryClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
         state = lazyListState,
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(VacancyTheme.colorScheme.background),
     ) {
         items(vacancies) { uiVacancy ->
             VacancyRow(
@@ -320,39 +364,6 @@ fun VacancyListItem(
                 }
             }
         }
-        // В макете нет примера этой кнопки, поэтому пока убрал из ui
-        /*else if (hasMorePages) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Не удалось загрузить данные",
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        style = VacancyTheme.typography.regular12,
-                        color = VacancyTheme.colorScheme.onSurfaceVariant
-                    )
-                    Button(onClick = onRetryClick) {
-                        Text("Повторить")
-                    }
-                }
-            }
-        } else if (vacancies.isNotEmpty()) {
-            item {
-                Text(
-                    text = "Это все вакансии",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center,
-                    style = VacancyTheme.typography.regular12,
-                    color = VacancyTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }*/
     }
 }
 
@@ -366,6 +377,7 @@ fun VacancyRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 9.dp)
+            .padding(horizontal = 8.dp)
             .clickable { onClick() },
         verticalAlignment = Alignment.Top
     ) {
@@ -409,7 +421,6 @@ fun VacancyRow(
             SalaryDisplay(
                 salaryRange = vacancyUiModel.vacancy.salary,
                 textStyle = VacancyTheme.typography.regular16,
-                textColor = VacancyTheme.colorScheme.inverseSurface
             )
         }
     }
@@ -424,7 +435,7 @@ fun CountVacancies(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 3.dp),
+            .padding(top = 6.dp),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -437,7 +448,7 @@ fun CountVacancies(
         ) {
             Text(
                 text = textMessage,
-                color = VacancyTheme.colorScheme.onPrimary,
+                color = VacancyTheme.colorScheme.outlineVariant,
                 style = VacancyTheme.typography.regular16,
             )
         }

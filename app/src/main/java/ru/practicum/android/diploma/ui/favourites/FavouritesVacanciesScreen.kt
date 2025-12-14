@@ -1,6 +1,8 @@
 package ru.practicum.android.diploma.ui.favourites
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +41,6 @@ import ru.practicum.android.diploma.ui.common.Placeholder
 import ru.practicum.android.diploma.ui.favourites.state.FavouritesScreenState
 import ru.practicum.android.diploma.util.SalaryDisplay
 
-
 @Composable
 fun FavouritesVacanciesScreen(
     navController: NavController,
@@ -58,7 +59,6 @@ fun FavouritesVacanciesScreen(
             color = VacancyTheme.colorScheme.inverseSurface,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
                 .padding(horizontal = 16.dp, vertical = 19.dp)
         )
 
@@ -98,26 +98,31 @@ fun FavouritesVacanciesScreen(
                                 .clickable {
                                     navController.navigate(Routes.createVacancyDetailsRoute(vacancy.id))
                                 }
-                                .padding(vertical = 12.dp)
+                                .padding(top = 18.dp)
                         ) {
                             val imageLoader: ImageLoader = koinInject()
                             Row(
                                 modifier = Modifier
-                                    .fillMaxWidth(),
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
                                 verticalAlignment = Alignment.Top
                             ) {
                                 val logoUrl = vacancy.company.logoUrl
                                 AsyncImage(
                                     model = ImageRequest.Builder(LocalContext.current)
                                         .data(logoUrl)
+                                        .crossfade(true)
                                         .build(),
                                     imageLoader = imageLoader,
                                     contentDescription = null,
                                     placeholder = painterResource(id = R.drawable.placeholder_logo),
                                     modifier = Modifier
                                         .size(48.dp)
-                                        .clip(VacancyTheme.shapes.shape12dp)
-                                        .padding(start = 16.dp),
+                                        .border(
+                                            shape = VacancyTheme.shapes.shape12dp,
+                                            border = BorderStroke(1.dp, VacancyTheme.colorScheme.secondaryContainer)
+                                        )
+                                        .clip(VacancyTheme.shapes.shape12dp),
                                     contentScale = ContentScale.Inside
                                 )
 
@@ -141,8 +146,7 @@ fun FavouritesVacanciesScreen(
                                     )
                                     SalaryDisplay(
                                         vacancy.salary,
-                                        textStyle = VacancyTheme.typography.regular16,
-                                        textColor = VacancyTheme.colorScheme.onPrimaryContainer,
+                                        textStyle = VacancyTheme.typography.medium16,
                                     )
                                 }
                             }

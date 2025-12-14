@@ -4,29 +4,33 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import ru.practicum.android.diploma.data.ExternalNavigatorImpl
 import ru.practicum.android.diploma.data.FavVacanciesRepositoryImpl
+import ru.practicum.android.diploma.data.FilterRepositoryImpl
+import ru.practicum.android.diploma.data.IndustryRepositoryImpl
 import ru.practicum.android.diploma.data.VacancyRepositoryImpl
 import ru.practicum.android.diploma.data.db.converters.FavVacanciesDbConvertor
 import ru.practicum.android.diploma.domain.DomainMapper
 import ru.practicum.android.diploma.domain.api.ExternalNavigator
 import ru.practicum.android.diploma.domain.api.FavVacanciesRepository
+import ru.practicum.android.diploma.domain.api.FilterRepository
+import ru.practicum.android.diploma.domain.api.IndustryRepository
 import ru.practicum.android.diploma.domain.api.VacancyRepository
 
 val repositoryModule = module {
-
     single<VacancyRepository> {
         VacancyRepositoryImpl(get(), get())
     }
-
     single<FavVacanciesRepository> {
-        FavVacanciesRepositoryImpl(get(), get())
+        FavVacanciesRepositoryImpl(get(), get(), get())
     }
-
+    single<FilterRepository> {
+        FilterRepositoryImpl(get())
+    }
+    single<IndustryRepository> {
+        IndustryRepositoryImpl(get(), get())
+    }
     single<ExternalNavigator> {
         ExternalNavigatorImpl(androidApplication(), get())
     }
-
     single { DomainMapper() }
-
     single { FavVacanciesDbConvertor() }
-
 }

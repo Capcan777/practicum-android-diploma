@@ -1,11 +1,18 @@
 package ru.practicum.android.diploma.data.db.converters
 
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.data.db.entity.VacancyEntity
+import ru.practicum.android.diploma.domain.models.Contacts
 import ru.practicum.android.diploma.domain.models.Employer
+import ru.practicum.android.diploma.domain.models.Employment
 import ru.practicum.android.diploma.domain.models.Experience
 import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.domain.models.Phone
 import ru.practicum.android.diploma.domain.models.SalaryRange
+import ru.practicum.android.diploma.domain.models.Schedule
 import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.util.ResourceProvider
+import java.util.Locale
 
 private const val EMPLOYER_PARTS = 3
 private const val EMPLOYER_MIN_PARTS = 2
@@ -13,6 +20,11 @@ private const val EMPLOYER_MIN_PARTS = 2
 class FavVacanciesDbConvertor {
 
     fun map(vacancyEntity: VacancyEntity): Vacancy {
+        val phones = if (vacancyEntity.contactPhone.isNotBlank()) {
+            listOf(Phone(comment = null, formatted = vacancyEntity.contactPhone))
+        } else {
+            null
+        }
         return Vacancy(
             id = vacancyEntity.vacancyId,
             title = vacancyEntity.title,
@@ -21,20 +33,34 @@ class FavVacanciesDbConvertor {
             experience = parseExperienceString(vacancyEntity.experience),
             company = parseEmployerString(vacancyEntity.company),
             location = vacancyEntity.location.takeIf { it.isNotBlank() },
-            industry = parseIndustryString(vacancyEntity.industry)
+            industry = parseIndustryString(vacancyEntity.industry),
+            schedule = scheduleToString(vacancyEntity.schedule),
+            employment = employmentToString(vacancyEntity.employment),
+            contacts = Contacts(
+                name = vacancyEntity.contactName.takeIf { it.isNotBlank() },
+                email = vacancyEntity.contactEmail.takeIf { it.isNotBlank() },
+                phones = phones
+            ),
+            skills = parseSkillsString(vacancyEntity.skills)
         )
     }
 
-    fun map(vacancy: Vacancy): VacancyEntity {
+    fun map(vacancy: Vacancy, resourceProvider: ResourceProvider): VacancyEntity {
         return VacancyEntity(
             vacancyId = vacancy.id,
             title = vacancy.title,
             description = vacancy.description,
-            salary = fromSalaryRange(vacancy.salary),
+            salary = fromSalaryRange(resourceProvider, vacancy.salary),
             experience = experienceToString(vacancy.experience),
             company = employerToString(vacancy.company),
             location = vacancy.location ?: "",
-            industry = industryToString(vacancy.industry)
+            industry = industryToString(vacancy.industry),
+            schedule = vacancy.schedule?.name ?: "",
+            employment = vacancy.employment?.name ?: "",
+            contactName = vacancy.contacts?.name ?: "",
+            contactEmail = vacancy.contacts?.email ?: "",
+            contactPhone = contactsPhone(vacancy.contacts?.phones),
+            skills = skillsToString(vacancy.skills)
         )
     }
 
@@ -47,36 +73,35 @@ class FavVacanciesDbConvertor {
             .trim()
 
         val numbers = Regex("""\d+""").findAll(cleaned).mapNotNull { it.value.toIntOrNull() }.toList()
-        val currency = Regex("""RUB|USD|EUR|HKD""", RegexOption.IGNORE_CASE).find(cleaned)?.value
+        val currency = Regex("""RUB|USD|EUR|HKD|SEK|GBP""", RegexOption.IGNORE_CASE)
+            .find(cleaned)?.value?.uppercase()
 
-        val from = when {
-            cleaned.startsWith("от", ignoreCase = true) && numbers.isNotEmpty() -> numbers.first()
-            numbers.isNotEmpty() -> numbers.first()
-            else -> null
-        }
-
-        val to = when {
-            cleaned.startsWith("до", ignoreCase = true) && numbers.isNotEmpty() -> numbers.first()
-            numbers.size >= 2 -> numbers[1]
-            else -> null
-        }
+        val from = numbers.getOrNull(0)
+        val to = numbers.getOrNull(1)
 
         return SalaryRange(from = from, to = to, currency = currency)
     }
 
-    fun fromSalaryRange(salary: SalaryRange?): String {
+    fun fromSalaryRange(resourceProvider: ResourceProvider, salary: SalaryRange?): String {
         if (salary == null) return ""
         val from = salary.from
         val to = salary.to
-        val currency = salary.currency?.trim() ?: ""
-        val currencySuffix = if (currency.isNotBlank()) " $currency" else ""
+        val currencyCode = salary.currency?.trim()?.uppercase(Locale.getDefault()) ?: ""
 
-        return when {
-            from != null && to != null -> "$from-$to$currencySuffix"
-            from != null -> "от$from$currencySuffix"
-            to != null -> "до$to$currencySuffix"
+        val base = when {
+            from != null && to != null ->
+                resourceProvider.getString(R.string.salary_range, from, to)
+
+            from != null ->
+                resourceProvider.getString(R.string.salary_from, from)
+
+            to != null ->
+                resourceProvider.getString(R.string.salary_to, to)
+
             else -> ""
         }
+
+        return if (currencyCode.isNotBlank()) "$base $currencyCode" else base
     }
 
     fun parseExperienceString(s: String?): Experience? {
@@ -92,6 +117,22 @@ class FavVacanciesDbConvertor {
                 id = null,
                 name = s
             )
+        }
+    }
+
+    fun scheduleToString(schedule: String): Schedule {
+        return if (schedule.isBlank()) {
+            Schedule(id = "", name = "")
+        } else {
+            Schedule(id = "", name = schedule)
+        }
+    }
+
+    fun employmentToString(employment: String): Employment {
+        return if (employment.isBlank()) {
+            Employment(id = "", name = "")
+        } else {
+            Employment(id = "", name = employment)
         }
     }
 
@@ -113,11 +154,13 @@ class FavVacanciesDbConvertor {
                 name = parts[1],
                 logoUrl = parts[2]
             )
+
             parts.size == EMPLOYER_MIN_PARTS -> Employer(
                 id = parts[0],
                 name = parts[1],
                 logoUrl = ""
             )
+
             else -> Employer(
                 id = "",
                 name = s,
@@ -143,6 +186,20 @@ class FavVacanciesDbConvertor {
 
     fun industryToString(ind: Industry): String {
         return if (ind.id != 0) "${ind.id}|${ind.name}" else ind.name
+    }
+
+    fun contactsPhone(phones: List<Phone>?): String {
+        return phones?.firstOrNull()?.formatted ?: ""
+    }
+
+    fun parseSkillsString(skills: String?): List<String> {
+        if (skills.isNullOrBlank()) return emptyList()
+        return skills.split("|").map { it.trim() }.filter { it.isNotBlank() }
+    }
+
+    fun skillsToString(skills: List<String>?): String {
+        if (skills.isNullOrEmpty()) return ""
+        return skills.joinToString("|")
     }
 
 }
